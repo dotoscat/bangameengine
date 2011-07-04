@@ -16,13 +16,16 @@ main(int argc, char *argv[]){
         box = new bange::box(argv[1]);
     }
     else{
-        box = new bange::box();
+        box = new bange::box("config.lua");
     }
-    box->Run();
+    if (!box->GetError()){
+        box->Run();}
     delete box;
     if (PHYSFS_deinit() == 0){
         std::cout << "bange(physfs): " << PHYSFS_getLastError() << std::endl;
         return EXIT_FAILURE;
     }
+    if (box->GetError()){
+        return EXIT_FAILURE;}
     return EXIT_SUCCESS;
 }

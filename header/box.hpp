@@ -7,13 +7,12 @@ namespace bange{
         private:
             lua_State *vm;
             sf::RenderWindow *window;
+            bool error;
         public:
-            box();
             box(const char *);
             ~box();
+            bool GetError();
             void Run();
-        protected:
-            void Initialize();
     };
     
 }
