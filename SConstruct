@@ -9,4 +9,4 @@ BANGECCFLAGS = ""
 if DEBUG:
     BANGECCFLAGS += "-g"
 
-Program("bange", Glob("source/*.cpp"), CPPPATH=["./header"], LIBS=BANGELIBS, CCFLAGS=BANGECCFLAGS)
+Program("bange", Glob("source/*.cpp"), CPPPATH=["./include"], LIBS=BANGELIBS, CCFLAGS=BANGECCFLAGS)

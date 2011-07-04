@@ -1,16 +1,24 @@
 #include <iostream>
 #include <box.hpp>
+#include <vm.hpp>
 
 bange::box::box(const char *config){
     error = false;
     window = NULL;
     vm = luaL_newstate();
     if (luaL_dofile(vm, config)){
-        std::cout << "bange(lua): Error reading \"" << config << "\": " << lua_tostring(vm, -1) << std::endl;
+        std::cout << "bange(lua): Error reading config file \"" << config << "\": " << lua_tostring(vm, -1) << std::endl;
         error = true;
         return;
     }
+    char runfile[128] = "run.lua";
+    vm::GetString(vm, "Run", runfile, 128);
     luaL_openlibs(vm);
+    if (luaL_dofile(vm, runfile)){
+        std::cout << "bange(lua): Error reading run file \"" << runfile << "\": " << lua_tostring(vm, -1) << std::endl;
+        error = true;
+        return;
+    }
     sf::VideoMode videomode(640, 480);
     char title[128] = {0};
     unsigned long windowstyle = sf::Style::Close;
