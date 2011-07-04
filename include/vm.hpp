@@ -29,8 +29,8 @@ namespace bange{
 
 		void PrepareVM(lua_State *);
 
-		void SetInt(lua_State *, const char *, int);
-		bool GetInt(lua_State *, const char *, lua_Number &);
+		void SetNumber(lua_State *, const char *, int);
+		bool GetNumber(lua_State *, const char *, lua_Number &);
 
 		void SetBoolean(lua_State *, const char *, int);
 		bool GetBoolean(lua_State *, const char *, int &);

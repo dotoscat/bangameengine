@@ -5,6 +5,7 @@
 bange::box::box(const char *config){
     error = false;
     window = NULL;
+    escapekey = sf::Key::Escape;
     vm = luaL_newstate();
     if (luaL_dofile(vm, config)){
         std::cout << "bange(lua): Error reading config file \"" << config << "\": " << lua_tostring(vm, -1) << std::endl;
@@ -19,12 +20,23 @@ bange::box::box(const char *config){
         error = true;
         return;
     }
+    //Get Window dimensions
     sf::VideoMode videomode(640, 480);
+    //Get Title
     char title[128] = "BAN Game Engine";
     vm::GetString(vm, "Title", title, 128);
+    //Set styles (fullscreen, close, resize, titlebar, none)
     unsigned long windowstyle = sf::Style::Close;
+    //Set Window settings
     sf::WindowSettings windowsettings;
+    //Create window
     window = new sf::RenderWindow(videomode, title, windowstyle, windowsettings);
+    //Set FPS
+    lua_Number FPS = 60;
+    vm::GetNumber(vm, "FPS", FPS);
+    window->SetFramerateLimit( static_cast<unsigned int>(FPS) );
+    //Set KeyRepeat
+    //Set Key
 }
 
 bange::box::~box(){
@@ -42,6 +54,8 @@ void bange::box::Run(){
         
         while(window->GetEvent(event)){
             if (event.Type == sf::Event::Closed){
+                window->Close();}
+            else if (event.Type == sf::Event::KeyPressed && event.Key.Code == escapekey){
                 window->Close();}
         }
         
