@@ -20,7 +20,8 @@ bange::box::box(const char *config){
         return;
     }
     sf::VideoMode videomode(640, 480);
-    char title[128] = {0};
+    char title[128] = "BAN Game Engine";
+    vm::GetString(vm, "Title", title, 128);
     unsigned long windowstyle = sf::Style::Close;
     sf::WindowSettings windowsettings;
     window = new sf::RenderWindow(videomode, title, windowstyle, windowsettings);
