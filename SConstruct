@@ -1,1 +1,2 @@
-Program("bange", Glob("source/*.cpp"), CPPPATH=["./header"], LIBS=["physfs", "lua5.1", "chipmunk"])
+BANGELIBS = ["physfs", "lua5.1", "chipmunk", "sfml-system", "sfml-window", "sfml-graphics"]
+Program("bange", Glob("source/*.cpp"), CPPPATH=["./header"], LIBS=BANGELIBS)

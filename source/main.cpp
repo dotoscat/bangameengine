@@ -18,6 +18,7 @@ main(int argc, char *argv[]){
     else{
         box = new bange::box();
     }
+    box->Run();
     delete box;
     if (PHYSFS_deinit() == 0){
         std::cout << "bange(physfs): " << PHYSFS_getLastError() << std::endl;
