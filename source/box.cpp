@@ -5,8 +5,9 @@
 bange::box::box(const char *config){
     error = false;
     window = NULL;
-    escapekey = sf::Key::Escape;
+    this->escapekey = sf::Key::Escape;
     vm = luaL_newstate();
+    vm::PrepareVM(vm);
     if (luaL_dofile(vm, config)){
         std::cout << "bange(lua): Error reading config file \"" << config << "\": " << lua_tostring(vm, -1) << std::endl;
         error = true;
@@ -36,7 +37,10 @@ bange::box::box(const char *config){
     vm::GetNumber(vm, "FPS", FPS);
     window->SetFramerateLimit( static_cast<unsigned int>(FPS) );
     //Set KeyRepeat
-    //Set Key
+    //Set EscapeKey
+    lua_Number escapekey = 0;
+    if (vm::GetNumber(vm, "EscapeKey", escapekey)){
+        this->escapekey = static_cast<sf::Key::Code>(escapekey);}
 }
 
 bange::box::~box(){
