@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <physfs.h>
+#include <chipmunk/chipmunk.h>
 #include <box.hpp>
 
 main(int argc, char *argv[]){
@@ -9,6 +10,7 @@ main(int argc, char *argv[]){
         std::cout << "bange(physfs): " << PHYSFS_getLastError() << std::endl;
         return EXIT_FAILURE;
     }
+    cpInitChipmunk();
     bange::box *box = NULL;
     if (argc > 1){
         box = new bange::box(argv[1]);
