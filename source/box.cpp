@@ -37,10 +37,17 @@ bange::box::box(const char *config){
     vm::GetNumber(vm, "FPS", FPS);
     window->SetFramerateLimit( static_cast<unsigned int>(FPS) );
     //Set KeyRepeat
+    //Set VerticalSync
     //Set EscapeKey
     lua_Number escapekey = 0;
     if (vm::GetNumber(vm, "EscapeKey", escapekey)){
         this->escapekey = static_cast<sf::Key::Code>(escapekey);}
+    //Store in lua environment this box
+    lua_pushlightuserdata(vm, this);
+    lua_setfield(vm, LUA_REGISTRYINDEX, "bange::box");
+    //Store in lua environment box's window
+    lua_pushlightuserdata(vm, this->window);
+    lua_setfield(vm, LUA_REGISTRYINDEX, "bange::box::window");
 }
 
 bange::box::~box(){
