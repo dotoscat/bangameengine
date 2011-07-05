@@ -37,7 +37,13 @@ bange::box::box(const char *config){
     vm::GetNumber(vm, "FPS", FPS);
     window->SetFramerateLimit( static_cast<unsigned int>(FPS) );
     //Set KeyRepeat
+    int keyrepeat = 0;
+    vm::GetBoolean(vm, "KeyRepeat", keyrepeat);
+    window->EnableKeyRepeat((bool)keyrepeat);
     //Set VerticalSync
+    int verticalsync = 0;
+    vm::GetBoolean(vm, "VerticalSync", verticalsync);
+    window->UseVerticalSync((bool)verticalsync);
     //Set EscapeKey
     lua_Number escapekey = 0;
     if (vm::GetNumber(vm, "EscapeKey", escapekey)){
