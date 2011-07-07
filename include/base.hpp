@@ -1,4 +1,4 @@
-//box.hpp
+//base.hpp
 //Copyright (C) 2010-2011 Oscar (.teri) Triano
 
 //This program is free software: you can redistribute it and/or modify
@@ -14,27 +14,30 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _bange_box_
-#define _bange_box_
+#ifndef _bange_base_
+#define _bange_base_
 
-#include <SFML/Graphics.hpp>
 #include <lua5.1/lua.hpp>
 
 namespace bange{
-    
-    class box{
-        private:
-            lua_State *vm;
-            sf::RenderWindow *window;
-            bool error;
-            sf::Key::Code escapekey;
-        public:
-            box(const char *);
-            ~box();
-            bool GetError();
-            void Run();
+
+    class base{
+        bool NewIndex(lua_State *) = 0;//Set attributes
+        bool Index(lua_State *) = 0;//Get attributes, request methods
+        void Clean(lua_State *){};//Some classes doesn't need clean
+    };
+
+    struct proxy{
+        int parent;
+        bange::base *;
     };
     
+    bange::proxy *BuildProxy(bange::base *, lua_State *);
+
+    static int proxy_newindex(lua_State *);
+    static int proxy_index(lua_State *);
+    static int proxy_gc(lua_State *);
+
 }
 
 #endif
