@@ -37,6 +37,8 @@ namespace bange{
 
 		bool GetString(lua_State *, const char*, char *, int);
 	
+        bool GetTable(lua_State *, const char *);
+    
 	}
 
 }

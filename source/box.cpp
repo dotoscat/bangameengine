@@ -15,6 +15,7 @@
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
+#include <physfs.h>
 #include <box.hpp>
 #include <vm.hpp>
 
@@ -70,6 +71,22 @@ bange::box::box(const char *config){
     //Store in lua environment box's window
     lua_pushlightuserdata(vm, this->window);
     lua_setfield(vm, LUA_REGISTRYINDEX, "bange::box::window");
+    //Add packages
+    if (bange::vm::GetTable(vm, "Packages")){
+        lua_pushnil(vm);
+        while(lua_next(vm, -2)){
+            if (!lua_isstring(vm, -1)){
+                lua_pop(vm, 1);
+                continue;
+            }
+            if (PHYSFS_addToSearchPath(lua_tostring(vm, -1), 0) == 0){
+                std::cout << "bange(physfs): " << lua_tostring(vm, -1) << ": " << PHYSFS_getLastError() << std::endl;
+            }
+            //next
+            lua_pop(vm, 1);
+        }
+        lua_pop(vm, 1);
+    }
 }
 
 bange::box::~box(){

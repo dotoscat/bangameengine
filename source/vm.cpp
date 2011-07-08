@@ -211,3 +211,11 @@ bool bange::vm::GetString(lua_State *vm, const char *var, char *string, int size
     lua_pop(vm, 1);
     return true;
 }
+
+bool bange::vm::GetTable(lua_State *vm, const char *name){
+    lua_getglobal(vm, name);
+    if (!lua_istable(vm, -1)){
+        lua_pop(vm, 1);
+        return false;}
+    return true;
+}
