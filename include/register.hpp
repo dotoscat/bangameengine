@@ -1,4 +1,4 @@
-//vm.hpp
+//register.hpp
 //Copyright (C) 2010-2011 Oscar (.teri) Triano
 
 //This program is free software: you can redistribute it and/or modify
@@ -14,31 +14,15 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _bange_vm_
-#define _bange_vm_
+#ifndef _bange_register_
+#define _bange_register_
 
-#include <cstring>
-#include <chipmunk/chipmunk.h>
-#include <lua5.1/lua.hpp>
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
+#include <vm.hpp>
 
 namespace bange{
-
-	namespace vm{
-
-		void SetNumber(lua_State *, const char *, int);
-		bool GetNumber(lua_State *, const char *, lua_Number &);
-
-		void SetBoolean(lua_State *, const char *, int);
-		bool GetBoolean(lua_State *, const char *, int &);
-
-		bool GetString(lua_State *, const char*, char *, int);
-	
-        bool GetTable(lua_State *, const char *);
     
-	}
-
+    void PrepareVM(lua_State *);
+    
 }
 
 #endif

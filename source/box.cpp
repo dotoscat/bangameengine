@@ -17,14 +17,14 @@
 #include <iostream>
 #include <physfs.h>
 #include <box.hpp>
-#include <vm.hpp>
+#include <register.hpp>
 
 bange::box::box(const char *config){
     error = false;
     window = NULL;
     this->escapekey = sf::Key::Escape;
     vm = luaL_newstate();
-    vm::PrepareVM(vm);
+    bange::PrepareVM(vm);
     if (luaL_dofile(vm, config)){
         std::cout << "bange(lua): Error reading config file \"" << config << "\": " << lua_tostring(vm, -1) << std::endl;
         error = true;
