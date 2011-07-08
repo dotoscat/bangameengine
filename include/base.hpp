@@ -22,17 +22,18 @@
 namespace bange{
 
     class base{
-        virtual bool NewIndex(lua_State *) = 0;//Set attributes
-        virtual bool Index(lua_State *) = 0;//Get attributes, request methods
-        virtual void Clean(lua_State *){};//Some classes doesn't need clean
+        public:
+            virtual bool NewIndex(lua_State *) = 0;//Set attributes
+            virtual bool Index(lua_State *) = 0;//Get attributes, request methods
+            virtual void Clean(lua_State *){};//Some classes doesn't need clean
     };
 
     struct proxy{
         int parent;
-        bange::base *base;
+        bange::base *object;
     };
     
-    bange::proxy *BuildProxy(lua_State *, bange::base *, int);
+    void BuildProxy(lua_State *, bange::base *, int=LUA_REFNIL);//+1
 
     static int proxy_newindex(lua_State *);
     static int proxy_index(lua_State *);
