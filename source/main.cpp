@@ -36,12 +36,13 @@ main(int argc, char *argv[]){
     }
     if (!box->GetError()){
         box->Run();}
+    if (box->GetError()){
+        delete box;
+        return EXIT_FAILURE;}
     delete box;
     if (PHYSFS_deinit() == 0){
         std::cout << "bange(physfs): " << PHYSFS_getLastError() << std::endl;
         return EXIT_FAILURE;
     }
-    if (box->GetError()){
-        return EXIT_FAILURE;}
     return EXIT_SUCCESS;
 }
