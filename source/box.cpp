@@ -30,14 +30,6 @@ bange::box::box(const char *config){
         error = true;
         return;
     }
-    char runfile[128] = "run.lua";
-    vm::GetString(vm, "Run", runfile, 128);
-    luaL_openlibs(vm);
-    if (luaL_dofile(vm, runfile)){
-        std::cout << "bange(lua): Error reading run file \"" << runfile << "\": " << lua_tostring(vm, -1) << std::endl;
-        error = true;
-        return;
-    }
     //Get Window dimensions
     sf::VideoMode videomode(640, 480);
     //Get Title
@@ -87,6 +79,15 @@ bange::box::box(const char *config){
         }
         lua_pop(vm, 1);
     }
+    //Execute the run file
+    char runfile[128] = "run.lua";
+    vm::GetString(vm, "Run", runfile, 128);
+    luaL_openlibs(vm);
+    if (luaL_dofile(vm, runfile)){
+        std::cout << "bange(lua): Error reading run file \"" << runfile << "\": " << lua_tostring(vm, -1) << std::endl;
+        error = true;
+        return;
+    }
 }
 
 bange::box::~box(){
@@ -113,4 +114,44 @@ void bange::box::Run(){
         window->Display();
         
     }
+}
+
+void bange::box::RegisterVM(lua_State *vm){
+    luaL_Reg functions[] = {
+    {"IsKeyDown", IsKeyDown},
+    {"GetMouseX", GetMouseX},
+    {"GetMouseY", GetMouseY},
+    NULL};
+    luaL_register(vm, "bange", functions);
+    lua_pop(vm, 1);
+}
+
+static int IsKeyDown(lua_State *vm){
+    //keycode -> bool
+    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box::window");
+    sf::RenderWindow *window = static_cast<sf::RenderWindow *>(lua_touserdata(vm, -1));
+    lua_pop(vm, 1);
+    if (window->GetInput().IsKeyDown( static_cast<sf::Key::Code>(lua_tonumber(vm, 1)) ) ){
+        lua_pushboolean(vm, 1);
+    }else{
+        lua_pushboolean(vm, 0);}
+    return 1;
+}
+
+static int GetMouseX(lua_State *vm){
+    //-> number
+    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box::window");
+    sf::RenderWindow *window = static_cast<sf::RenderWindow *>(lua_touserdata(vm, -1));
+    lua_pop(vm, 1);
+    lua_pushnumber(vm, window->GetInput().GetMouseX());
+    return 1;
+}
+
+static int GetMouseY(lua_State *vm){
+    //-> number
+    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box::window");
+    sf::RenderWindow *window = static_cast<sf::RenderWindow *>(lua_touserdata(vm, -1));
+    lua_pop(vm, 1);
+    lua_pushnumber(vm, window->GetInput().GetMouseY());
+    return 1;
 }

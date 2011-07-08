@@ -33,8 +33,15 @@ namespace bange{
             ~box();
             bool GetError();
             void Run();
+            
+            static void RegisterVM(lua_State *);
+            
     };
     
 }
+
+static int IsKeyDown(lua_State *);
+static int GetMouseX(lua_State *);
+static int GetMouseY(lua_State *);
 
 #endif

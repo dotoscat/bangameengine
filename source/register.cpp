@@ -15,6 +15,7 @@
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <register.hpp>
+#include <box.hpp>
 
 void bange::PrepareVM(lua_State *vm){
 	using namespace bange::vm;
@@ -154,19 +155,5 @@ void bange::PrepareVM(lua_State *vm){
     SetNumber(vm, "NO_GROUP", CP_NO_GROUP);
     SetNumber(vm, "ALL_LAYERS", CP_ALL_LAYERS);
     //register bange functions and other engine's elements
-    lua_newtable(vm);
-    /*
-    bange::RegisterVM(vm);
-    bange::image::RegisterVM(vm);
-    bange::base::RegisterVM(vm);
-    bange::behavior::RegisterVM(vm);
-    bange::layer::RegisterVM(vm);
-    bange::layerobject::RegisterVM(vm);
-    bange::scene::RegisterVM(vm);
-    bange::view::RegisterVM(vm);
-    bange::object::RegisterVM(vm);
-    bange::simplestring::RegisterVM(vm);
-    bange::simplesprite::RegisterVM(vm);
-    bange::font::RegisterVM(vm);*/
-    lua_setglobal(vm, "bange");
+    bange::box::RegisterVM(vm);
 }

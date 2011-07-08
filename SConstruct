@@ -1,4 +1,4 @@
-DEBUG = False #Set True or False
+DEBUG = True #Set True or False
 
 #Don't touch
 #===========
