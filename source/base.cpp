@@ -1,7 +1,7 @@
 #include <iostream>
 #include <base.hpp>
 
-void BuildProxy(lua_State *vm, bange::base *object, int parent){
+void bange::BuildProxy(lua_State *vm, bange::base *object, int parent){
     
     bange::proxy *proxy = static_cast<bange::proxy *>( lua_newuserdata(vm, sizeof(bange::proxy)) );
     proxy->parent = parent;

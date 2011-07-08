@@ -1,4 +1,4 @@
-//box.hpp
+//image.hpp
 //Copyright (C) 2010-2011 Oscar (.teri) Triano
 
 //This program is free software: you can redistribute it and/or modify
@@ -14,33 +14,24 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _bange_box_
-#define _bange_box_
+#ifndef _bange_image_
+#define _bange_image_
 
 #include <SFML/Graphics.hpp>
-#include <lua5.1/lua.hpp>
+#include <base.hpp>
 
 namespace bange{
     
-    class box{
-        private:
-            lua_State *vm;
-            sf::RenderWindow *window;
-            bool error;
-            sf::Key::Code escapekey;
+    class image: public sf::Image, public bange::base{
         public:
-            box(const char *);
-            ~box();
-            bool GetError();
-            void Run();
+            bool NewIndex(lua_State *){};
+            bool Index(lua_State *){};
             
             static void RegisterVM(lua_State *);
-            
+
     };
     
-    static int IsKeyDown(lua_State *);
-    static int GetMouseX(lua_State *);
-    static int GetMouseY(lua_State *);
+    static int LoadImage(lua_State *);
     
 }
 

@@ -16,6 +16,7 @@
 
 #include <register.hpp>
 #include <box.hpp>
+#include <image.hpp>
 
 void bange::PrepareVM(lua_State *vm){
 	using namespace bange::vm;
@@ -156,4 +157,5 @@ void bange::PrepareVM(lua_State *vm){
     SetNumber(vm, "ALL_LAYERS", CP_ALL_LAYERS);
     //register bange functions and other engine's elements
     bange::box::RegisterVM(vm);
+    bange::image::RegisterVM(vm);
 }

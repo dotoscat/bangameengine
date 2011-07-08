@@ -118,15 +118,15 @@ void bange::box::Run(){
 
 void bange::box::RegisterVM(lua_State *vm){
     luaL_Reg functions[] = {
-    {"IsKeyDown", IsKeyDown},
-    {"GetMouseX", GetMouseX},
-    {"GetMouseY", GetMouseY},
+    {"IsKeyDown", bange::IsKeyDown},
+    {"GetMouseX", bange::GetMouseX},
+    {"GetMouseY", bange::GetMouseY},
     NULL};
     luaL_register(vm, "bange", functions);
     lua_pop(vm, 1);
 }
 
-static int IsKeyDown(lua_State *vm){
+static int bange::IsKeyDown(lua_State *vm){
     //keycode -> bool
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box::window");
     sf::RenderWindow *window = static_cast<sf::RenderWindow *>(lua_touserdata(vm, -1));
@@ -138,7 +138,7 @@ static int IsKeyDown(lua_State *vm){
     return 1;
 }
 
-static int GetMouseX(lua_State *vm){
+static int bange::GetMouseX(lua_State *vm){
     //-> number
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box::window");
     sf::RenderWindow *window = static_cast<sf::RenderWindow *>(lua_touserdata(vm, -1));
@@ -147,7 +147,7 @@ static int GetMouseX(lua_State *vm){
     return 1;
 }
 
-static int GetMouseY(lua_State *vm){
+static int bange::GetMouseY(lua_State *vm){
     //-> number
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box::window");
     sf::RenderWindow *window = static_cast<sf::RenderWindow *>(lua_touserdata(vm, -1));
