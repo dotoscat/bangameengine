@@ -1,4 +1,4 @@
-//base.hpp
+//scene.hpp
 //Copyright (C) 2010-2011 Oscar (.teri) Triano
 
 //This program is free software: you can redistribute it and/or modify
@@ -14,32 +14,34 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _bange_base_
-#define _bange_base_
+#ifndef _bange_scene_
+#define _bange_scene_
 
-#include <lua5.1/lua.hpp>
+#include <vector>
+#include <chipmunk/chipmunk.h>
+#include <base.hpp>
 
 namespace bange{
-
-    class base{
+    
+    class scene: public bange::base{
+        private:
+            cpSpace *space;
+            std::vector<int> layers;
         public:
-            virtual bool NewIndex(lua_State *, const char *) = 0;//Set attributes
-            virtual bool Index(lua_State *, const char *) = 0;//Get attributes, request methods
-            virtual void Clean(lua_State *){};//Some classes doesn't need clean
-            virtual ~base(){};
-    };
-
-    struct proxy{
-        int parent;
-        bange::base *object;
+            mutable bool physics;
+        public:
+            scene(int);
+            bool NewIndex(lua_State *, const char *){};
+            bool Index(lua_State *, const char *){};
+            void Clean(lua_State *);
+            ~scene();
+            
+            static void RegisterVM(lua_State *);
+            
     };
     
-    bange::proxy *BuildProxy(lua_State *, bange::base *, int=LUA_REFNIL);//+1
-
-    static int proxy_newindex(lua_State *);
-    static int proxy_index(lua_State *);
-    static int proxy_gc(lua_State *);
-
+    static int NewScene(lua_State *);
+    
 }
 
 #endif

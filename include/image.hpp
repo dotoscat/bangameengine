@@ -24,8 +24,8 @@ namespace bange{
     
     class image: public sf::Image, public bange::base{
         public:
-            bool NewIndex(lua_State *){};
-            bool Index(lua_State *){};
+            bool NewIndex(lua_State *, const char *){};
+            bool Index(lua_State *, const char *){};
             
             static void RegisterVM(lua_State *);
 

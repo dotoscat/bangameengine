@@ -91,6 +91,7 @@ bange::box::box(const char *config){
 }
 
 bange::box::~box(){
+    std::cout << "bange(lua): vm top:" << lua_gettop(vm) << std::endl;
     lua_close(vm);
     if (window != NULL){
         delete window;}
