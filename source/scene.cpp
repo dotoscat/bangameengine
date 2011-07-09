@@ -15,6 +15,7 @@
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
+#include <cstring>
 #include <scene.hpp>
 
 bange::scene::scene(int nlayers){
@@ -24,12 +25,26 @@ bange::scene::scene(int nlayers){
         layers[i] = LUA_REFNIL;}
 }
 
+bool bange::scene::NewIndex(lua_State *vm, const char *key){
+    if (strcmp(key, "data") == 0){
+        luaL_unref(vm, LUA_REGISTRYINDEX, data);
+        data = luaL_ref(vm, LUA_REGISTRYINDEX);
+    }
+    return true;
+}
+
 bool bange::scene::Index(lua_State *vm, const char *key){
     if(this->bange::behavior::Index(vm, key)){
         return true;}
+    if (strcmp(key, "data") == 0){
+        lua_rawgeti(vm, LUA_REGISTRYINDEX, data);
+        return true;
+    }
+    return false;
 }
 
 void bange::scene::Clean(lua_State *vm){
+    luaL_unref(vm, LUA_REGISTRYINDEX, data);
     this->bange::behavior::Clean(vm);
     for(int i = 0; i < layers.size(); i += 1){
         luaL_unref(vm, LUA_REGISTRYINDEX, layers[i]);

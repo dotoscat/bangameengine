@@ -26,13 +26,14 @@ namespace bange{
     
     class scene: public bange::base, public bange::behavior{
         private:
+            int data;
             cpSpace *space;
             std::vector<int> layers;
         public:
             mutable bool physics;
         public:
             scene(int);
-            bool NewIndex(lua_State *, const char *){};
+            bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
             ~scene();
