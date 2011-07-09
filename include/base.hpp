@@ -31,7 +31,10 @@ namespace bange{
 
     struct proxy{
         bange::base *object;
+        
+        static void RegisterVM(lua_State *);//Just for arrange the code
     };
+    
     
     bange::proxy *BuildProxy(lua_State *, bange::base *);//+1
 

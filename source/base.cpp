@@ -1,19 +1,23 @@
 #include <iostream>
 #include <base.hpp>
 
-bange::proxy *bange::BuildProxy(lua_State *vm, bange::base *object){
-    
-    bange::proxy *proxy = static_cast<bange::proxy *>( lua_newuserdata(vm, sizeof(bange::proxy)) );
-    proxy->object = object;
-    
-    lua_createtable(vm, 0, 3);
+void bange::proxy::RegisterVM(lua_State *vm){
     luaL_Reg meta[] = {
     {"__newindex", bange::proxy_newindex},
     {"__index", bange::proxy_index},
     {"__gc", bange::proxy_gc},
     {NULL, NULL}};
-    
+    lua_createtable(vm, 0, 3);
     luaL_register(vm, NULL, meta);
+    lua_setfield(vm, LUA_REGISTRYINDEX, "metatable_proxy");
+}
+
+bange::proxy *bange::BuildProxy(lua_State *vm, bange::base *object){
+    
+    bange::proxy *proxy = static_cast<bange::proxy *>( lua_newuserdata(vm, sizeof(bange::proxy)) );
+    proxy->object = object;
+    
+    lua_getfield(vm, LUA_REGISTRYINDEX, "metatable_proxy");
     lua_setmetatable(vm, -2);
     
     return proxy;

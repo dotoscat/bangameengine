@@ -18,6 +18,7 @@
 #include <physfs.h>
 #include <box.hpp>
 #include <register.hpp>
+#include <scene.hpp>
 
 bange::box::box(const char *config){
     error = false;
@@ -102,6 +103,9 @@ bool bange::box::GetError(){
 
 void bange::box::Run(){
     sf::Event event;
+    bange::proxy *proxy = NULL;
+    bange::scene *scene = NULL;
+    int indexscene = -1;
     while(window->IsOpened()){
         
         lua_getglobal(vm, "bange");
@@ -119,6 +123,30 @@ void bange::box::Run(){
             else if (event.Type == sf::Event::KeyPressed && event.Key.Code == escapekey){
                 window->Close();}
         }
+        
+        //Process the scenes
+        lua_getfield(vm, -1, "Scenes");
+        if (lua_istable(vm, -1)){
+            lua_pushnil(vm);
+            
+            while(lua_next(vm, -2)){
+                if (!lua_isuserdata(vm, -1)){
+                    lua_pop(vm, 1);
+                    continue;
+                }
+                proxy = static_cast<bange::proxy *>(lua_touserdata(vm, -1));
+                scene = dynamic_cast<bange::scene *>(proxy->object);
+                if (scene == NULL){
+                    lua_pop(vm, 1);
+                    continue;
+                }
+                scene->Process(lua_gettop(vm), window->GetFrameTime(), vm);
+                lua_pop(vm, 1);//Next
+            }
+            
+        }
+        lua_pop(vm, 1);
+        //---
         
         window->Clear();
         window->Display();
