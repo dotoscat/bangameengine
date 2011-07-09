@@ -52,7 +52,7 @@ static int bange::NewScene(lua_State *vm){
     }
     lua_Number layers = lua_tonumber(vm, 1);
     if (layers <= 0){
-        std::cout << "bange.NewScene: Layers must be greater or minus than 0." << std::endl;
+        std::cout << "bange.NewScene: Layers must be greater than 0." << std::endl;
         lua_pushnil(vm);
         return 1;
     }
