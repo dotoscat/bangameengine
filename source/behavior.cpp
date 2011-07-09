@@ -62,8 +62,9 @@ void bange::behavior::Clean(lua_State *vm){
 void bange::behavior::RegisterVM(lua_State *vm){
     luaL_Reg methods[] = {
     {"AddFunction", bange::behavior_AddFunction},
+    {"StopFunction", bange::behavior_StopFunction},
     {NULL, NULL}};
-    lua_createtable(vm, 0, 1);
+    lua_createtable(vm, 0, 2);
     luaL_register(vm, NULL, methods);
     lua_setfield(vm, LUA_REGISTRYINDEX, "bange::behavior::");
 }
@@ -95,6 +96,26 @@ static int bange::behavior_AddFunction(lua_State *vm){
     lua_pushvalue(vm, 4);//data
     newfunction.data = luaL_ref(vm, LUA_REGISTRYINDEX);
     newfunction.time = time;
-    behavior->functions[lua_topointer(vm, 1)] = newfunction;
+    behavior->functions[lua_topointer(vm, 2)] = newfunction;
+    return 0;
+}
+
+static int bange::behavior_StopFunction(lua_State *vm){
+    //userdata, function, boolean
+    bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 1));
+    bange::behavior *behavior = dynamic_cast<bange::behavior *>(proxy->object);
+    if (behavior == NULL){
+        std::cout << lua_touserdata(vm, 1) << ":AddFunction(): Object without any behavior." << std::endl;
+        return 0;
+    }
+    if (!lua_isfunction(vm, 2)){
+        std::cout << lua_touserdata(vm, 1) << ":AddFunction(): First parameter isn't a function." << std::endl;
+        return 0;
+    }
+    if (!lua_isnil(vm, 3) && !lua_isboolean(vm, 3)){
+        std::cout << lua_touserdata(vm, 1) << ":AddFunction(): First parameter isn't a boolean." << std::endl;
+        return 0;
+    }
+    behavior->functions[lua_topointer(vm, 2)].stop = static_cast<bool>( lua_toboolean(vm, 3) );
     return 0;
 }

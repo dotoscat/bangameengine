@@ -51,6 +51,7 @@ namespace bange{
     };
     
     static int behavior_AddFunction(lua_State *);
+    static int behavior_StopFunction(lua_State *);
     
 }
 
