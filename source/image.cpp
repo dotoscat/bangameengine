@@ -21,7 +21,7 @@
 void bange::image::RegisterVM(lua_State *vm){
     luaL_Reg functions[] = {
     {"LoadImage", bange::LoadImage},
-    NULL};
+    {NULL, NULL}};
     luaL_register(vm, "bange", functions);
     lua_pop(vm, 1);
 }

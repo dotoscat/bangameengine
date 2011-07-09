@@ -24,7 +24,13 @@ bange::scene::scene(int nlayers){
         layers[i] = LUA_REFNIL;}
 }
 
+bool bange::scene::Index(lua_State *vm, const char *key){
+    if(this->bange::behavior::Index(vm, key)){
+        return true;}
+}
+
 void bange::scene::Clean(lua_State *vm){
+    this->bange::behavior::Clean(vm);
     for(int i = 0; i < layers.size(); i += 1){
         luaL_unref(vm, LUA_REGISTRYINDEX, layers[i]);
     }
@@ -38,7 +44,7 @@ bange::scene::~scene(){
 void bange::scene::RegisterVM(lua_State *vm){
     luaL_Reg functions[] = {
     {"NewScene", bange::NewScene},
-    NULL};
+    {NULL, NULL}};
     luaL_register(vm, "bange", functions);
     lua_pop(vm, 1);
 }

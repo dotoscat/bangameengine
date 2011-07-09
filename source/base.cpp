@@ -1,19 +1,19 @@
 #include <iostream>
 #include <base.hpp>
 
-bange::proxy *bange::BuildProxy(lua_State *vm, bange::base *object, int parent){
+bange::proxy *bange::BuildProxy(lua_State *vm, bange::base *object){
     
     bange::proxy *proxy = static_cast<bange::proxy *>( lua_newuserdata(vm, sizeof(bange::proxy)) );
-    proxy->parent = parent;
     proxy->object = object;
     
     lua_createtable(vm, 0, 3);
-    lua_pushcfunction(vm, bange::proxy_newindex);
-    lua_setfield(vm, -2, "__newindex");
-    lua_pushcfunction(vm, bange::proxy_index);
-    lua_setfield(vm, -2, "__index");
-    lua_pushcfunction(vm, bange::proxy_gc);
-    lua_setfield(vm, -2, "__gc");
+    luaL_Reg meta[] = {
+    {"__newindex", bange::proxy_newindex},
+    {"__index", bange::proxy_index},
+    {"__gc", bange::proxy_gc},
+    {NULL, NULL}};
+    
+    luaL_register(vm, NULL, meta);
     lua_setmetatable(vm, -2);
     
     return proxy;
@@ -37,10 +37,6 @@ static int bange::proxy_index(lua_State *vm){
 static int bange::proxy_gc(lua_State *vm){
     //userdata
     bange::proxy *proxy = static_cast<bange::proxy *>( lua_touserdata(vm, 1) );
-    if (proxy->parent != LUA_REFNIL){
-        luaL_unref(vm, LUA_REGISTRYINDEX, proxy->parent);
-        return 0;
-    }
     std::cout << "GC collects: " << proxy << std::endl;
     proxy->object->Clean(vm);
     delete proxy->object;

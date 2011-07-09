@@ -91,7 +91,7 @@ bange::box::box(const char *config){
 }
 
 bange::box::~box(){
-    std::cout << "bange(lua): vm top:" << lua_gettop(vm) << std::endl;
+    std::cout << "bange(lua): vm top: " << lua_gettop(vm) << std::endl;
     lua_close(vm);
     if (window != NULL){
         delete window;}
@@ -104,6 +104,15 @@ void bange::box::Run(){
     sf::Event event;
     while(window->IsOpened()){
         
+        lua_getglobal(vm, "bange");
+        lua_getfield(vm, -1, "Exit");
+        if (!lua_isnil(vm, -1) && lua_isboolean(vm, -1) && lua_toboolean(vm, 1)){
+            lua_pop(vm, 2);
+            window->Close();
+            continue;
+        }
+        lua_pop(vm, 1);
+        
         while(window->GetEvent(event)){
             if (event.Type == sf::Event::Closed){
                 window->Close();}
@@ -113,6 +122,8 @@ void bange::box::Run(){
         
         window->Clear();
         window->Display();
+        
+        lua_pop(vm, 1);
         
     }
 }

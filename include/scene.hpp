@@ -20,10 +20,11 @@
 #include <vector>
 #include <chipmunk/chipmunk.h>
 #include <base.hpp>
+#include <behavior.hpp>
 
 namespace bange{
     
-    class scene: public bange::base{
+    class scene: public bange::base, public bange::behavior{
         private:
             cpSpace *space;
             std::vector<int> layers;
@@ -32,7 +33,7 @@ namespace bange{
         public:
             scene(int);
             bool NewIndex(lua_State *, const char *){};
-            bool Index(lua_State *, const char *){};
+            bool Index(lua_State *, const char *);
             void Clean(lua_State *);
             ~scene();
             

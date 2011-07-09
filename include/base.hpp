@@ -30,11 +30,10 @@ namespace bange{
     };
 
     struct proxy{
-        int parent;
         bange::base *object;
     };
     
-    bange::proxy *BuildProxy(lua_State *, bange::base *, int=LUA_REFNIL);//+1
+    bange::proxy *BuildProxy(lua_State *, bange::base *);//+1
 
     static int proxy_newindex(lua_State *);
     static int proxy_index(lua_State *);
