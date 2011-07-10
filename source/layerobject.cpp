@@ -22,7 +22,7 @@ bange::layerobject::layerobject(cpSpace *space, size_t maxobjects){
     this->maxobjects = maxobjects;
     objects.reserve(maxobjects);
     for(size_t i = 0; i < maxobjects; i += 1){
-        objects[i] = LUA_REFNIL;}
+        objects.push_back(LUA_REFNIL);}
 }
 
 bool bange::layerobject::NewIndex(lua_State *vm, const char *key){

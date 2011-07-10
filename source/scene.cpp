@@ -22,13 +22,16 @@ bange::scene::scene(int nlayers){
     space = cpSpaceNew();
     layers.reserve(nlayers);
     for(int i = 0; i < nlayers; i += 1){
-        layers[i] = LUA_REFNIL;}
+        layers.push_back(LUA_REFNIL);}
 }
 
 bool bange::scene::NewIndex(lua_State *vm, const char *key){
     if (strcmp(key, "data") == 0){
         luaL_unref(vm, LUA_REGISTRYINDEX, data);
         data = luaL_ref(vm, LUA_REGISTRYINDEX);
+    }
+    else if (strcmp(key, "physics") == 0 && lua_isboolean(vm, 3)){
+        physics = static_cast<bool>(lua_toboolean(vm, 3));
     }
     return true;
 }
@@ -38,6 +41,10 @@ bool bange::scene::Index(lua_State *vm, const char *key){
         return true;}
     if (strcmp(key, "data") == 0){
         lua_rawgeti(vm, LUA_REGISTRYINDEX, data);
+        return true;
+    }
+    else if (strcmp(key, "physics") == 0){
+        lua_pushboolean(vm, 1);
         return true;
     }
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::scene::");
@@ -52,6 +59,22 @@ void bange::scene::Clean(lua_State *vm){
         luaL_unref(vm, LUA_REGISTRYINDEX, layers[i]);
     }
     lua_gc(vm, LUA_GCCOLLECT, 0);
+}
+
+void bange::scene::Process(int indexscene, float time, lua_State *vm){
+    this->bange::behavior::Process(indexscene, time, vm);
+    bange::proxy *proxy = NULL;
+    bange::layer *layer = NULL;
+    std::vector<int>::iterator alayer = layers.begin();
+    for(; alayer != layers.end(); alayer++){
+        if (*alayer == LUA_REFNIL){
+            continue;}
+        lua_rawgeti(vm, LUA_REGISTRYINDEX, (*alayer));
+        proxy = static_cast<bange::proxy *>( lua_touserdata(vm, -1) );
+        layer = static_cast<bange::layer *>(proxy->object);
+        layer->Process(lua_gettop(vm), time, vm);
+        lua_pop(vm, 1);
+    }
 }
 
 void bange::scene::SetLayer(int ilayer, int reference, lua_State *vm){
@@ -93,7 +116,7 @@ static int bange::NewScene(lua_State *vm){
         lua_pushnil(vm);
         return 1;
     }
-    bange::scene *scene = new bange::scene(lua_tonumber(vm, 1));
+    bange::scene *scene = new bange::scene(layers);
     bange::BuildProxy(vm, scene);
     return 1;
 }
