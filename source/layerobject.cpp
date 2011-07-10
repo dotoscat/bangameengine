@@ -14,6 +14,7 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <iostream>
 #include <cstring>
 #include <layerobject.hpp>
 
@@ -44,6 +45,7 @@ bool bange::layerobject::Index(lua_State *vm, const char *key){
 }
 
 void bange::layerobject::Clean(lua_State *vm){
+    this->bange::layer::Clean(vm);
     std::vector<int>::iterator aobject = objects.begin();
     for(; aobject != objects.end(); aobject++){
         luaL_unref(vm, LUA_REGISTRYINDEX, *aobject);}
