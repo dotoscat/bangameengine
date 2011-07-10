@@ -40,7 +40,9 @@ bool bange::scene::Index(lua_State *vm, const char *key){
         lua_rawgeti(vm, LUA_REGISTRYINDEX, data);
         return true;
     }
-    return false;
+    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::scene::");
+    lua_getfield(vm, -1, key);
+    return true;
 }
 
 void bange::scene::Clean(lua_State *vm){
@@ -50,6 +52,12 @@ void bange::scene::Clean(lua_State *vm){
         luaL_unref(vm, LUA_REGISTRYINDEX, layers[i]);
     }
     lua_gc(vm, LUA_GCCOLLECT, 0);
+}
+
+void bange::scene::SetLayer(int ilayer, int reference, lua_State *vm){
+    luaL_unref(vm, LUA_REGISTRYINDEX, layers[ilayer]);
+    lua_gc(vm, LUA_GCCOLLECT, 0);
+    layers[ilayer] = reference;
 }
 
 bange::scene::~scene(){
@@ -62,6 +70,14 @@ void bange::scene::RegisterVM(lua_State *vm){
     {NULL, NULL}};
     luaL_register(vm, "bange", functions);
     lua_pop(vm, 1);
+    
+    luaL_Reg methods[] = {
+    {"SetLayerObject", bange::scene_SetLayerObject},
+    {NULL, NULL}};
+    lua_createtable(vm, 0, 1);
+    luaL_register(vm, NULL, methods);
+    lua_setfield(vm, LUA_REGISTRYINDEX, "bange::scene::");
+    
 }
 
 static int bange::NewScene(lua_State *vm){
@@ -79,5 +95,38 @@ static int bange::NewScene(lua_State *vm){
     }
     bange::scene *scene = new bange::scene(lua_tonumber(vm, 1));
     bange::BuildProxy(vm, scene);
+    return 1;
+}
+
+static int bange::scene_SetLayerObject(lua_State *vm){
+    //scene, ilayer, maxobjects
+    bange::proxy *proxy = static_cast<bange::proxy *>( lua_touserdata(vm, 1) );
+    bange::scene *scene = static_cast<bange::scene *>(proxy->object);
+    if (!lua_isnumber(vm, 2)){
+        std::cout << lua_touserdata(vm, 1) << ":SetLayerObject(): First argument must be a number" << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    int i = lua_tonumber(vm, 2);
+    if (i <= 0){
+        std::cout << lua_touserdata(vm, 1) << ":SetLayerObject(): First argument must be a greater than 0." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    if (!lua_isnumber(vm, 3)){
+        std::cout << lua_touserdata(vm, 1) << ":SetLayerObject(): 2nd argument must be a number" << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    size_t maxobjects = lua_tonumber(vm, 3);
+    if (maxobjects <= 0){
+        std::cout << lua_touserdata(vm, 1) << ":SetLayerObject(): 2nd argument must be a greater than 0." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    bange::layer *layer = new bange::layerobject(scene->space, maxobjects);
+    bange::BuildProxy(vm, layer);
+    lua_pushvalue(vm, -1);
+    scene->SetLayer(i-1, luaL_ref(vm, LUA_REGISTRYINDEX), vm);
     return 1;
 }

@@ -1,4 +1,4 @@
-//scene.hpp
+//layerobject.hpp
 //Copyright (C) 2010-2011 Oscar (.teri) Triano
 
 //This program is free software: you can redistribute it and/or modify
@@ -14,40 +14,33 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _bange_scene_
-#define _bange_scene_
+#ifndef _bange_layerobject_
+#define _bange_layerobject_
 
 #include <vector>
 #include <chipmunk/chipmunk.h>
-#include <base.hpp>
-#include <behavior.hpp>
-#include <layerobject.hpp>
+#include <layer.hpp>
 
 namespace bange{
     
-    class scene: public bange::base, public bange::behavior{
+    class layerobject: public bange::layer{
         private:
-            int data;
-            std::vector<int> layers;
+            cpSpace *space;
+            size_t maxobjects;
+            std::vector<int> objects;
         public:
-            mutable cpSpace *space;
-            mutable bool physics;
-        public:
-            scene(int);
+            layerobject(cpSpace *, size_t);
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
-            void SetLayer(int, int, lua_State *);
-            ~scene();
+            void Process(int, float, lua_State *);
+            void Draw(sf::RenderTarget &);
             
-            static void RegisterVM(lua_State *);
-
+        protected:
+            lua_Number CountObjects();
+            
     };
-    
-    static int NewScene(lua_State *);
-    
-    static int scene_SetLayerObject(lua_State *);
-    
+        
 }
 
 #endif
