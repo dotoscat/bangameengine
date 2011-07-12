@@ -26,6 +26,9 @@ namespace bange{
     class layerobject: public bange::layer{
         private:
             size_t maxobjects;
+            size_t nobjects;
+            size_t iteration;
+            size_t position;
             std::vector<int> objects;
         public:
             mutable cpSpace *space;
@@ -37,10 +40,7 @@ namespace bange{
             void Process(int, float, lua_State *);
             void Draw(sf::RenderTarget &);
             bool AddObject(int);
-            
-        protected:
-            lua_Number CountObjects();
-        
+
         public:
             static void RegisterVM(lua_State *);
             

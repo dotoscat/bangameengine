@@ -16,6 +16,7 @@
 
 #include <iostream>
 #include <cstring>
+#include <SFML/System.hpp>
 #include <layerobject.hpp>
 #include <object.hpp>
 #include <aux.hpp>
@@ -32,6 +33,9 @@ void bange::layerobject::RegisterVM(lua_State *vm){
 bange::layerobject::layerobject(cpSpace *space, size_t maxobjects){
     this->space = space;
     this->maxobjects = maxobjects;
+    nobjects = 0;
+    iteration = 10;
+    position = 0;
     objects.reserve(maxobjects);
     for(size_t i = 0; i < maxobjects; i += 1){
         objects.push_back(LUA_REFNIL);}
@@ -50,7 +54,7 @@ bool bange::layerobject::Index(lua_State *vm, const char *key){
         lua_pushnumber(vm, maxobjects);
         return true;}
     else if (strcmp(key, "nobjects") == 0){
-        lua_pushnumber(vm, this->CountObjects());
+        lua_pushnumber(vm, nobjects);
         return true;}
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::layerobject::");
     lua_getfield(vm, -1, key);
@@ -67,9 +71,13 @@ void bange::layerobject::Clean(lua_State *vm){
 
 void bange::layerobject::Process(int indexlayer, float time, lua_State *vm){
     this->bange::behavior::Process(indexlayer, time, vm);
-    std::vector<int>::iterator aobject = objects.begin();
-    for(; aobject != objects.end(); aobject++){
+    size_t end = position+iteration, i = position;
+    for(; i < end; i += 1){
+        if (i == maxobjects){
+            i = 0;
+            break;}
     }
+    position = i;    
 }
 
 void bange::layerobject::Draw(sf::RenderTarget &rendertarget){
@@ -82,20 +90,12 @@ bool bange::layerobject::AddObject(int referenceobject){
         
         if (objects[i] == LUA_REFNIL){
             objects[i] = referenceobject;
+            nobjects += 1;
             return true;
         }
 
     }
     return false;
-}
-
-lua_Number bange::layerobject::CountObjects(){
-    size_t nobjects = 0;
-    for(size_t i = 0; i < maxobjects; i += 1){
-        if (objects[i] != LUA_REFNIL){
-            nobjects += 1;}
-    }
-    return static_cast<lua_Number>(nobjects);
 }
 
 static int bange::layerobject_AddShapeRectangle(lua_State *vm){
