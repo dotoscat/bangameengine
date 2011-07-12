@@ -1,4 +1,4 @@
-//layerobject.hpp
+//drawable.hpp
 //Copyright (C) 2010-2011 Oscar (.teri) Triano
 
 //This program is free software: you can redistribute it and/or modify
@@ -14,39 +14,21 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _bange_layerobject_
-#define _bange_layerobject_
+#ifndef _bange_drawable_
+#define _bange_drawable_
 
-#include <vector>
-#include <chipmunk/chipmunk.h>
-#include <layer.hpp>
+#include <lua5.1/lua.hpp>
+#include <SFML/Graphics.hpp>
 
 namespace bange{
     
-    class layerobject: public bange::layer{
-        private:
-            size_t maxobjects;
-            std::vector<int> objects;
+    class drawable{
+        protected:
+            sf::Drawable *thedrawable;
         public:
-            mutable cpSpace *space;
-        public:
-            layerobject(cpSpace *, size_t);
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
-            void Clean(lua_State *);
-            void Process(int, float, lua_State *);
-            void Draw(sf::RenderTarget &);
-            bool AddObject(int);
-            
-        protected:
-            lua_Number CountObjects();
-        
-        public:
-            static void RegisterVM(lua_State *);
-            
     };
-    
-    static int layerobject_AddShapeRectangle(lua_State *);
     
 }
 

@@ -19,6 +19,7 @@
 #include <base.hpp>
 #include <scene.hpp>
 #include <image.hpp>
+#include <layerobject.hpp>
 
 void bange::PrepareVM(lua_State *vm){
 	using namespace bange::vm;
@@ -162,5 +163,6 @@ void bange::PrepareVM(lua_State *vm){
     bange::behavior::RegisterVM(vm);
     bange::proxy::RegisterVM(vm);
     bange::scene::RegisterVM(vm);
+    bange::layerobject::RegisterVM(vm);
     bange::image::RegisterVM(vm);
 }

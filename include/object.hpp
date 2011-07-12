@@ -1,4 +1,4 @@
-//layerobject.hpp
+//object.hpp
 //Copyright (C) 2010-2011 Oscar (.teri) Triano
 
 //This program is free software: you can redistribute it and/or modify
@@ -14,40 +14,43 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _bange_layerobject_
-#define _bange_layerobject_
+#ifndef _bange_object_
+#define _bange_object_
 
-#include <vector>
-#include <chipmunk/chipmunk.h>
-#include <layer.hpp>
+#include <lua5.1/lua.hpp>
+#include <base.hpp>
+#include <behavior.hpp>
+#include <body.hpp>
+#include <drawable.hpp>
 
 namespace bange{
     
-    class layerobject: public bange::layer{
-        private:
-            size_t maxobjects;
-            std::vector<int> objects;
+    class object: public bange::base, public bange::drawable, public bange::behavior{
+        protected:
+            int data;
+            bool del;
+            bool visible;
+            cpSpace *space;
+            bange::body *body;
         public:
-            mutable cpSpace *space;
-        public:
-            layerobject(cpSpace *, size_t);
+            object();
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
-            void Process(int, float, lua_State *);
-            void Draw(sf::RenderTarget &);
-            bool AddObject(int);
+            virtual ~object();
+            const bange::body *GetBody();
             
-        protected:
-            lua_Number CountObjects();
-        
-        public:
             static void RegisterVM(lua_State *);
-            
+
     };
     
-    static int layerobject_AddShapeRectangle(lua_State *);
+    static int object_GiveBody(lua_State *);
     
+    class shape: public bange::object, public sf::Shape{
+        public:
+            shape(cpSpace *);
+    };
+        
 }
 
 #endif
