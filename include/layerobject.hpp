@@ -27,7 +27,7 @@ namespace bange{
         private:
             size_t maxobjects;
             size_t nobjects;
-            size_t iteration;
+            size_t iterations;
             size_t position;
             std::vector<int> objects;
         public:

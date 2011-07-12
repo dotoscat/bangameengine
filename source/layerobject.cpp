@@ -34,7 +34,7 @@ bange::layerobject::layerobject(cpSpace *space, size_t maxobjects){
     this->space = space;
     this->maxobjects = maxobjects;
     nobjects = 0;
-    iteration = 10;
+    iterations = maxobjects;
     position = 0;
     objects.reserve(maxobjects);
     for(size_t i = 0; i < maxobjects; i += 1){
@@ -44,6 +44,10 @@ bange::layerobject::layerobject(cpSpace *space, size_t maxobjects){
 bool bange::layerobject::NewIndex(lua_State *vm, const char *key){
     if (this->bange::layer::NewIndex(vm, key)){
         return true;}
+    if (strcmp("iterations", key) == 0){
+        iterations = lua_tonumber(vm, 3);
+        return true;
+    }
     return false;
 }
 
@@ -55,6 +59,9 @@ bool bange::layerobject::Index(lua_State *vm, const char *key){
         return true;}
     else if (strcmp(key, "nobjects") == 0){
         lua_pushnumber(vm, nobjects);
+        return true;}
+    else if (strcmp(key, "iterations") == 0){
+        lua_pushnumber(vm, iterations);
         return true;}
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::layerobject::");
     lua_getfield(vm, -1, key);
@@ -71,7 +78,7 @@ void bange::layerobject::Clean(lua_State *vm){
 
 void bange::layerobject::Process(int indexlayer, float time, lua_State *vm){
     this->bange::behavior::Process(indexlayer, time, vm);
-    size_t end = position+iteration, i = position;
+    size_t end = position+iterations, i = position;
     for(; i < end; i += 1){
         if (i == maxobjects){
             i = 0;
