@@ -19,6 +19,7 @@
 #include <box.hpp>
 #include <register.hpp>
 #include <scene.hpp>
+#include <view.hpp>
 
 bange::box::box(const char *config){
     error = false;
@@ -126,6 +127,10 @@ void bange::box::Run(){
         
         //Process the scenes
         lua_getfield(vm, -1, "Scenes");
+        if (lua_isnil(vm, -1)){
+            lua_pop(vm, 1);
+            lua_getfield(vm, -1, "Run");
+        }
         if (lua_istable(vm, -1)){
             lua_pushnil(vm);
             
@@ -141,7 +146,15 @@ void bange::box::Run(){
                     continue;
                 }
                 scene->Process(lua_gettop(vm), window->GetFrameTime(), vm);
-                lua_pop(vm, 1);//Next
+                //Draw scene
+                if (scene->view == LUA_REFNIL){
+                    lua_pop(vm, 1);//next
+                }
+                lua_rawgeti(vm, LUA_REGISTRYINDEX, scene->view);
+                bange::view *view = ( static_cast<bange::view *>(static_cast<bange::proxy *>( lua_touserdata(vm, -1))->object) );
+                window->SetView(*view);
+                scene->Draw(renderwindow);
+                lua_pop(vm, 2);//View and next
             }
             
         }
