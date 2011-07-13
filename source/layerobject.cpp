@@ -87,9 +87,18 @@ void bange::layerobject::Process(int indexlayer, float time, lua_State *vm){
     position = i;    
 }
 
-void bange::layerobject::Draw(sf::RenderTarget &rendertarget){
-    if(!visible){
-        return;}
+void bange::layerobject::Draw(sf::RenderTarget &rendertarget, lua_State *vm){
+    bange::proxy *proxy = NULL;
+    bange::object *object = NULL;
+    for(int i = 0; i < objects.size(); i += 1){
+        if (objects[i] == LUA_REFNIL){
+            continue;}
+        lua_rawgeti(vm, LUA_REGISTRYINDEX, objects[i]);
+        proxy = static_cast<bange::proxy *>(lua_touserdata(vm, -1));
+        lua_pop(vm, 1);
+        object = static_cast<bange::object *>(proxy->object);
+        rendertarget.Draw(*object->thedrawable);
+    }
 }
 
 bool bange::layerobject::AddObject(int referenceobject){
@@ -144,9 +153,9 @@ static int bange::layerobject_AddShapeRectangle(lua_State *vm){
             outlinecolor = bange::TableTosfColor(6, vm);}
             
     }
-    sf::Vector2f P1 = bange::TableTosfVector2f(1, vm);
-    sf::Vector2f P2 = bange::TableTosfVector2f(2, vm);
-    sf::Color color = bange::TableTosfColor(3, vm);
+    sf::Vector2f P1 = bange::TableTosfVector2f(2, vm);
+    sf::Vector2f P2 = bange::TableTosfVector2f(3, vm);
+    sf::Color color = bange::TableTosfColor(4, vm);
     bange::shape *shape = new bange::shape(layerobject->space);
     *static_cast<sf::Shape *>(shape) = sf::Shape::Rectangle(P1, P2, color, outline, outlinecolor);
     bange::BuildProxy(vm, shape);

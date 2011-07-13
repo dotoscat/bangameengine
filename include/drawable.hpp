@@ -23,8 +23,8 @@
 namespace bange{
     
     class drawable{
-        protected:
-            sf::Drawable *thedrawable;
+        public:
+            mutable sf::Drawable *thedrawable;
         public:
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);

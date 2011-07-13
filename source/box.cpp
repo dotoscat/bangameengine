@@ -106,6 +106,7 @@ void bange::box::Run(){
     sf::Event event;
     bange::proxy *proxy = NULL;
     bange::scene *scene = NULL;
+    bange::view *view = NULL;
     int indexscene = -1;
     while(window->IsOpened()){
         
@@ -127,10 +128,6 @@ void bange::box::Run(){
         
         //Process the scenes
         lua_getfield(vm, -1, "Scenes");
-        if (lua_isnil(vm, -1)){
-            lua_pop(vm, 1);
-            lua_getfield(vm, -1, "Run");
-        }
         if (lua_istable(vm, -1)){
             lua_pushnil(vm);
             
@@ -146,15 +143,7 @@ void bange::box::Run(){
                     continue;
                 }
                 scene->Process(lua_gettop(vm), window->GetFrameTime(), vm);
-                //Draw scene
-                if (scene->view == LUA_REFNIL){
-                    lua_pop(vm, 1);//next
-                }
-                lua_rawgeti(vm, LUA_REGISTRYINDEX, scene->view);
-                bange::view *view = ( static_cast<bange::view *>(static_cast<bange::proxy *>( lua_touserdata(vm, -1))->object) );
-                window->SetView(*view);
-                scene->Draw(renderwindow);
-                lua_pop(vm, 2);//View and next
+                lua_pop(vm, 1);//next
             }
             
         }
@@ -162,6 +151,31 @@ void bange::box::Run(){
         //---
         
         window->Clear();
+        //Process the view
+        lua_getfield(vm, -1, "Views");
+        if (lua_istable(vm, -1)){
+            lua_pushnil(vm);
+            
+            while(lua_next(vm, -2)){
+                if (!lua_isuserdata(vm, -1)){
+                    lua_pop(vm, 1);
+                    continue;
+                }
+                proxy = static_cast<bange::proxy *>(lua_touserdata(vm, -1));
+                view = dynamic_cast<bange::view *>(proxy->object);
+                if (view == NULL || (view != NULL && view->scene == LUA_REFNIL) ){
+                    lua_pop(vm, 1);
+                    continue;
+                }
+                window->SetView(*view);
+                lua_rawgeti(vm, LUA_REGISTRYINDEX, view->scene);
+                scene = static_cast<bange::scene *>(static_cast<bange::proxy *>(lua_touserdata(vm, -1))->object);
+                scene->Draw(*window, vm);
+                lua_pop(vm, 2);//Scene and next
+            }
+            
+        }
+        lua_pop(vm, 1);
         window->Display();
         
         lua_pop(vm, 1);

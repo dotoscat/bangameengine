@@ -29,10 +29,14 @@ namespace bange{
         public:
             view();
             bool NewIndex(lua_State *, const char *);
-            bool Index(lua_State * const char *);
+            bool Index(lua_State *, const char *);
             void Clean(lua_State *);
         
+            static void RegisterVM(lua_State *);
+        
     };
+    
+    static int NewView(lua_State *);
     
 }
 

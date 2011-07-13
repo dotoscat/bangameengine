@@ -15,6 +15,7 @@
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
+#include <cstring>
 #include <view.hpp>
 #include <scene.hpp>
 
@@ -46,6 +47,46 @@ bool bange::view::Index(lua_State *vm, const char *key){
     return false;
 }
 
-bange::view::Clean(lua_State *vm){
+void bange::view::Clean(lua_State *vm){
     luaL_unref(vm, LUA_REGISTRYINDEX, scene);
+}
+
+void bange::view::RegisterVM(lua_State *vm){
+    luaL_Reg functions[] = {
+    {"NewView", bange::NewView},
+    {NULL, NULL}};
+    luaL_register(vm, "bange", functions);
+    lua_pop(vm, 1);
+}
+
+static int bange::NewView(lua_State *vm){
+    //width, height
+    if (!lua_isnumber(vm, 1)){
+        std::cout << "bange.NewView(): First parameter must be a valid number." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    if (!lua_isnumber(vm, 2)){
+        std::cout << "bange.NewView(): 2nd parameter must be a valid number." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    float width = 0.f, height = 0.f;
+    width = lua_tonumber(vm, 1);
+    if (width <= 0){
+        std::cout << "bange.NewView(): First parameter must be greater than 0" << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    height = lua_tonumber(vm, 2);
+    if (height <= 0){
+        std::cout << "bange.NewView(): 2nd para must be greater than 0" << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    bange::view *view = new bange::view();
+    view->SetCenter(width/2.f, height/2.f);
+    view->SetHalfSize(width/2.f, height/2.f);
+    BuildProxy(vm, view);
+    return 1;
 }

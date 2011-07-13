@@ -38,7 +38,7 @@ namespace bange{
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
             void Process(int, float, lua_State *);
-            void Draw(sf::RenderTarget &);
+            void Draw(sf::RenderTarget &, lua_State *);
             bool AddObject(int);
 
         public:

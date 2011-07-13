@@ -30,10 +30,11 @@ namespace bange{
         public:
             mutable bool visible;
         public:
+            layer():visible(true){};
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
-            virtual void Draw(sf::RenderTarget &) = 0;
+            virtual void Draw(sf::RenderTarget &, lua_State *) = 0;
             virtual void Process(int, float, lua_State *) = 0;
     };
     

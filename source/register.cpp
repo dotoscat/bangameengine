@@ -20,6 +20,7 @@
 #include <scene.hpp>
 #include <image.hpp>
 #include <layerobject.hpp>
+#include <view.hpp>
 
 void bange::PrepareVM(lua_State *vm){
 	using namespace bange::vm;
@@ -158,11 +159,13 @@ void bange::PrepareVM(lua_State *vm){
     //register chipmunk's constants
     SetNumber(vm, "NO_GROUP", CP_NO_GROUP);
     SetNumber(vm, "ALL_LAYERS", CP_ALL_LAYERS);
+    SetNumber(vm, "INFINITY", INFINITY);
     //register bange functions and other engine's elements
     bange::box::RegisterVM(vm);
     bange::behavior::RegisterVM(vm);
     bange::proxy::RegisterVM(vm);
     bange::scene::RegisterVM(vm);
+    bange::view::RegisterVM(vm);
     bange::layerobject::RegisterVM(vm);
     bange::image::RegisterVM(vm);
 }

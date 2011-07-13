@@ -39,6 +39,7 @@ namespace bange{
             void Clean(lua_State *);
             void Process(int, float, lua_State *);
             void SetLayer(int, int, lua_State *);
+            void Draw(sf::RenderTarget &, lua_State *);
             ~scene();
             
             static void RegisterVM(lua_State *);

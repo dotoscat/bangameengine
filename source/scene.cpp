@@ -17,6 +17,7 @@
 #include <iostream>
 #include <cstring>
 #include <scene.hpp>
+#include <view.hpp>
 
 bange::scene::scene(int nlayers){
     space = cpSpaceNew();
@@ -74,6 +75,22 @@ void bange::scene::Process(int indexscene, float time, lua_State *vm){
         layer = static_cast<bange::layer *>(proxy->object);
         layer->Process(lua_gettop(vm), time, vm);
         lua_pop(vm, 1);
+    }
+}
+
+void bange::scene::Draw(sf::RenderTarget &rendertarget, lua_State *vm){
+    bange::proxy *proxy = NULL;
+    bange::layer *layer = NULL;
+    for (int i = 0; i < layers.size(); i += 1){
+        if (layers[i] == LUA_REFNIL){
+            continue;}
+        lua_rawgeti(vm, LUA_REGISTRYINDEX, layers[i]);
+        proxy = static_cast<bange::proxy *>(lua_touserdata(vm, -1));
+        lua_pop(vm, 1);
+        layer = static_cast<bange::layer *>(proxy->object);
+        if (!layer->visible){
+            continue;}
+        layer->Draw(rendertarget, vm);
     }
 }
 
