@@ -28,15 +28,17 @@ namespace bange{
     class object: public bange::base, public bange::drawable, public bange::behavior{
         protected:
             int data;
-            bool del;
-            bool visible;
             cpSpace *space;
             bange::body *body;
+        public:
+            mutable bool del;
+            mutable bool visible;
         public:
             object();
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
+            void Process(int, float, lua_State *);
             virtual ~object();
             const bange::body *GetBody();
             

@@ -96,6 +96,7 @@ static int bange::behavior_AddFunction(lua_State *vm){
     lua_pushvalue(vm, 4);//data
     newfunction.data = luaL_ref(vm, LUA_REGISTRYINDEX);
     newfunction.time = time;
+    newfunction.timeleft = time;
     behavior->functions[lua_topointer(vm, 2)] = newfunction;
     return 0;
 }

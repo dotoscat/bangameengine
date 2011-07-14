@@ -40,6 +40,11 @@ namespace bange{
             void Process(int, float, lua_State *);
             void Draw(sf::RenderTarget &, lua_State *);
             bool AddObject(int);
+            bool Filled(){
+                if (nobjects == maxobjects){
+                    return true;}
+                return false;
+            };
 
         public:
             static void RegisterVM(lua_State *);

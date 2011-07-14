@@ -78,13 +78,36 @@ void bange::layerobject::Clean(lua_State *vm){
 
 void bange::layerobject::Process(int indexlayer, float time, lua_State *vm){
     this->bange::behavior::Process(indexlayer, time, vm);
+    bange::proxy *proxy = NULL;
+    bange::object *object = NULL;
     size_t end = position+iterations, i = position;
+    if (end > maxobjects){
+        end=maxobjects;}
+    
     for(; i < end; i += 1){
-        if (i == maxobjects){
-            i = 0;
-            break;}
+        if (objects[i] == LUA_REFNIL){
+            continue;}
+        lua_rawgeti(vm, LUA_REGISTRYINDEX, objects[i]);
+        proxy = static_cast<bange::proxy *>(lua_touserdata(vm, -1));
+        object = static_cast<bange::object *>(proxy->object);
+        //Code del object and process object
+        if (object->del){
+            luaL_unref(vm, LUA_REGISTRYINDEX, objects[i]);
+            objects[i] = LUA_REFNIL;
+            nobjects -= 1;
+        }
+        object->Process(lua_gettop(vm), time, vm);
+        if (object->del){
+            luaL_unref(vm, LUA_REGISTRYINDEX, objects[i]);
+            objects[i] = LUA_REFNIL;
+            nobjects -= 1;
+        }
+        lua_pop(vm, 1);//pop proxy
+        
     }
-    position = i;    
+    position = i;
+    if (position == maxobjects){
+        position = 0;}
 }
 
 void bange::layerobject::Draw(sf::RenderTarget &rendertarget, lua_State *vm){
@@ -97,6 +120,8 @@ void bange::layerobject::Draw(sf::RenderTarget &rendertarget, lua_State *vm){
         proxy = static_cast<bange::proxy *>(lua_touserdata(vm, -1));
         lua_pop(vm, 1);
         object = static_cast<bange::object *>(proxy->object);
+        if (!object->visible){
+            continue;}
         rendertarget.Draw(*object->thedrawable);
     }
 }
@@ -153,6 +178,10 @@ static int bange::layerobject_AddShapeRectangle(lua_State *vm){
             outlinecolor = bange::TableTosfColor(6, vm);}
             
     }
+    if (layerobject->Filled()){
+        lua_pushnil(vm);
+        return 1;
+    }
     sf::Vector2f P1 = bange::TableTosfVector2f(2, vm);
     sf::Vector2f P2 = bange::TableTosfVector2f(3, vm);
     sf::Color color = bange::TableTosfColor(4, vm);
@@ -160,10 +189,7 @@ static int bange::layerobject_AddShapeRectangle(lua_State *vm){
     *static_cast<sf::Shape *>(shape) = sf::Shape::Rectangle(P1, P2, color, outline, outlinecolor);
     bange::BuildProxy(vm, shape);
     lua_pushvalue(vm, -1);
-    if ( !layerobject->AddObject(luaL_ref(vm, LUA_REGISTRYINDEX)) ){
-        lua_pushnil(vm);
-        return 1;
-    }
+    layerobject->AddObject(luaL_ref(vm, LUA_REGISTRYINDEX));
     return 1;
 }
 
