@@ -64,18 +64,18 @@ namespace bange{
     inline void sfVector2fToTable(sf::Vector2f vector, lua_State *vm){
         lua_createtable(vm, 0, 2);
         lua_pushnumber(vm, vector.x);
-        lua_setfield(vm, -1, "x");
+        lua_setfield(vm, -2, "x");
         lua_pushnumber(vm, vector.y);
-        lua_setfield(vm, -1, "y");
+        lua_setfield(vm, -2, "y");
         //+1
     }
 
     inline void cpVect2fToTable(cpVect vector, lua_State *vm){
         lua_createtable(vm, 0, 2);
         lua_pushnumber(vm, vector.x);
-        lua_setfield(vm, -1, "x");
+        lua_setfield(vm, -2, "x");
         lua_pushnumber(vm, vector.y);
-        lua_setfield(vm, -1, "y");
+        lua_setfield(vm, -2, "y");
         //+1
     }
 
@@ -118,13 +118,13 @@ namespace bange{
     inline void sfColorToTable(sf::Color color, lua_State *vm){
         lua_createtable(vm, 0, 4);
         lua_pushnumber(vm, color.r);
-        lua_setfield(vm, -1, "r");
+        lua_setfield(vm, -2, "r");
         lua_pushnumber(vm, color.g);
-        lua_setfield(vm, -1, "g");
+        lua_setfield(vm, -2, "g");
         lua_pushnumber(vm, color.b);
-        lua_setfield(vm, -1, "b");
+        lua_setfield(vm, -2, "b");
         lua_pushnumber(vm, color.a);
-        lua_setfield(vm, -1, "a");
+        lua_setfield(vm, -2, "a");
         //+1
     }
 
