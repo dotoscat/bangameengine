@@ -37,9 +37,8 @@ void bange::behavior::Process(int indexobject, float time, lua_State *vm){
         if ( afunction->second.timeleft <= 0.f ){
             lua_rawgeti(vm, LUA_REGISTRYINDEX, afunction->second.thefunction);
             lua_pushvalue(vm, indexobject);//object with the behavior
-            lua_pushnumber(vm, time);
             lua_rawgeti(vm, LUA_REGISTRYINDEX, afunction->second.data);
-            if (lua_pcall(vm, 3, 0, 0) == LUA_ERRRUN){
+            if (lua_pcall(vm, 2, 0, 0) == LUA_ERRRUN){
                 std::cout << this << ": Error executing: " << lua_tostring(vm, -1) << std::endl;
                 lua_pop(vm, 1);
             }

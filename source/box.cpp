@@ -188,6 +188,7 @@ void bange::box::RegisterVM(lua_State *vm){
     {"IsKeyDown", bange::IsKeyDown},
     {"GetMouseX", bange::GetMouseX},
     {"GetMouseY", bange::GetMouseY},
+    {"GetFrameTime", bange::GetFrameTime},
     NULL};
     luaL_register(vm, "bange", functions);
     lua_pop(vm, 1);
@@ -220,5 +221,14 @@ static int bange::GetMouseY(lua_State *vm){
     sf::RenderWindow *window = static_cast<sf::RenderWindow *>(lua_touserdata(vm, -1));
     lua_pop(vm, 1);
     lua_pushnumber(vm, window->GetInput().GetMouseY());
+    return 1;
+}
+
+static int bange::GetFrameTime(lua_State *vm){
+    //->number
+    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box::window");
+    sf::RenderWindow *window = static_cast<sf::RenderWindow *>(lua_touserdata(vm, -1));
+    lua_pop(vm, 1);
+    lua_pushnumber(vm, window->GetFrameTime());
     return 1;
 }
