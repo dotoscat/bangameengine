@@ -70,7 +70,7 @@ namespace bange{
         //+1
     }
 
-    inline void cpVect2fToTable(cpVect vector, lua_State *vm){
+    inline void cpVectToTable(cpVect vector, lua_State *vm){
         lua_createtable(vm, 0, 2);
         lua_pushnumber(vm, vector.x);
         lua_setfield(vm, -2, "x");

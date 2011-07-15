@@ -70,7 +70,7 @@ bool bange::scene::Index(lua_State *vm, const char *key){
         return true;
     }
     else if (strcmp(key, "gravity") == 0){
-        bange::cpVect2fToTable(space->gravity, vm);
+        bange::cpVectToTable(space->gravity, vm);
         return true;
     }
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::scene::");

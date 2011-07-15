@@ -17,6 +17,7 @@
 #include <iostream>
 #include <cstring>
 #include <object.hpp>
+#include <aux.hpp>
 
 void bange::object::RegisterVM(lua_State *vm){
     luaL_Reg methods[] = {
@@ -59,6 +60,10 @@ bool bange::object::NewIndex(lua_State *vm, const char *key){
                 body->RemoveFromSpace();}
             return true;
         }
+        else if (strcmp("velocity", key) == 0){
+            body->SetVel(bange::TableTocpVect(3, vm));
+            return true;
+        }
     }
     return false;
 }
@@ -83,6 +88,10 @@ bool bange::object::Index(lua_State *vm, const char *key){
     if (body != NULL){
         if (strcmp("inspace", key) == 0){
             lua_pushboolean(vm, static_cast<int>(body->inspace));
+            return true;
+        }
+        else if (strcmp("velocity", key) == 0){
+            bange::cpVectToTable(body->GetVel(), vm);
             return true;
         }
     }

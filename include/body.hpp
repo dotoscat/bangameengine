@@ -52,6 +52,14 @@ namespace bange{
                 inspace = false;
             };
             
+            cpVect GetVel(){
+                return cpBodyGetVel(thebody);
+            }
+            
+            void SetVel(cpVect vel){
+                cpBodySetVel(thebody, vel);
+            }
+            
             /*
             void SetMass(cpFloat);
             cpFloat GetMass();
