@@ -167,5 +167,6 @@ void bange::PrepareVM(lua_State *vm){
     bange::scene::RegisterVM(vm);
     bange::view::RegisterVM(vm);
     bange::layerobject::RegisterVM(vm);
+    bange::object::RegisterVM(vm);
     bange::image::RegisterVM(vm);
 }
