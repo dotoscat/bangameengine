@@ -20,6 +20,7 @@
 #include <scene.hpp>
 #include <image.hpp>
 #include <layerobject.hpp>
+#include <object.hpp>
 #include <view.hpp>
 
 void bange::PrepareVM(lua_State *vm){
