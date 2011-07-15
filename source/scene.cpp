@@ -21,7 +21,7 @@
 
 bange::scene::scene(int nlayers){
     space = cpSpaceNew();
-    physics = true;
+    physics = false;
     layers.reserve(nlayers);
     for(int i = 0; i < nlayers; i += 1){
         layers.push_back(LUA_REFNIL);}
@@ -31,11 +31,17 @@ bool bange::scene::NewIndex(lua_State *vm, const char *key){
     if (strcmp(key, "data") == 0){
         luaL_unref(vm, LUA_REGISTRYINDEX, data);
         data = luaL_ref(vm, LUA_REGISTRYINDEX);
+        return true;
     }
     else if (strcmp(key, "physics") == 0 && lua_isboolean(vm, 3)){
         physics = static_cast<bool>(lua_toboolean(vm, 3));
+        return true;
     }
-    return true;
+    else if (strcmp(key, "iterations") == 0){
+        space->iterations = lua_tonumber(vm, 3);
+        return true;
+    }
+    return false;
 }
 
 bool bange::scene::Index(lua_State *vm, const char *key){
@@ -46,7 +52,11 @@ bool bange::scene::Index(lua_State *vm, const char *key){
         return true;
     }
     else if (strcmp(key, "physics") == 0){
-        lua_pushboolean(vm, 1);
+        lua_pushboolean(vm, static_cast<int>(physics));
+        return true;
+    }
+    else if (strcmp(key, "iterations") == 0){
+        lua_pushnumber(vm, space->iterations);
         return true;
     }
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::scene::");
