@@ -18,6 +18,7 @@
 #include <cstring>
 #include <scene.hpp>
 #include <view.hpp>
+#include <aux.hpp>
 
 bange::scene::scene(int nlayers){
     space = cpSpaceNew();
@@ -41,6 +42,15 @@ bool bange::scene::NewIndex(lua_State *vm, const char *key){
         space->iterations = lua_tonumber(vm, 3);
         return true;
     }
+    else if (strcmp(key, "gravity") == 0 ){
+        if (!lua_istable(vm, 3)){
+            std::cout << lua_touserdata(vm, 1) << ".gravity: Value isn't a table." << std::endl;
+            return true;
+        }
+        
+        space->gravity = bange::TableTocpVect(3, vm);
+        return true;
+    }
     return false;
 }
 
@@ -57,6 +67,10 @@ bool bange::scene::Index(lua_State *vm, const char *key){
     }
     else if (strcmp(key, "iterations") == 0){
         lua_pushnumber(vm, space->iterations);
+        return true;
+    }
+    else if (strcmp(key, "gravity") == 0){
+        bange::cpVect2fToTable(space->gravity, vm);
         return true;
     }
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::scene::");
