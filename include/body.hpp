@@ -33,6 +33,25 @@ namespace bange{
         public:
             body(cpSpace *, void *, cpFloat, cpFloat);
             ~body();
+            
+            cpVect GetPos(){
+                return cpBodyGetPos(thebody);
+            };
+            
+            void AddToSpace(){
+                if (inspace){
+                    return;}
+                cpSpaceAddBody(space, thebody);
+                inspace = true;
+            };
+            
+            void RemoveFromSpace(){
+                if (!inspace){
+                    return;}
+                cpSpaceRemoveBody(space, thebody);
+                inspace = false;
+            };
+            
             /*
             void SetMass(cpFloat);
             cpFloat GetMass();

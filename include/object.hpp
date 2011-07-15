@@ -41,7 +41,7 @@ namespace bange{
             void Process(int, float, lua_State *);
             virtual ~object();
             void GiveBody(cpFloat, cpFloat);
-            const bange::body *GetBody();
+            const bange::body &GetBody();
             
             static void RegisterVM(lua_State *);
 
