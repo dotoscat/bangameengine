@@ -21,6 +21,7 @@
 
 bange::scene::scene(int nlayers){
     space = cpSpaceNew();
+    physics = true;
     layers.reserve(nlayers);
     for(int i = 0; i < nlayers; i += 1){
         layers.push_back(LUA_REFNIL);}
@@ -63,6 +64,8 @@ void bange::scene::Clean(lua_State *vm){
 }
 
 void bange::scene::Process(int indexscene, float time, lua_State *vm){
+    if (physics){
+        cpSpaceStep(space, time);}
     this->bange::behavior::Process(indexscene, time, vm);
     bange::proxy *proxy = NULL;
     bange::layer *layer = NULL;
