@@ -41,7 +41,7 @@ namespace bange{
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
             void Process(int, float, lua_State *);
-            virtual ~object();
+            virtual ~object(){};
             
             static void RegisterVM(lua_State *);
 

@@ -30,7 +30,7 @@
 
 void bange::PrepareVM(lua_State *vm){
 	using namespace bange::vm;
-	using namespace sf::Key;
+	using sf::Keyboard;
 	using namespace sf::Mouse;
 	using namespace sf::Joy;
     SetNumber(vm, "KeyA", A);

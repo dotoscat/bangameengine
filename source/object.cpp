@@ -84,29 +84,10 @@ bool bange::object::Index(lua_State *vm, const char *key){
     
 }
 
-bange::object::~object(){
-    if (body != NULL){
-        delete body;}
-}
-
 void bange::object::Clean(lua_State *vm){
     luaL_unref(vm, LUA_REGISTRYINDEX, data);
 }
 
 void bange::object::Process(int indexobject, float time, lua_State *vm){
     this->bange::behavior::Process(indexobject, time, vm);
-    if (body != NULL){
-        cpVect pos = body->GetPos();
-        thedrawable->SetPosition(pos.x, pos.y);
-    }
-}
-
-void bange::object::GiveBody(cpFloat mass, cpFloat moi){
-    if (body != NULL){
-        return;}
-    body = new bange::body(space, this, mass, moi);
-}
-
-const bange::body &bange::object::GetBody(){
-    return *body;
 }
