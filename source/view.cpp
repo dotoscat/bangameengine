@@ -96,6 +96,10 @@ bool bange::view::Index(lua_State *vm, const char *key){
         lua_pushcfunction(vm, bange::view_Rotate);
         return true;
     }
+    else if (strcmp("Move", key) == 0){
+        lua_pushcfunction(vm, bange::view_Move);
+        return true;
+    }
     return false;
 }
 
@@ -149,5 +153,17 @@ static int bange::view_Rotate(lua_State *vm){
     bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 1));
     bange::view *view = static_cast<bange::view *>(proxy->object);
     view->Rotate(lua_tonumber(vm, 2));
+    return 0;
+}
+
+static int bange::view_Move(lua_State *vm){
+    //view, {x, y}
+    bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 1));
+    bange::view *view = static_cast<bange::view *>(proxy->object);
+    if (!lua_istable(vm, 2)){
+        std::cout << proxy << ":Move() : Argument isn't a table." << std::endl;
+        return 0;
+    }
+    view->Move(bange::TableTosfVector2f(2, vm));
     return 0;
 }
