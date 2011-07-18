@@ -144,56 +144,45 @@ bool bange::layerobject::AddObject(int referenceobject){
 }
 
 static int bange::layerobject_AddShapeRectangle(lua_State *vm){
-    //layerobject, vect1, vect2, color, float outline, outlinecolor
+    //layerobject, {Left, Top, Width, Height}, color, float outline, outlinecolor
     bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 1));
     bange::layerobject *layerobject = static_cast<bange::layerobject *>(proxy->object);
     if (!lua_istable(vm, 2)){
-        std::cout << "bange.NewRectangle: First argument must be a table with the 1st point." << std::endl;
+        std::cout << "bange.NewRectangle: First argument must be a table" << std::endl;
         lua_pushnil(vm);
         return 1;
     }
     if (!lua_istable(vm, 3)){
-        std::cout << "bange.NewRectangle: 2nd argument must be a table with the 2st point." << std::endl;
-        lua_pushnil(vm);
-        return 1;
-    }
-    if (!lua_istable(vm, 4)){
         std::cout << "bange.NewRectangle: 3hd argument must be a table with the colors." << std::endl;
         lua_pushnil(vm);
         return 1;
     }
     sf::Color outlinecolor(0, 0, 0);
     float outline = 0.f;
-    if (lua_gettop(vm) > 4){
+    if (lua_gettop(vm) > 3){
         
-        if (!lua_isnumber(vm, 5)){
+        if (!lua_isnumber(vm, 4)){
             std::cout << "bange.NewRectangle: 4th argument must be a valid number." << std::endl;
             lua_pushnil(vm);
             return 1;
         }
-        else if (lua_isnumber(vm, 5)){
-            outline = lua_tonumber(vm, 5);}
-        if (!lua_istable(vm, 6)){
+        else if (lua_isnumber(vm, 4)){
+            outline = lua_tonumber(vm, 4);}
+        if (!lua_istable(vm, 5)){
             std::cout << "bange.NewRectangle: 5th argument must be a table with the colors.." << std::endl;
             lua_pushnil(vm);
             return 1;
         }
-        else if (lua_isnumber(vm, 6)){
-            outlinecolor = bange::TableTosfColor(6, vm);}
+        else if (lua_isnumber(vm, 5)){
+            outlinecolor = bange::TableTosfColor(5, vm);}
             
     }
     if (layerobject->Filled()){
         lua_pushnil(vm);
         return 1;
     }
-    sf::Vector2f P1 = bange::TableTosfVector2f(2, vm);
-    sf::Vector2f P2 = bange::TableTosfVector2f(3, vm);
-    sf::FloatRect rect;
-    rect.Left = P1.x;
-    rect.Top = P1.y;
-    rect.Width = P2.x;
-    rect.Height = P2.y;
-    sf::Color color = bange::TableTosfColor(4, vm);
+    sf::FloatRect rect = bange::TableTosfFloatRect(2, vm);
+    sf::Color color = bange::TableTosfColor(3, vm);
     bange::shape *shape = new bange::shape();
     *static_cast<sf::Shape *>(shape) = sf::Shape::Rectangle(rect, color, outline, outlinecolor);
     bange::BuildProxy(vm, shape);
