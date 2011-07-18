@@ -39,7 +39,7 @@ void bange::behavior::Process(int indexobject, sf::Uint32 time, lua_State *vm){
     for(afunction = functions.begin(); afunction != functions.end(); afunction++){
         if ( afunction->second.stop ){
             continue;}
-        if ( afunction->second.timeleft <= 0.f ){
+        if ( afunction->second.timestored >= afunction->second.time){
             lua_rawgeti(vm, LUA_REGISTRYINDEX, afunction->second.thefunction);
             lua_pushvalue(vm, indexobject);//object with the behavior
             lua_rawgeti(vm, LUA_REGISTRYINDEX, afunction->second.data);
@@ -47,9 +47,9 @@ void bange::behavior::Process(int indexobject, sf::Uint32 time, lua_State *vm){
                 std::cout << this << ": Error executing: " << lua_tostring(vm, -1) << std::endl;
                 lua_pop(vm, 1);
             }
-            afunction->second.timeleft = afunction->second.time;
+            afunction->second.timestored = 0;
         }else{
-            afunction->second.timeleft -= time;
+            afunction->second.timestored += time;
         }
         
     }
@@ -77,7 +77,7 @@ static int bange::behavior_AddFunction(lua_State *vm){
     //userdata, function, time, data
     bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 1));
     bange::behavior *behavior = dynamic_cast<bange::behavior *>(proxy->object);
-    float time = 0.f;
+    sf::Uint32 time = 0;
     if (behavior == NULL){
         std::cout << lua_touserdata(vm, 1) << ":AddFunction(): Object without any behavior." << std::endl;
         return 0;
@@ -91,16 +91,16 @@ static int bange::behavior_AddFunction(lua_State *vm){
         return 0;
     }
     else if (lua_gettop(vm) > 2 && lua_isnil(vm, 3)){
-        time = 0.f;}
+        time = 0;}
     else if (lua_gettop(vm) > 2 && lua_isnumber(vm, 3)){
-        time = lua_tonumber(vm, 3);}
+        time = static_cast<sf::Uint32>(lua_tonumber(vm, 3));}
     bange::behavior::function newfunction;
     lua_pushvalue(vm, 2);//function
     newfunction.thefunction = luaL_ref(vm, LUA_REGISTRYINDEX);
     lua_pushvalue(vm, 4);//data
     newfunction.data = luaL_ref(vm, LUA_REGISTRYINDEX);
     newfunction.time = time;
-    newfunction.timeleft = time;
+    newfunction.timestored = 0;
     behavior->functions[lua_topointer(vm, 2)] = newfunction;
     return 0;
 }

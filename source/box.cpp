@@ -113,6 +113,7 @@ void bange::box::Run(){
     bange::scene *scene = NULL;
     bange::view *view = NULL;
     int indexscene = -1;
+    sf::Uint32 frametime = 0;
     while(window->IsOpened()){
         
         lua_getglobal(vm, "bange");

@@ -35,11 +35,11 @@ namespace bange{
             struct function{
                 int thefunction;
                 int data;
-                sf::Uint32 timeleft;
+                sf::Uint32 timestored;
                 sf::Uint32 time;
                 bool stop;
                 
-                function(): thefunction(LUA_REFNIL), data(LUA_REFNIL), timeleft(0.f), time(0.f), stop(false){};
+                function(): thefunction(LUA_REFNIL), data(LUA_REFNIL), timestored(0.f), time(0.f), stop(false){};
                 
             };
         
