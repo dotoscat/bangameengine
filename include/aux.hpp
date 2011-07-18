@@ -110,7 +110,7 @@ namespace bange{
         lua_getfield(vm, indextable, "Left");
         if (lua_isnil(vm, -1)){
             lua_pop(vm, 1);
-            lua_rawgeti(v, indextable, 1);
+            lua_rawgeti(vm, indextable, 1);
         }
         rect.Left = lua_tonumber(vm, -1);
         lua_pop(vm, 1);
@@ -118,7 +118,7 @@ namespace bange{
         lua_getfield(vm, indextable, "Top");
         if (lua_isnil(vm, -1)){
             lua_pop(vm, 1);
-            lua_rawgeti(v, indextable, 2);
+            lua_rawgeti(vm, indextable, 2);
         }
         rect.Top = lua_tonumber(vm, -1);
         lua_pop(vm, 1);
@@ -126,7 +126,7 @@ namespace bange{
         lua_getfield(vm, indextable, "Width");
         if (lua_isnil(vm, -1)){
             lua_pop(vm, 1);
-            lua_rawgeti(v, indextable, 3);
+            lua_rawgeti(vm, indextable, 3);
         }
         rect.Width = lua_tonumber(vm, -1);
         lua_pop(vm, 1);
@@ -134,7 +134,7 @@ namespace bange{
         lua_getfield(vm, indextable, "Height");
         if (lua_isnil(vm, -1)){
             lua_pop(vm, 1);
-            lua_rawgeti(v, indextable, 4);
+            lua_rawgeti(vm, indextable, 4);
         }
         rect.Height = lua_tonumber(vm, -1);
         lua_pop(vm, 1);

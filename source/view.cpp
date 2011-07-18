@@ -23,6 +23,7 @@
 #include <cstring>
 #include <view.hpp>
 #include <scene.hpp>
+#include <aux.hpp>
 
 bange::view::view(){
     scene = LUA_REFNIL;
@@ -41,12 +42,34 @@ bool bange::view::NewIndex(lua_State *vm, const char *key){
         luaL_unref(vm, LUA_REGISTRYINDEX, scene);
         scene = luaL_ref(vm, LUA_REGISTRYINDEX);
     }
+    else if (strcmp("viewport", key) == 0){
+        if (!lua_istable(vm, 3)){
+            std::cout << lua_touserdata(vm, 1) << ".viewport : Value isn't a table" << std::endl;
+            return true;
+        }
+        this->SetViewport(bange::TableTosfFloatRect(3, vm));
+    }
+    else if (strcmp("size", key) == 0){
+        if (!lua_istable(vm, 3)){
+            std::cout << lua_touserdata(vm, 1) << ".size : Value isn't a table" << std::endl;
+            return true;
+        }
+        this->SetSize(bange::TableTosfVector2f(3, vm));
+    }
     return true;
 }
 
 bool bange::view::Index(lua_State *vm, const char *key){
     if (strcmp("scene", key) == 0){
         lua_rawgeti(vm, LUA_REGISTRYINDEX, scene);
+        return true;
+    }
+    else if (strcmp("viewport", key) == 0){
+        bange::sfFloatRectToTable(this->GetViewport(), vm);
+        return true;
+    }
+    else if (strcmp("size", key) == 0){
+        bange::sfVector2fToTable(this->GetSize(), vm);
         return true;
     }
     return false;
