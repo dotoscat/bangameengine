@@ -43,9 +43,8 @@ namespace bange{
             
     };
     
-    static int IsKeyDown(lua_State *);
-    static int GetMouseX(lua_State *);
-    static int GetMouseY(lua_State *);
+    static int IsKeyPressed(lua_State *);
+    static int GetMousePosition(lua_State *);
     static int GetFrameTime(lua_State *);
     
 }

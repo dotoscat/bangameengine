@@ -191,8 +191,7 @@ void bange::box::Run(){
 void bange::box::RegisterVM(lua_State *vm){
     luaL_Reg functions[] = {
     {"IsKeyPressed", bange::IsKeyPressed},
-    {"GetMouseX", bange::GetMouseX},
-    {"GetMouseY", bange::GetMouseY},
+    {"GetMousePosition", bange::GetMousePosition},
     {"GetFrameTime", bange::GetFrameTime},
     NULL};
     luaL_register(vm, "bange", functions);
@@ -201,28 +200,24 @@ void bange::box::RegisterVM(lua_State *vm){
 
 static int bange::IsKeyPressed(lua_State *vm){
     //keycode -> bool
-    if (sf::Keyboard.IsKeyPressed( static_cast<sf::Keyboard::Key>(lua_tonumber(vm, 1)) ) ){
+    if (sf::Keyboard::IsKeyPressed( static_cast<sf::Keyboard::Key>(lua_tonumber(vm, 1)) ) ){
         lua_pushboolean(vm, 1);
     }else{
         lua_pushboolean(vm, 0);}
     return 1;
 }
 
-static int bange::GetMouseX(lua_State *vm){
-    //-> number
+static int bange::GetMousePosition(lua_State *vm){
+    //-> table {x, y}
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box::window");
     sf::RenderWindow *window = static_cast<sf::RenderWindow *>(lua_touserdata(vm, -1));
     lua_pop(vm, 1);
-    lua_pushnumber(vm, window->GetInput().GetMouseX());
-    return 1;
-}
-
-static int bange::GetMouseY(lua_State *vm){
-    //-> number
-    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box::window");
-    sf::RenderWindow *window = static_cast<sf::RenderWindow *>(lua_touserdata(vm, -1));
-    lua_pop(vm, 1);
-    lua_pushnumber(vm, window->GetInput().GetMouseY());
+    sf::Vector2i position = sf::Mouse::GetPosition(*window);
+    lua_createtable(vm, 0, 2);
+    lua_pushnumber(vm, static_cast<lua_Number>(position.x) );
+    lua_setfield(vm, -1, "x");
+    lua_pushnumber(vm, static_cast<lua_Number>(position.y) );
+    lua_setfield(vm, -1, "y");
     return 1;
 }
 
