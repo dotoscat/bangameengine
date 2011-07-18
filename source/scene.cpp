@@ -159,7 +159,7 @@ static int bange::scene_SetLayerObject(lua_State *vm){
         lua_pushnil(vm);
         return 1;
     }
-    bange::layer *layer = new bange::layerobject(scene->space, maxobjects);
+    bange::layer *layer = new bange::layerobject(maxobjects);
     bange::BuildProxy(vm, layer);
     lua_pushvalue(vm, -1);
     scene->SetLayer(i-1, luaL_ref(vm, LUA_REGISTRYINDEX), vm);
