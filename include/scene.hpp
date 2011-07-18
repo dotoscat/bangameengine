@@ -23,6 +23,7 @@
 #define _bange_scene_
 
 #include <vector>
+#include <map>
 #include <base.hpp>
 #include <behavior.hpp>
 #include <layerobject.hpp>
@@ -33,6 +34,8 @@ namespace bange{
         private:
             int data;
             std::vector<int> layers;
+        public:
+            mutable std::map<const void *, int> views;
         public:
             scene(int);
             bool NewIndex(lua_State *, const char *);

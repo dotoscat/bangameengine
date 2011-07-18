@@ -104,6 +104,56 @@ namespace bange{
         //+1
     }
 
+    inline sf::FloatRect TableTosfFloatRect(int indextable, lua_State *vm){
+        sf::FloatRect rect;
+        
+        lua_getfield(vm, indextable, "Left");
+        if (lua_isnil(vm, -1)){
+            lua_pop(vm, 1);
+            lua_rawgeti(v, indextable, 1);
+        }
+        rect.Left = lua_tonumber(vm, -1);
+        lua_pop(vm, 1);
+        
+        lua_getfield(vm, indextable, "Top");
+        if (lua_isnil(vm, -1)){
+            lua_pop(vm, 1);
+            lua_rawgeti(v, indextable, 2);
+        }
+        rect.Top = lua_tonumber(vm, -1);
+        lua_pop(vm, 1);
+        
+        lua_getfield(vm, indextable, "Width");
+        if (lua_isnil(vm, -1)){
+            lua_pop(vm, 1);
+            lua_rawgeti(v, indextable, 3);
+        }
+        rect.Width = lua_tonumber(vm, -1);
+        lua_pop(vm, 1);
+        
+        lua_getfield(vm, indextable, "Height");
+        if (lua_isnil(vm, -1)){
+            lua_pop(vm, 1);
+            lua_rawgeti(v, indextable, 4);
+        }
+        rect.Height = lua_tonumber(vm, -1);
+        lua_pop(vm, 1);
+        
+        return rect;
+    }
+
+    inline void sfFloatRectToTable(sf::FloatRect rect, lua_State *vm){
+        lua_createtable(vm, 0, 4);
+        lua_pushnumber(vm, rect.Left);
+        lua_setfield(vm, -2, "Left");
+        lua_pushnumber(vm, rect.Top);
+        lua_setfield(vm, -2, "Top");
+        lua_pushnumber(vm, rect.Width);
+        lua_setfield(vm, -2, "Width");
+        lua_pushnumber(vm, rect.Height);
+        lua_setfield(vm, -2, "Height");
+    }
+
 }
 
 #endif
