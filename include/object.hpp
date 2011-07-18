@@ -49,7 +49,7 @@ namespace bange{
 
     class shape: public bange::object, public sf::Shape{
         public:
-            shape(cpSpace *);
+            shape();
     };
         
 }

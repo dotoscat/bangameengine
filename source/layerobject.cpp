@@ -188,9 +188,14 @@ static int bange::layerobject_AddShapeRectangle(lua_State *vm){
     }
     sf::Vector2f P1 = bange::TableTosfVector2f(2, vm);
     sf::Vector2f P2 = bange::TableTosfVector2f(3, vm);
+    sf::FloatRect rect;
+    rect.Left = P1.x;
+    rect.Top = P1.y;
+    rect.Width = P2.x;
+    rect.Height = P2.y;
     sf::Color color = bange::TableTosfColor(4, vm);
-    bange::shape *shape = new bange::shape(layerobject->space);
-    *static_cast<sf::Shape *>(shape) = sf::Shape::Rectangle(P1, P2, color, outline, outlinecolor);
+    bange::shape *shape = new bange::shape();
+    *static_cast<sf::Shape *>(shape) = sf::Shape::Rectangle(rect, color, outline, outlinecolor);
     bange::BuildProxy(vm, shape);
     lua_pushvalue(vm, -1);
     layerobject->AddObject(luaL_ref(vm, LUA_REGISTRYINDEX));
