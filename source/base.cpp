@@ -62,7 +62,7 @@ static int bange::proxy_index(lua_State *vm){
 static int bange::proxy_gc(lua_State *vm){
     //userdata
     bange::proxy *proxy = static_cast<bange::proxy *>( lua_touserdata(vm, 1) );
-    std::cout << "GC collects: " << proxy << std::endl;
+    //std::cout << "GC collects: " << proxy << std::endl;
     proxy->object->Clean(vm);
     delete proxy->object;
     return 0;

@@ -40,7 +40,7 @@ namespace bange{
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
             virtual void Draw(sf::RenderTarget &, lua_State *) = 0;
-            virtual void Process(int, float, lua_State *) = 0;
+            virtual void Process(int, sf::Uint32, lua_State *) = 0;
     };
     
 }

@@ -32,7 +32,7 @@ bool bange::behavior::Index(lua_State *vm, const char *key){
     return false;
 }
 
-void bange::behavior::Process(int indexobject, float time, lua_State *vm){
+void bange::behavior::Process(int indexobject, sf::Uint32 time, lua_State *vm){
     if (functions.empty()){
         return;}
     std::map<const void *, bange::behavior::function>::iterator afunction;

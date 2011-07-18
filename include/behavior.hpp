@@ -23,6 +23,7 @@
 #define _bange_behavior_
 
 #include <map>
+#include <SFML/Config.hpp>
 #include <lua5.1/lua.hpp>
 
 namespace bange{
@@ -34,8 +35,8 @@ namespace bange{
             struct function{
                 int thefunction;
                 int data;
-                float timeleft;
-                float time;
+                sf::Uint32 timeleft;
+                sf::Uint32 time;
                 bool stop;
                 
                 function(): thefunction(LUA_REFNIL), data(LUA_REFNIL), timeleft(0.f), time(0.f), stop(false){};
@@ -49,7 +50,7 @@ namespace bange{
             bool NewIndex(lua_State *, const char *){return false;};
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
-            void Process(int, float, lua_State *);
+            void Process(int, sf::Uint32, lua_State *);
 
             static void RegisterVM(lua_State *);
         

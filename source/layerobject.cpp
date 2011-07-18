@@ -80,7 +80,7 @@ void bange::layerobject::Clean(lua_State *vm){
     lua_gc(vm, LUA_GCCOLLECT, 0);
 }
 
-void bange::layerobject::Process(int indexlayer, float time, lua_State *vm){
+void bange::layerobject::Process(int indexlayer, sf::Uint32 time, lua_State *vm){
     this->bange::behavior::Process(indexlayer, time, vm);
     bange::proxy *proxy = NULL;
     bange::object *object = NULL;
@@ -201,4 +201,3 @@ static int bange::layerobject_AddShapeRectangle(lua_State *vm){
     layerobject->AddObject(luaL_ref(vm, LUA_REGISTRYINDEX));
     return 1;
 }
-

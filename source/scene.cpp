@@ -61,7 +61,7 @@ void bange::scene::Clean(lua_State *vm){
     lua_gc(vm, LUA_GCCOLLECT, 0);
 }
 
-void bange::scene::Process(int indexscene, float time, lua_State *vm){
+void bange::scene::Process(int indexscene, sf::Uint32 time, lua_State *vm){
     this->bange::behavior::Process(indexscene, time, vm);
     bange::proxy *proxy = NULL;
     bange::layer *layer = NULL;

@@ -38,7 +38,7 @@ namespace bange{
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
-            void Process(int, float, lua_State *);
+            void Process(int, sf::Uint32, lua_State *);
             void SetLayer(int, int, lua_State *);
             void Draw(sf::RenderTarget &, lua_State *);
             virtual ~scene(){};

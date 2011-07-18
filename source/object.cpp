@@ -88,6 +88,6 @@ void bange::object::Clean(lua_State *vm){
     luaL_unref(vm, LUA_REGISTRYINDEX, data);
 }
 
-void bange::object::Process(int indexobject, float time, lua_State *vm){
+void bange::object::Process(int indexobject, sf::Uint32 time, lua_State *vm){
     this->bange::behavior::Process(indexobject, time, vm);
 }
