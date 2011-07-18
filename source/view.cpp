@@ -56,6 +56,13 @@ bool bange::view::NewIndex(lua_State *vm, const char *key){
         }
         this->SetSize(bange::TableTosfVector2f(3, vm));
     }
+    else if (strcmp("center", key) == 0){
+        if (!lua_istable(vm, 3)){
+            std::cout << lua_touserdata(vm, 1) << ".center : Value isn't a table" << std::endl;
+            return true;
+        }
+        this->SetCenter(bange::TableTosfVector2f(3, vm));
+    }
     return true;
 }
 
@@ -70,6 +77,10 @@ bool bange::view::Index(lua_State *vm, const char *key){
     }
     else if (strcmp("size", key) == 0){
         bange::sfVector2fToTable(this->GetSize(), vm);
+        return true;
+    }
+    else if (strcmp("center", key) == 0){
+        bange::sfVector2fToTable(this->GetCenter(), vm);
         return true;
     }
     return false;
