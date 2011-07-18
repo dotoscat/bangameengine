@@ -63,6 +63,10 @@ bool bange::view::NewIndex(lua_State *vm, const char *key){
         }
         this->SetCenter(bange::TableTosfVector2f(3, vm));
     }
+    else if (strcmp("rotation", key) == 0){
+        this->SetRotation(lua_tonumber(vm, 3));
+        return true;
+    }
     return true;
 }
 
@@ -81,6 +85,15 @@ bool bange::view::Index(lua_State *vm, const char *key){
     }
     else if (strcmp("center", key) == 0){
         bange::sfVector2fToTable(this->GetCenter(), vm);
+        return true;
+    }
+    else if (strcmp("rotation", key) == 0){
+        lua_pushnumber(vm, this->GetRotation());
+        return true;
+    }
+    //Method
+    else if (strcmp("Rotate", key) == 0){
+        lua_pushcfunction(vm, bange::view_Rotate);
         return true;
     }
     return false;
@@ -129,4 +142,12 @@ static int bange::NewView(lua_State *vm){
     bange::view *view = new bange::view(center, size);
     BuildProxy(vm, view);
     return 1;
+}
+
+static int bange::view_Rotate(lua_State *vm){
+    //view, number
+    bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 1));
+    bange::view *view = static_cast<bange::view *>(proxy->object);
+    view->Rotate(lua_tonumber(vm, 2));
+    return 0;
 }

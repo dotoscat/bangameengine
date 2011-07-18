@@ -42,6 +42,7 @@ namespace bange{
     };
     
     static int NewView(lua_State *);
+    static int view_Rotate(lua_State *);
     
 }
 
