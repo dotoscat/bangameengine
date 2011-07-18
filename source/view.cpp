@@ -76,22 +76,21 @@ static int bange::NewView(lua_State *vm){
         lua_pushnil(vm);
         return 1;
     }
-    float width = 0.f, height = 0.f;
-    width = lua_tonumber(vm, 1);
-    if (width <= 0){
+    sf::FloatRect rect;
+    rect.Width = lua_tonumber(vm, 1);
+    if (rect.Width <= 0){
         std::cout << "bange.NewView(): First parameter must be greater than 0" << std::endl;
         lua_pushnil(vm);
         return 1;
     }
-    height = lua_tonumber(vm, 2);
-    if (height <= 0){
+    rect.Height = lua_tonumber(vm, 2);
+    if (rect.Height <= 0){
         std::cout << "bange.NewView(): 2nd para must be greater than 0" << std::endl;
         lua_pushnil(vm);
         return 1;
     }
     bange::view *view = new bange::view();
-    view->SetCenter(width/2.f, height/2.f);
-    view->SetHalfSize(width/2.f, height/2.f);
+    view->SetSize(rect.Width, rect.Height);
     BuildProxy(vm, view);
     return 1;
 }
