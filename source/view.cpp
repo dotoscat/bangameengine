@@ -25,7 +25,7 @@
 #include <scene.hpp>
 #include <aux.hpp>
 
-bange::view::view(){
+bange::view::view(const sf::Vector2f &center, const sf::Vector2f &size): sf::View(center, size){
     scene = LUA_REFNIL;
 }
 
@@ -110,21 +110,23 @@ static int bange::NewView(lua_State *vm){
         lua_pushnil(vm);
         return 1;
     }
-    sf::FloatRect rect;
-    rect.Width = lua_tonumber(vm, 1);
-    if (rect.Width <= 0){
+    sf::Vector2f size;
+    size.x = lua_tonumber(vm, 1);
+    if (size.x <= 0){
         std::cout << "bange.NewView(): First parameter must be greater than 0" << std::endl;
         lua_pushnil(vm);
         return 1;
     }
-    rect.Height = lua_tonumber(vm, 2);
-    if (rect.Height <= 0){
+    size.y = lua_tonumber(vm, 2);
+    if (size.y <= 0){
         std::cout << "bange.NewView(): 2nd para must be greater than 0" << std::endl;
         lua_pushnil(vm);
         return 1;
     }
-    bange::view *view = new bange::view();
-    view->SetSize(rect.Width, rect.Height);
+    sf::Vector2f center;
+    center.x = size.x / 2.f;
+    center.y = size.y / 2.f;
+    bange::view *view = new bange::view(center, size);
     BuildProxy(vm, view);
     return 1;
 }

@@ -32,7 +32,7 @@ namespace bange{
         public:
             mutable int scene;
         public:
-            view();
+            view(const sf::Vector2f &, const sf::Vector2f &);
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
