@@ -29,7 +29,7 @@
 bange::box::box(const char *config){
     error = false;
     window = NULL;
-    this->escapekey = sf::Key::Escape;
+    this->escapekey = sf::Keyboard::Escape;
     vm = luaL_newstate();
     bange::PrepareVM(vm);
     if (luaL_dofile(vm, config)){
@@ -45,9 +45,9 @@ bange::box::box(const char *config){
     //Set styles (fullscreen, close, resize, titlebar, none)
     unsigned long windowstyle = sf::Style::Close;
     //Set Window settings
-    sf::WindowSettings windowsettings;
+    sf::ContextSettings contextsettings;
     //Create window
-    window = new sf::RenderWindow(videomode, title, windowstyle, windowsettings);
+    window = new sf::RenderWindow(videomode, title, windowstyle, contextsettings);
     //Set FPS
     lua_Number FPS = 60;
     vm::GetNumber(vm, "FPS", FPS);
@@ -59,11 +59,11 @@ bange::box::box(const char *config){
     //Set VerticalSync
     int verticalsync = 0;
     vm::GetBoolean(vm, "VerticalSync", verticalsync);
-    window->UseVerticalSync((bool)verticalsync);
+    window->EnableVerticalSync((bool)verticalsync);
     //Set EscapeKey
     lua_Number escapekey = 0;
     if (vm::GetNumber(vm, "EscapeKey", escapekey)){
-        this->escapekey = static_cast<sf::Key::Code>(escapekey);}
+        this->escapekey = static_cast<sf::Keyboard::Key>(escapekey);}
     //Store in lua environment this box
     lua_pushlightuserdata(vm, this);
     lua_setfield(vm, LUA_REGISTRYINDEX, "bange::box");
@@ -124,7 +124,7 @@ void bange::box::Run(){
         }
         lua_pop(vm, 1);
         
-        while(window->GetEvent(event)){
+        while(window->PollEvent(event)){
             if (event.Type == sf::Event::Closed){
                 window->Close();}
             else if (event.Type == sf::Event::KeyPressed && event.Key.Code == escapekey){

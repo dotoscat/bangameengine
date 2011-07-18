@@ -23,7 +23,6 @@
 #define _bange_scene_
 
 #include <vector>
-#include <chipmunk/chipmunk.h>
 #include <base.hpp>
 #include <behavior.hpp>
 #include <layerobject.hpp>
@@ -35,9 +34,6 @@ namespace bange{
             int data;
             std::vector<int> layers;
         public:
-            mutable cpSpace *space;
-            mutable bool physics;
-        public:
             scene(int);
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
@@ -45,7 +41,7 @@ namespace bange{
             void Process(int, float, lua_State *);
             void SetLayer(int, int, lua_State *);
             void Draw(sf::RenderTarget &, lua_State *);
-            ~scene();
+            virtual ~scene(){};
             
             static void RegisterVM(lua_State *);
 

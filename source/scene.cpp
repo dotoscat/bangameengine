@@ -26,8 +26,6 @@
 #include <aux.hpp>
 
 bange::scene::scene(int nlayers){
-    space = cpSpaceNew();
-    physics = false;
     layers.reserve(nlayers);
     for(int i = 0; i < nlayers; i += 1){
         layers.push_back(LUA_REFNIL);}
@@ -39,23 +37,6 @@ bool bange::scene::NewIndex(lua_State *vm, const char *key){
         data = luaL_ref(vm, LUA_REGISTRYINDEX);
         return true;
     }
-    else if (strcmp(key, "physics") == 0 && lua_isboolean(vm, 3)){
-        physics = static_cast<bool>(lua_toboolean(vm, 3));
-        return true;
-    }
-    else if (strcmp(key, "iterations") == 0){
-        space->iterations = lua_tonumber(vm, 3);
-        return true;
-    }
-    else if (strcmp(key, "gravity") == 0 ){
-        if (!lua_istable(vm, 3)){
-            std::cout << lua_touserdata(vm, 1) << ".gravity: Value isn't a table." << std::endl;
-            return true;
-        }
-        
-        space->gravity = bange::TableTocpVect(3, vm);
-        return true;
-    }
     return false;
 }
 
@@ -64,18 +45,6 @@ bool bange::scene::Index(lua_State *vm, const char *key){
         return true;}
     if (strcmp(key, "data") == 0){
         lua_rawgeti(vm, LUA_REGISTRYINDEX, data);
-        return true;
-    }
-    else if (strcmp(key, "physics") == 0){
-        lua_pushboolean(vm, static_cast<int>(physics));
-        return true;
-    }
-    else if (strcmp(key, "iterations") == 0){
-        lua_pushnumber(vm, space->iterations);
-        return true;
-    }
-    else if (strcmp(key, "gravity") == 0){
-        bange::cpVectToTable(space->gravity, vm);
         return true;
     }
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::scene::");
@@ -93,8 +62,6 @@ void bange::scene::Clean(lua_State *vm){
 }
 
 void bange::scene::Process(int indexscene, float time, lua_State *vm){
-    if (physics){
-        cpSpaceStep(space, time);}
     this->bange::behavior::Process(indexscene, time, vm);
     bange::proxy *proxy = NULL;
     bange::layer *layer = NULL;
@@ -130,10 +97,6 @@ void bange::scene::SetLayer(int ilayer, int reference, lua_State *vm){
     luaL_unref(vm, LUA_REGISTRYINDEX, layers[ilayer]);
     lua_gc(vm, LUA_GCCOLLECT, 0);
     layers[ilayer] = reference;
-}
-
-bange::scene::~scene(){
-    cpSpaceFree(space);
 }
 
 void bange::scene::RegisterVM(lua_State *vm){

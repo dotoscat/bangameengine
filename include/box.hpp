@@ -32,7 +32,7 @@ namespace bange{
             lua_State *vm;
             sf::RenderWindow *window;
             bool error;
-            sf::Key::Code escapekey;
+            sf::Keyboard::Key escapekey;
         public:
             box(const char *);
             ~box();

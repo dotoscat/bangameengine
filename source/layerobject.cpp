@@ -35,8 +35,7 @@ void bange::layerobject::RegisterVM(lua_State *vm){
     lua_setfield(vm, LUA_REGISTRYINDEX, "bange::layerobject::");
 }
 
-bange::layerobject::layerobject(cpSpace *space, size_t maxobjects){
-    this->space = space;
+bange::layerobject::layerobject(size_t maxobjects){
     this->maxobjects = maxobjects;
     nobjects = 0;
     iterations = maxobjects;

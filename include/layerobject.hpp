@@ -36,9 +36,7 @@ namespace bange{
             size_t position;
             std::vector<int> objects;
         public:
-            mutable cpSpace *space;
-        public:
-            layerobject(cpSpace *, size_t);
+            layerobject(size_t);
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);

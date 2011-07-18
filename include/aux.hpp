@@ -23,7 +23,6 @@
 #define _bange_aux_
 
 #include <SFML/Graphics.hpp>
-#include <chipmunk/chipmunk.h>
 #include <lua5.1/lua.hpp>
 
 namespace bange{
@@ -46,7 +45,7 @@ namespace bange{
         lua_pop(vm, 1);
         return vector;
     }
-
+/*
     inline cpVect TableTocpVect(int indextable, lua_State *vm){
         cpVect vector = cpvzero;
         lua_getfield(vm, indextable, "x");
@@ -65,7 +64,7 @@ namespace bange{
         lua_pop(vm, 1);
         return vector;
     }
-
+*/
     inline void sfVector2fToTable(sf::Vector2f vector, lua_State *vm){
         lua_createtable(vm, 0, 2);
         lua_pushnumber(vm, vector.x);
@@ -74,7 +73,7 @@ namespace bange{
         lua_setfield(vm, -2, "y");
         //+1
     }
-
+/*
     inline void cpVectToTable(cpVect vector, lua_State *vm){
         lua_createtable(vm, 0, 2);
         lua_pushnumber(vm, vector.x);
@@ -83,7 +82,7 @@ namespace bange{
         lua_setfield(vm, -2, "y");
         //+1
     }
-
+*/
     inline sf::Color TableTosfColor(int indextable, lua_State *vm){
         sf::Color color;
         lua_getfield(vm, indextable, "r");

@@ -162,10 +162,6 @@ void bange::PrepareVM(lua_State *vm){
     SetNumber(vm, "StringBold", sf::String::Bold);
     SetNumber(vm, "StringItalic", sf::String::Italic);
     SetNumber(vm, "StringUndelined", sf::String::Underlined);
-    //register chipmunk's constants
-    SetNumber(vm, "NO_GROUP", CP_NO_GROUP);
-    SetNumber(vm, "ALL_LAYERS", CP_ALL_LAYERS);
-    SetNumber(vm, "INFINITY", INFINITY);
     //register bange functions and other engine's elements
     bange::box::RegisterVM(vm);
     bange::behavior::RegisterVM(vm);

@@ -25,7 +25,6 @@
 #include <lua5.1/lua.hpp>
 #include <base.hpp>
 #include <behavior.hpp>
-#include <body.hpp>
 #include <drawable.hpp>
 
 namespace bange{
@@ -33,8 +32,6 @@ namespace bange{
     class object: public bange::base, public bange::drawable, public bange::behavior{
         protected:
             int data;
-            cpSpace *space;
-            bange::body *body;
         public:
             mutable bool del;
             mutable bool visible;
@@ -45,15 +42,11 @@ namespace bange{
             void Clean(lua_State *);
             void Process(int, float, lua_State *);
             virtual ~object();
-            void GiveBody(cpFloat, cpFloat);
-            const bange::body &GetBody();
             
             static void RegisterVM(lua_State *);
 
     };
-    
-    static int object_GiveBody(lua_State *);
-    
+
     class shape: public bange::object, public sf::Shape{
         public:
             shape(cpSpace *);
