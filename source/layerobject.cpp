@@ -26,15 +26,6 @@
 #include <object.hpp>
 #include <aux.hpp>
 
-void bange::layerobject::RegisterVM(lua_State *vm){
-    luaL_Reg methods[] = {
-    {"AddShapeRectangle", bange::layerobject_AddShapeRectangle},
-    {NULL, NULL}};
-    lua_createtable(vm, 0, 1);
-    luaL_register(vm, NULL, methods);
-    lua_setfield(vm, LUA_REGISTRYINDEX, "bange::layerobject::");
-}
-
 bange::layerobject::layerobject(size_t maxobjects){
     this->maxobjects = maxobjects;
     nobjects = 0;
@@ -67,9 +58,16 @@ bool bange::layerobject::Index(lua_State *vm, const char *key){
     else if (strcmp(key, "iterations") == 0){
         lua_pushnumber(vm, iterations);
         return true;}
-    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::layerobject::");
-    lua_getfield(vm, -1, key);
-    return true;
+    //Methods
+    else if (strcmp(key, "AddShapeRectangle") == 0){
+        lua_pushcfunction(vm, bange::layerobject_AddShapeRectangle);
+        return true;
+    }
+    else if (strcmp(key, "AddText") == 0){
+        lua_pushcfunction(vm, bange::layerobject_AddText);
+        return true;
+    }
+    return false;
 }
 
 void bange::layerobject::Clean(lua_State *vm){
@@ -143,7 +141,7 @@ bool bange::layerobject::AddObject(int referenceobject){
     return false;
 }
 
-static int bange::layerobject_AddShapeRectangle(lua_State *vm){
+int bange::layerobject_AddShapeRectangle(lua_State *vm){
     //layerobject, {Left, Top, Width, Height}, color, float outline, outlinecolor
     bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 1));
     bange::layerobject *layerobject = static_cast<bange::layerobject *>(proxy->object);
@@ -186,6 +184,28 @@ static int bange::layerobject_AddShapeRectangle(lua_State *vm){
     bange::shape *shape = new bange::shape();
     *static_cast<sf::Shape *>(shape) = sf::Shape::Rectangle(rect, color, outline, outlinecolor);
     bange::BuildProxy(vm, shape);
+    lua_pushvalue(vm, -1);
+    layerobject->AddObject(luaL_ref(vm, LUA_REGISTRYINDEX));
+    return 1;
+}
+
+int bange::layerobject_AddText(lua_State *vm){
+    //layerobject, text
+    bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 1));
+    bange::layerobject *layerobject = static_cast<bange::layerobject *>(proxy->object);
+    const char *strtext = NULL;
+    if (lua_isstring(vm, 2)){
+            strtext = lua_tostring(vm, 2);
+    }
+    else if (!lua_isstring(vm, 2)){
+            std::cout << "bange.NewText: 2nd argument isn't a valid string" << std::endl;
+            lua_pushnil(vm);
+            return 1;
+    }
+    bange::text *text = new bange::text();
+    if (strtext != NULL){
+        text->SetString(sf::String(strtext));}
+    bange::BuildProxy(vm, text);
     lua_pushvalue(vm, -1);
     layerobject->AddObject(luaL_ref(vm, LUA_REGISTRYINDEX));
     return 1;

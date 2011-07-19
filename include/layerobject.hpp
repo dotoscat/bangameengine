@@ -48,12 +48,10 @@ namespace bange{
                     return true;}
                 return false;
             };
-
-        public:
-            static void RegisterVM(lua_State *);
             
     };
     
+    static int layerobject_AddText(lua_State *);
     static int layerobject_AddShapeRectangle(lua_State *);
     
 }

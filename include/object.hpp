@@ -51,7 +51,12 @@ namespace bange{
         public:
             shape();
     };
-        
+    
+    class text: public bange::object, public sf::Text{
+        public:
+            text(){thedrawable=this;};
+    };
+    
 }
 
 #endif

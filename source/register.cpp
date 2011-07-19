@@ -24,7 +24,6 @@
 #include <base.hpp>
 #include <scene.hpp>
 #include <image.hpp>
-#include <layerobject.hpp>
 #include <object.hpp>
 #include <view.hpp>
 
@@ -167,7 +166,6 @@ void bange::PrepareVM(lua_State *vm){
     bange::proxy::RegisterVM(vm);
     bange::scene::RegisterVM(vm);
     bange::view::RegisterVM(vm);
-    bange::layerobject::RegisterVM(vm);
     bange::object::RegisterVM(vm);
     bange::image::RegisterVM(vm);
 }
