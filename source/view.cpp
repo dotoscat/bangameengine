@@ -100,6 +100,10 @@ bool bange::view::Index(lua_State *vm, const char *key){
         lua_pushcfunction(vm, bange::view_Move);
         return true;
     }
+    else if (strcmp("Zoom", key) == 0){
+        lua_pushcfunction(vm, bange::view_Zoom);
+        return true;
+    }
     return false;
 }
 
@@ -165,5 +169,17 @@ static int bange::view_Move(lua_State *vm){
         return 0;
     }
     view->Move(bange::TableTosfVector2f(2, vm));
+    return 0;
+}
+
+static int bange::view_Zoom(lua_State *vm){
+    //view, factor
+    bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 1));
+    bange::view *view = static_cast<bange::view *>(proxy->object);
+    if (!lua_isnumber(vm, 2)){
+        std::cout << proxy << ":Zoom() : Argument isn't a valid number." << std::endl;
+        return 0;
+    }
+    view->Zoom(lua_tonumber(vm, 2));
     return 0;
 }
