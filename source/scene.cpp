@@ -57,6 +57,10 @@ void bange::scene::Clean(lua_State *vm){
     for(int i = 0; i < layers.size(); i += 1){
         luaL_unref(vm, LUA_REGISTRYINDEX, layers[i]);
     }
+    std::map<const void *, int>::iterator aview = views.begin();
+    for(; aview != views.end(); aview++){
+        luaL_unref(vm, LUA_REGISTRYINDEX, aview->second);
+    }
     lua_gc(vm, LUA_GCCOLLECT, 0);
 }
 
