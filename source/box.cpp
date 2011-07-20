@@ -147,7 +147,7 @@ void bange::box::Run(){
                     lua_pop(vm, 1);
                     continue;
                 }
-                scene->Process(lua_gettop(vm), window->GetFrameTime(), vm);
+                scene->Process(lua_gettop(vm), window->GetFrameTime(), *window, vm);
                 lua_pop(vm, 1);//next
             }
             
@@ -175,7 +175,7 @@ void bange::box::Run(){
                 window->SetView(*view);
                 lua_rawgeti(vm, LUA_REGISTRYINDEX, view->scene);
                 scene = static_cast<bange::scene *>(static_cast<bange::proxy *>(lua_touserdata(vm, -1))->object);
-                scene->Draw(*window, vm);
+                //scene->Draw(*window, vm);
                 lua_pop(vm, 2);//Scene and next
             }
             

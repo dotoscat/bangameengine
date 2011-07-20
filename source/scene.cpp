@@ -64,7 +64,7 @@ void bange::scene::Clean(lua_State *vm){
     lua_gc(vm, LUA_GCCOLLECT, 0);
 }
 
-void bange::scene::Process(int indexscene, sf::Uint32 time, lua_State *vm){
+void bange::scene::Process(int indexscene, sf::Uint32 time, sf::RenderTarget &rendertarget, lua_State *vm){
     this->bange::behavior::Process(indexscene, time, vm);
     bange::proxy *proxy = NULL;
     bange::layer *layer = NULL;
@@ -75,24 +75,8 @@ void bange::scene::Process(int indexscene, sf::Uint32 time, lua_State *vm){
         lua_rawgeti(vm, LUA_REGISTRYINDEX, (*alayer));
         proxy = static_cast<bange::proxy *>( lua_touserdata(vm, -1) );
         layer = static_cast<bange::layer *>(proxy->object);
-        layer->Process(lua_gettop(vm), time, vm);
+        //layer->Process(lua_gettop(vm), time, vm);
         lua_pop(vm, 1);
-    }
-}
-
-void bange::scene::Draw(sf::RenderTarget &rendertarget, lua_State *vm){
-    bange::proxy *proxy = NULL;
-    bange::layer *layer = NULL;
-    for (int i = 0; i < layers.size(); i += 1){
-        if (layers[i] == LUA_REFNIL){
-            continue;}
-        lua_rawgeti(vm, LUA_REGISTRYINDEX, layers[i]);
-        proxy = static_cast<bange::proxy *>(lua_touserdata(vm, -1));
-        lua_pop(vm, 1);
-        layer = static_cast<bange::layer *>(proxy->object);
-        if (!layer->visible){
-            continue;}
-        layer->Draw(rendertarget, vm);
     }
 }
 
