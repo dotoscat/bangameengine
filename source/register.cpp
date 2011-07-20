@@ -161,6 +161,12 @@ void bange::PrepareVM(lua_State *vm){
     SetNumber(vm, "TextItalic", sf::Text::Italic);
     SetNumber(vm, "TextUndelined", sf::Text::Underlined);
     //register bange functions and other engine's elements
+    luaL_Reg functions[] = {
+    {"NewScene", bange::NewScene},
+    {NULL, NULL}};
+    luaL_register(vm, "bange", functions);
+    lua_pop(vm, 1);
+    
     bange::box::RegisterVM(vm);
     bange::behavior::RegisterVM(vm);
     bange::proxy::RegisterVM(vm);

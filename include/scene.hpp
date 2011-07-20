@@ -27,6 +27,7 @@
 #include <base.hpp>
 #include <behavior.hpp>
 #include <layerobject.hpp>
+#include <view.hpp>
 
 namespace bange{
     
@@ -50,9 +51,10 @@ namespace bange{
 
     };
     
-    static int NewScene(lua_State *);
+    int NewScene(lua_State *);
     
     static int scene_SetLayerObject(lua_State *);
+    static int scene_AddView(lua_State *);
     
 }
 

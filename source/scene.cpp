@@ -22,7 +22,6 @@
 #include <iostream>
 #include <cstring>
 #include <scene.hpp>
-#include <view.hpp>
 #include <aux.hpp>
 
 bange::scene::scene(int nlayers){
@@ -108,14 +107,15 @@ void bange::scene::RegisterVM(lua_State *vm){
     
     luaL_Reg methods[] = {
     {"SetLayerObject", bange::scene_SetLayerObject},
+    {"AddView", bange::scene_AddView},
     {NULL, NULL}};
-    lua_createtable(vm, 0, 1);
+    lua_createtable(vm, 0, 2);
     luaL_register(vm, NULL, methods);
     lua_setfield(vm, LUA_REGISTRYINDEX, "bange::scene::");
     
 }
 
-static int bange::NewScene(lua_State *vm){
+int bange::NewScene(lua_State *vm){
     //nlayers
     if (!lua_isnumber(vm, 1)){
         std::cout << "bange.NewScene: First argument must be a number." << std::endl;
@@ -164,4 +164,21 @@ static int bange::scene_SetLayerObject(lua_State *vm){
     lua_pushvalue(vm, -1);
     scene->SetLayer(i-1, luaL_ref(vm, LUA_REGISTRYINDEX), vm);
     return 1;
+}
+
+static int bange::scene_AddView(lua_State *vm){
+    //scene, view
+    bange::proxy *proxy = static_cast<bange::proxy *>( lua_touserdata(vm, 1) );
+    bange::scene *scene = static_cast<bange::scene *>(proxy->object);
+    if (!lua_isuserdata(vm, 2)){
+        std::cout << proxy << ":AddView() : First argument ins't a valid userdata" << std::endl;
+        return 0;
+    }
+    bange::view *view = dynamic_cast<bange::view *>( static_cast<bange::proxy *>(lua_touserdata(vm, 2))->object );
+    if (view == NULL){
+        std::cout << proxy << ":AddView() : First argument ins't a view" << std::endl;
+        return 0;
+    }
+    scene->views[proxy] = luaL_ref(vm, LUA_REGISTRYINDEX);
+    return 0;
 }
