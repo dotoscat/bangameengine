@@ -131,8 +131,9 @@ void bange::box::Run(){
                 window->Close();}
         }
         
+        window->Clear();
         //Process the scenes
-        lua_getfield(vm, -1, "Scenes");
+        lua_getfield(vm, -1, "Run");
         if (lua_istable(vm, -1)){
             lua_pushnil(vm);
             
@@ -154,33 +155,6 @@ void bange::box::Run(){
         }
         lua_pop(vm, 1);
         //---
-        
-        window->Clear();
-        //Process the view
-        lua_getfield(vm, -1, "Views");
-        if (lua_istable(vm, -1)){
-            lua_pushnil(vm);
-            
-            while(lua_next(vm, -2)){
-                if (!lua_isuserdata(vm, -1)){
-                    lua_pop(vm, 1);
-                    continue;
-                }
-                proxy = static_cast<bange::proxy *>(lua_touserdata(vm, -1));
-                view = dynamic_cast<bange::view *>(proxy->object);
-                if (view == NULL || (view != NULL && view->scene == LUA_REFNIL) ){
-                    lua_pop(vm, 1);
-                    continue;
-                }
-                window->SetView(*view);
-                lua_rawgeti(vm, LUA_REGISTRYINDEX, view->scene);
-                scene = static_cast<bange::scene *>(static_cast<bange::proxy *>(lua_touserdata(vm, -1))->object);
-                //scene->Draw(*window, vm);
-                lua_pop(vm, 2);//Scene and next
-            }
-            
-        }
-        lua_pop(vm, 1);
         window->Display();
         
         lua_pop(vm, 1);

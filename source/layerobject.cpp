@@ -25,6 +25,7 @@
 #include <layerobject.hpp>
 #include <object.hpp>
 #include <aux.hpp>
+#include <view.hpp>
 
 bange::layerobject::layerobject(size_t maxobjects){
     this->maxobjects = maxobjects;
@@ -78,10 +79,12 @@ void bange::layerobject::Clean(lua_State *vm){
     lua_gc(vm, LUA_GCCOLLECT, 0);
 }
 
-void bange::layerobject::Process(int indexlayer, sf::Uint32 time, lua_State *vm){
+void bange::layerobject::Process(int indexlayer, sf::Uint32 time, sf::RenderTarget &rendertarget, \
+std::map<const void *, int> &views, lua_State *vm){
     this->bange::behavior::Process(indexlayer, time, vm);
     bange::proxy *proxy = NULL;
     bange::object *object = NULL;
+    std::map<const void *, int>::iterator aview;
     size_t end = position+iterations, i = position;
     if (end > maxobjects){
         end=maxobjects;}
@@ -99,6 +102,12 @@ void bange::layerobject::Process(int indexlayer, sf::Uint32 time, lua_State *vm)
             nobjects -= 1;
         }
         object->Process(lua_gettop(vm), time, vm);
+        if (this->visible && object->visible){
+            for (aview = views.begin(); aview != views.end(); aview++){
+                rendertarget.SetView( *static_cast<const bange::view *>(aview->first) );
+                rendertarget.Draw(*object->thedrawable);
+            }
+        }
         if (object->del){
             luaL_unref(vm, LUA_REGISTRYINDEX, objects[i]);
             objects[i] = LUA_REFNIL;
@@ -110,22 +119,6 @@ void bange::layerobject::Process(int indexlayer, sf::Uint32 time, lua_State *vm)
     position = i;
     if (position == maxobjects){
         position = 0;}
-}
-
-void bange::layerobject::Draw(sf::RenderTarget &rendertarget, lua_State *vm){
-    bange::proxy *proxy = NULL;
-    bange::object *object = NULL;
-    for(int i = 0; i < objects.size(); i += 1){
-        if (objects[i] == LUA_REFNIL){
-            continue;}
-        lua_rawgeti(vm, LUA_REGISTRYINDEX, objects[i]);
-        proxy = static_cast<bange::proxy *>(lua_touserdata(vm, -1));
-        lua_pop(vm, 1);
-        object = static_cast<bange::object *>(proxy->object);
-        if (!object->visible){
-            continue;}
-        rendertarget.Draw(*object->thedrawable);
-    }
 }
 
 bool bange::layerobject::AddObject(int referenceobject){

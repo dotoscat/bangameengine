@@ -167,6 +167,6 @@ static int bange::scene_AddView(lua_State *vm){
         std::cout << proxy << ":AddView() : First argument ins't a view" << std::endl;
         return 0;
     }
-    scene->views[proxy] = luaL_ref(vm, LUA_REGISTRYINDEX);
+    scene->views[scene] = luaL_ref(vm, LUA_REGISTRYINDEX);
     return 0;
 }
