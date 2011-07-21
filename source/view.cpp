@@ -92,34 +92,28 @@ bool bange::view::Index(lua_State *vm, const char *key){
         return true;
     }
     //Method
-    else if (strcmp("Rotate", key) == 0){
-        lua_pushcfunction(vm, bange::view_Rotate);
-        return true;
-    }
-    else if (strcmp("Move", key) == 0){
-        lua_pushcfunction(vm, bange::view_Move);
-        return true;
-    }
-    else if (strcmp("Zoom", key) == 0){
-        lua_pushcfunction(vm, bange::view_Zoom);
-        return true;
-    }
-    return false;
+    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::view::");
+    lua_getfield(vm, -1, key);
+    return true;
 }
 
 void bange::view::Clean(lua_State *vm){
     luaL_unref(vm, LUA_REGISTRYINDEX, scene);
 }
 
-void bange::view::RegisterVM(lua_State *vm){
-    luaL_Reg functions[] = {
-    {"NewView", bange::NewView},
+void bange::view::RegisterVM(lua_State *vm){    
+    luaL_Reg methods[] = {
+    {"Move", bange::view_Move},
+    {"Zoom", bange::view_Zoom},
+    {"Rotate", bange::view_Rotate},
     {NULL, NULL}};
-    luaL_register(vm, "bange", functions);
-    lua_pop(vm, 1);
+    lua_createtable(vm, 0, 3);
+    luaL_register(vm, NULL, methods);
+    lua_setfield(vm, LUA_REGISTRYINDEX, "bange::view::");
+    
 }
 
-static int bange::NewView(lua_State *vm){
+int bange::NewView(lua_State *vm){
     //width, height
     if (!lua_isnumber(vm, 1)){
         std::cout << "bange.NewView(): First parameter must be a valid number." << std::endl;

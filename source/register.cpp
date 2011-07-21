@@ -163,6 +163,7 @@ void bange::PrepareVM(lua_State *vm){
     //register bange functions and other engine's elements
     luaL_Reg functions[] = {
     {"NewScene", bange::NewScene},
+    {"NewView", bange::NewView},
     {NULL, NULL}};
     luaL_register(vm, "bange", functions);
     lua_pop(vm, 1);
