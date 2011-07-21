@@ -95,7 +95,6 @@ std::map<const void *, int> &views, lua_State *vm){
         lua_rawgeti(vm, LUA_REGISTRYINDEX, objects[i]);
         proxy = static_cast<bange::proxy *>(lua_touserdata(vm, -1));
         object = static_cast<bange::object *>(proxy->object);
-        //Code del object and process object
         if (object->del){
             luaL_unref(vm, LUA_REGISTRYINDEX, objects[i]);
             objects[i] = LUA_REFNIL;

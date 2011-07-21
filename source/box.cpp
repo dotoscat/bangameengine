@@ -116,7 +116,7 @@ void bange::box::Run(){
     while(window->IsOpened()){
         
         lua_getglobal(vm, "bange");
-        lua_getfield(vm, -1, "Exit");
+        lua_getfield(vm, 1, "Exit");
         if (!lua_isnil(vm, -1) && lua_isboolean(vm, -1) && lua_toboolean(vm, 1)){
             lua_pop(vm, 2);
             window->Close();
@@ -133,7 +133,8 @@ void bange::box::Run(){
         
         window->Clear();
         //Process the scenes
-        lua_getfield(vm, -1, "Run");
+        lua_getfield(vm, 1, "Run");
+        
         if (lua_istable(vm, -1)){
             lua_pushnil(vm);
             

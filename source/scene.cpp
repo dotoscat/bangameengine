@@ -75,7 +75,7 @@ void bange::scene::Process(int indexscene, sf::Uint32 time, sf::RenderTarget &re
         lua_rawgeti(vm, LUA_REGISTRYINDEX, (*alayer));
         proxy = static_cast<bange::proxy *>( lua_touserdata(vm, -1) );
         layer = static_cast<bange::layer *>(proxy->object);
-        //layer->Process(lua_gettop(vm), time, vm);
+        layer->Process(lua_gettop(vm), time, rendertarget, views, vm);
         lua_pop(vm, 1);
     }
 }
@@ -86,21 +86,14 @@ void bange::scene::SetLayer(int ilayer, int reference, lua_State *vm){
     layers[ilayer] = reference;
 }
 
-void bange::scene::RegisterVM(lua_State *vm){
-    luaL_Reg functions[] = {
-    {"NewScene", bange::NewScene},
-    {NULL, NULL}};
-    luaL_register(vm, "bange", functions);
-    lua_pop(vm, 1);
-    
+void bange::scene::RegisterVM(lua_State *vm){    
     luaL_Reg methods[] = {
     {"SetLayerObject", bange::scene_SetLayerObject},
     {"AddView", bange::scene_AddView},
     {NULL, NULL}};
     lua_createtable(vm, 0, 2);
     luaL_register(vm, NULL, methods);
-    lua_setfield(vm, LUA_REGISTRYINDEX, "bange::scene::");
-    
+    lua_setfield(vm, LUA_REGISTRYINDEX, "bange::scene::");    
 }
 
 int bange::NewScene(lua_State *vm){
@@ -167,6 +160,6 @@ static int bange::scene_AddView(lua_State *vm){
         std::cout << proxy << ":AddView() : First argument ins't a view" << std::endl;
         return 0;
     }
-    scene->views[scene] = luaL_ref(vm, LUA_REGISTRYINDEX);
+    scene->views[view] = luaL_ref(vm, LUA_REGISTRYINDEX);
     return 0;
 }
