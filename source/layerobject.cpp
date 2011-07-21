@@ -134,7 +134,7 @@ bool bange::layerobject::AddObject(int referenceobject){
 }
 
 int bange::layerobject_AddShapeRectangle(lua_State *vm){
-    //layerobject, {Left, Top, Width, Height}, color, float outline, outlinecolor
+    //layerobject, {Left, Top, Width, Height}, color, float outline, outlinecolor -> rect shape
     bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 1));
     bange::layerobject *layerobject = static_cast<bange::layerobject *>(proxy->object);
     if (!lua_istable(vm, 2)){
@@ -175,6 +175,44 @@ int bange::layerobject_AddShapeRectangle(lua_State *vm){
     sf::Color color = bange::TableTosfColor(3, vm);
     bange::shape *shape = new bange::shape();
     *static_cast<sf::Shape *>(shape) = sf::Shape::Rectangle(rect, color, outline, outlinecolor);
+    bange::BuildProxy(vm, shape);
+    lua_pushvalue(vm, -1);
+    layerobject->AddObject(luaL_ref(vm, LUA_REGISTRYINDEX));
+    return 1;
+}
+
+int bange::layerobject_AddShapeCircle(lua_State *vm){
+    //layerobject, center, radius, color, outline, outlinecolor -> circle shape
+    bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 1));
+    bange::layerobject *layerobject = static_cast<bange::layerobject *>(proxy->object);
+    if (!lua_istable(vm, 2)){
+        std::cout << proxy << ":AddShapeCircle() : First argument must be a table with the center." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    sf::Vector2f center = bange::TableTosfVector2f(2, vm);
+    if (!lua_isnumber(vm, 3)){
+        std::cout << proxy << ":AddShapeCircle() : Second argument must be a number." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    cpFloat radius = lua_tonumber(vm, 3);
+    if (!lua_istable(vm, 4)){
+        std::cout << proxy << ":AddShapeCircle() : 3d argument must be a table with the color." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    sf::Color color = bange::TableTosfColor(4, vm);
+    cpFloat outline = 0;
+    if (lua_gettop(vm) > 4 && lua_isnumber(vm, 5)){
+        outline = lua_tonumber(vm, 5);
+    }
+    sf::Color outlinecolor(0, 0, 0);
+    if (lua_gettop(vm) > 5 && lua_istable(vm, 6)){
+        outlinecolor = bange::TableTosfColor(6, vm);
+    }
+    bange::shape *shape = new bange::shape();
+    *static_cast<sf::Shape *>(shape) = sf::Shape::Circle(center, radius, color, outline, outlinecolor);
     bange::BuildProxy(vm, shape);
     lua_pushvalue(vm, -1);
     layerobject->AddObject(luaL_ref(vm, LUA_REGISTRYINDEX));
