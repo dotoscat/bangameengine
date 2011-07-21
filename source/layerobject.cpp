@@ -163,7 +163,7 @@ int bange::layerobject_AddShapeRectangle(lua_State *vm){
             lua_pushnil(vm);
             return 1;
         }
-        else if (lua_isnumber(vm, 5)){
+        else if (lua_istable(vm, 5)){
             outlinecolor = bange::TableTosfColor(5, vm);}
             
     }
