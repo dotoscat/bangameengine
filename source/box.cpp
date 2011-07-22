@@ -169,6 +169,8 @@ void bange::box::RegisterVM(lua_State *vm){
     {"GetMousePosition", bange::GetMousePosition},
     {"IsMouseButtonPressed", bange::IsMouseButtonPressed},
     {"GetFrameTime", bange::GetFrameTime},
+    {"GetWidth", bange::GetWidth},
+    {"GetHeight", bange::GetHeight},
     NULL};
     luaL_register(vm, "bange", functions);
     lua_pop(vm, 1);
@@ -212,5 +214,23 @@ static int bange::GetFrameTime(lua_State *vm){
     sf::RenderWindow *window = static_cast<sf::RenderWindow *>(lua_touserdata(vm, -1));
     lua_pop(vm, 1);
     lua_pushnumber(vm, window->GetFrameTime());
+    return 1;
+}
+
+static int bange::GetWidth(lua_State *vm){
+    //->number
+    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box::window");
+    sf::RenderWindow *window = static_cast<sf::RenderWindow *>(lua_touserdata(vm, -1));
+    lua_pop(vm, 1);
+    lua_pushnumber(vm, window->GetWidth());
+    return 1;
+}
+
+static int bange::GetHeight(lua_State *vm){
+    //->number
+    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box::window");
+    sf::RenderWindow *window = static_cast<sf::RenderWindow *>(lua_touserdata(vm, -1));
+    lua_pop(vm, 1);
+    lua_pushnumber(vm, window->GetHeight());
     return 1;
 }
