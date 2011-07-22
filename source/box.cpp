@@ -191,9 +191,9 @@ static int bange::GetMousePosition(lua_State *vm){
     sf::Vector2i position = sf::Mouse::GetPosition(*window);
     lua_createtable(vm, 0, 2);
     lua_pushnumber(vm, static_cast<lua_Number>(position.x) );
-    lua_setfield(vm, -1, "x");
+    lua_setfield(vm, -2, "x");
     lua_pushnumber(vm, static_cast<lua_Number>(position.y) );
-    lua_setfield(vm, -1, "y");
+    lua_setfield(vm, -2, "y");
     return 1;
 }
 
