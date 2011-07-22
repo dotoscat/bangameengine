@@ -167,6 +167,7 @@ void bange::box::RegisterVM(lua_State *vm){
     luaL_Reg functions[] = {
     {"IsKeyPressed", bange::IsKeyPressed},
     {"GetMousePosition", bange::GetMousePosition},
+    {"IsMouseButtonPressed", bange::IsMouseButtonPressed},
     {"GetFrameTime", bange::GetFrameTime},
     NULL};
     luaL_register(vm, "bange", functions);
@@ -193,6 +194,15 @@ static int bange::GetMousePosition(lua_State *vm){
     lua_setfield(vm, -1, "x");
     lua_pushnumber(vm, static_cast<lua_Number>(position.y) );
     lua_setfield(vm, -1, "y");
+    return 1;
+}
+
+static int bange::IsMouseButtonPressed(lua_State *vm){
+    //mousebutton -> bool
+    if (sf::Mouse::IsButtonPressed( static_cast<sf::Mouse::Button>(lua_tonumber(vm, 1)) ) ){
+        lua_pushboolean(vm, 1);
+    }else{
+        lua_pushboolean(vm, 0);}
     return 1;
 }
 
