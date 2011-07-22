@@ -72,6 +72,10 @@ bool bange::layerobject::Index(lua_State *vm, const char *key){
         lua_pushcfunction(vm, bange::layerobject_AddShapeCircle);
         return true;
     }
+    else if (strcmp(key, "AddShapeLine") == 0){
+        lua_pushcfunction(vm, bange::layerobject_AddShapeLine);
+        return true;
+    }
     return false;
 }
 
@@ -217,6 +221,50 @@ int bange::layerobject_AddShapeCircle(lua_State *vm){
     }
     bange::shape *shape = new bange::shape();
     *static_cast<sf::Shape *>(shape) = sf::Shape::Circle(center, radius, color, outline, outlinecolor);
+    bange::BuildProxy(vm, shape);
+    lua_pushvalue(vm, -1);
+    layerobject->AddObject(luaL_ref(vm, LUA_REGISTRYINDEX));
+    return 1;
+}
+
+int bange::layerobject_AddShapeLine(lua_State *vm){
+    //layerobject, point1 {x, y}, point2 {x, y}, thickness, color, outline, outlinecolor -> line shape
+    bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 1));
+    bange::layerobject *layerobject = static_cast<bange::layerobject *>(proxy->object);
+    if (!lua_istable(vm, 2)){
+        std::cout << proxy << ":AddShapeLine() : First argument must be a table with the 1st point." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    sf::Vector2f point1 = bange::TableTosfVector2f(2, vm);
+    if (!lua_istable(vm, 3)){
+        std::cout << proxy << ":AddShapeLine() : 2nd argument must be a table with the 2n point." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    sf::Vector2f point2 = bange::TableTosfVector2f(3, vm);
+    if (!lua_isnumber(vm, 4)){
+        std::cout << proxy << ":AddShapeLine() : 3rd argument must be a number." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    cpFloat thickness = lua_tonumber(vm, 4);
+    if (!lua_istable(vm, 5)){
+        std::cout << proxy << ":AddShapeLine() : 4th argument must be a table with the color." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    sf::Color color = bange::TableTosfColor(5, vm);
+    cpFloat outline = 0;
+    if (lua_gettop(vm) > 5 && lua_isnumber(vm, 6)){
+        outline = lua_tonumber(vm, 6);
+    }
+    sf::Color outlinecolor(0, 0, 0);
+    if (lua_gettop(vm) > 6 && lua_istable(vm, 7)){
+        outlinecolor = bange::TableTosfColor(7, vm);
+    }
+    bange::shape *shape = new bange::shape();
+    *static_cast<sf::Shape *>(shape) = sf::Shape::Line(point1, point2, thickness, color, outline, outlinecolor);
     bange::BuildProxy(vm, shape);
     lua_pushvalue(vm, -1);
     layerobject->AddObject(luaL_ref(vm, LUA_REGISTRYINDEX));
