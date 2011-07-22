@@ -68,6 +68,10 @@ bool bange::layerobject::Index(lua_State *vm, const char *key){
         lua_pushcfunction(vm, bange::layerobject_AddText);
         return true;
     }
+    else if (strcmp(key, "AddShapeCircle") == 0){
+        lua_pushcfunction(vm, bange::layerobject_AddShapeCircle);
+        return true;
+    }
     return false;
 }
 
