@@ -41,6 +41,14 @@ bool bange::drawable::NewIndex(lua_State *vm, const char *key){
         thedrawable->SetPosition(bange::TableTosfVector2f(3, vm));
         return true;
     }
+    else if ( strcmp("origin", key) == 0 ){
+        if (!lua_istable(vm, 3)){
+            std::cout << lua_touserdata(vm, 1) << ".origin: Value isn't a table" << std::endl;
+            return false;
+        }
+        thedrawable->SetOrigin(bange::TableTosfVector2f(3, vm));
+        return true;
+    }
     return false;
 }
 
@@ -51,6 +59,10 @@ bool bange::drawable::Index(lua_State *vm, const char *key){
     }
     else if ( strcmp("position", key) == 0){
         bange::sfVector2fToTable(thedrawable->GetPosition(), vm);
+        return true;
+    }
+    else if ( strcmp("origin", key) == 0){
+        bange::sfVector2fToTable(thedrawable->GetOrigin(), vm);
         return true;
     }
     return false;
