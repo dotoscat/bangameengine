@@ -55,6 +55,8 @@ namespace bange{
     class text: public bange::object, public sf::Text{
         public:
             text(){thedrawable=this;};
+            bool NewIndex(lua_State *, const char *);
+            bool Index(lua_State *, const char *);
     };
     
 }
