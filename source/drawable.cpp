@@ -49,6 +49,10 @@ bool bange::drawable::NewIndex(lua_State *vm, const char *key){
         thedrawable->SetOrigin(bange::TableTosfVector2f(3, vm));
         return true;
     }
+    else if ( strcmp("rotation", key) == 0){
+        thedrawable->SetRotation(lua_tonumber(vm, 3));
+        return true;
+    }
     return false;
 }
 
@@ -63,6 +67,10 @@ bool bange::drawable::Index(lua_State *vm, const char *key){
     }
     else if ( strcmp("origin", key) == 0){
         bange::sfVector2fToTable(thedrawable->GetOrigin(), vm);
+        return true;
+    }
+    else if (strcmp("rotation", key) == 0){
+        lua_pushnumber(vm, thedrawable->GetRotation());
         return true;
     }
     return false;
