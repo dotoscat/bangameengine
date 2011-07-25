@@ -25,24 +25,10 @@
 #include <scene.hpp>
 #include <aux.hpp>
 
-bange::view::view(const sf::Vector2f &center, const sf::Vector2f &size): sf::View(center, size){
-    scene = LUA_REFNIL;
-}
+bange::view::view(const sf::Vector2f &center, const sf::Vector2f &size): sf::View(center, size){}
 
 bool bange::view::NewIndex(lua_State *vm, const char *key){
-    if (strcmp("scene", key) == 0){
-        if (!lua_isuserdata(vm, 3)){
-            std::cout << lua_touserdata(vm, 1) << ".scene : Value isn't a userdata" << std::endl;
-            return true;
-        }
-        if ( dynamic_cast<bange::scene *>( static_cast<bange::proxy *>(lua_touserdata(vm, 3))->object ) == NULL ){
-            std::cout << lua_touserdata(vm, 1) << ".scene : Value isn't a scene" << std::endl;
-            return true;
-        }
-        luaL_unref(vm, LUA_REGISTRYINDEX, scene);
-        scene = luaL_ref(vm, LUA_REGISTRYINDEX);
-    }
-    else if (strcmp("viewport", key) == 0){
+    if (strcmp("viewport", key) == 0){
         if (!lua_istable(vm, 3)){
             std::cout << lua_touserdata(vm, 1) << ".viewport : Value isn't a table" << std::endl;
             return true;
@@ -71,11 +57,7 @@ bool bange::view::NewIndex(lua_State *vm, const char *key){
 }
 
 bool bange::view::Index(lua_State *vm, const char *key){
-    if (strcmp("scene", key) == 0){
-        lua_rawgeti(vm, LUA_REGISTRYINDEX, scene);
-        return true;
-    }
-    else if (strcmp("viewport", key) == 0){
+    if (strcmp("viewport", key) == 0){
         bange::sfFloatRectToTable(this->GetViewport(), vm);
         return true;
     }
@@ -95,10 +77,6 @@ bool bange::view::Index(lua_State *vm, const char *key){
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::view::");
     lua_getfield(vm, -1, key);
     return true;
-}
-
-void bange::view::Clean(lua_State *vm){
-    luaL_unref(vm, LUA_REGISTRYINDEX, scene);
 }
 
 void bange::view::RegisterVM(lua_State *vm){    

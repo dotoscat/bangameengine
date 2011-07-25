@@ -30,12 +30,9 @@ namespace bange{
     
     class view: public bange::base, public sf::View{
         public:
-            mutable int scene;
-        public:
             view(const sf::Vector2f &, const sf::Vector2f &);
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
-            void Clean(lua_State *);
         
             static void RegisterVM(lua_State *);
         
