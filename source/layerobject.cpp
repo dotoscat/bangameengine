@@ -102,6 +102,12 @@ std::map<const void *, int> &views, lua_State *vm){
             continue;}
         lua_rawgeti(vm, LUA_REGISTRYINDEX, objects[i]);
         proxy = static_cast<bange::proxy *>(lua_touserdata(vm, -1));
+        if (proxy == NULL){
+            std::cout << "bange::layerobject(" << this << ")::Process() -> void object at: " << i << "!!" << std::endl;
+            objects[i] = LUA_REFNIL;//Try fix it without unref the corrupted object
+            lua_pop(vm, 1);;//pop "proxy"
+            continue;//And continue
+        }
         object = static_cast<bange::object *>(proxy->object);
         if (object->del){
             luaL_unref(vm, LUA_REGISTRYINDEX, objects[i]);
@@ -289,6 +295,7 @@ int bange::layerobject_AddText(lua_State *vm){
         text->SetString(sf::String(strtext));}
     bange::BuildProxy(vm, text);
     lua_pushvalue(vm, -1);
-    layerobject->AddObject(luaL_ref(vm, LUA_REGISTRYINDEX));
+    int ref = luaL_ref(vm, LUA_REGISTRYINDEX);
+    layerobject->AddObject(ref);
     return 1;
 }
