@@ -40,7 +40,7 @@ namespace bange{
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
-            void Process(int, sf::Uint32, sf::RenderTarget &, std::map<const void *, int> &, lua_State *);
+            void Process(sf::Uint32, sf::RenderTarget &, std::map<const void *, int> &, lua_State *);
             bool AddObject(int);
             bool Filled(){
                 if (nobjects == maxobjects){

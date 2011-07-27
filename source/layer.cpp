@@ -24,12 +24,7 @@
 #include <layer.hpp>
 
 bool bange::layer::NewIndex(lua_State *vm, const char *key){
-    if (strcmp(key, "data") == 0){
-        luaL_unref(vm, LUA_REGISTRYINDEX, data);
-        data = luaL_ref(vm, LUA_REGISTRYINDEX);
-        return true;
-    }
-    else if (strcmp(key, "visible") == 0 && lua_isboolean(vm, 3)){
+    if (strcmp(key, "visible") == 0 && lua_isboolean(vm, 3)){
         visible = static_cast<bool>(lua_toboolean(vm, 3));
         return true;
     }
@@ -37,19 +32,9 @@ bool bange::layer::NewIndex(lua_State *vm, const char *key){
 }
 
 bool bange::layer::Index(lua_State *vm, const char *key){
-    if (this->bange::behavior::Index(vm, key)){
-        return true;}
-    if (strcmp(key, "data") == 0){
-        lua_rawgeti(vm, LUA_REGISTRYINDEX, data);
-        return true;
-    }
-    else if (strcmp(key, "visible") == 0){
+    if (strcmp(key, "visible") == 0){
         lua_pushboolean(vm, static_cast<int>(visible));
         return true;
     }
     return false;
-}
-
-void bange::layer::Clean(lua_State *vm){
-    luaL_unref(vm, LUA_REGISTRYINDEX, data);
 }

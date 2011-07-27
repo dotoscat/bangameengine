@@ -33,7 +33,6 @@ void bange::object::RegisterVM(lua_State *vm){
 }
 
 bange::object::object(){
-    data = LUA_REFNIL;
     visible = true;
     del = false;
 }
@@ -42,12 +41,7 @@ bool bange::object::NewIndex(lua_State *vm, const char *key){
     //this->bange::drawable::NewIndex(vm, key);
     if (this->bange::drawable::NewIndex(vm, key)){
         return true;}
-    if (strcmp("data", key) == 0){
-        luaL_unref(vm, LUA_REGISTRYINDEX, data);
-        data = luaL_ref(vm, LUA_REGISTRYINDEX);
-        return true;
-    }
-    else if (strcmp("visible", key) == 0){
+    if (strcmp("visible", key) == 0){
         visible = static_cast<bool>( lua_toboolean(vm, 3) );
         return true;
     }
@@ -59,15 +53,9 @@ bool bange::object::NewIndex(lua_State *vm, const char *key){
 }
 
 bool bange::object::Index(lua_State *vm, const char *key){
-    if (this->bange::behavior::Index(vm, key)){
-        return true;}
     if (this->bange::drawable::Index(vm, key)){
         return true;}
-    if ( strcmp("data", key) == 0 ){
-        lua_rawgeti(vm, LUA_REGISTRYINDEX, data);
-        return true;
-    }
-    else if ( strcmp("visible", key) == 0 ){
+    if ( strcmp("visible", key) == 0 ){
         lua_pushboolean(vm, visible);
         return true;
     }
@@ -85,9 +73,5 @@ bool bange::object::Index(lua_State *vm, const char *key){
 }
 
 void bange::object::Clean(lua_State *vm){
-    luaL_unref(vm, LUA_REGISTRYINDEX, data);
-}
-
-void bange::object::Process(int indexobject, sf::Uint32 time, lua_State *vm){
-    this->bange::behavior::Process(indexobject, time, vm);
+    ;//Add later a Destructor
 }

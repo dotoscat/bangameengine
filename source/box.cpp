@@ -117,7 +117,7 @@ void bange::box::Run(){
         
         lua_getglobal(vm, "bange");
         lua_getfield(vm, 1, "Exit");
-        if (!lua_isnil(vm, -1) && lua_isboolean(vm, -1) && lua_toboolean(vm, 1)){
+        if (!lua_isnil(vm, -1) && lua_isboolean(vm, -1) && lua_toboolean(vm, -1)){
             lua_pop(vm, 2);
             window->Close();
             continue;
@@ -149,7 +149,8 @@ void bange::box::Run(){
                     lua_pop(vm, 1);
                     continue;
                 }
-                scene->Process(lua_gettop(vm), window->GetFrameTime(), *window, vm);
+                proxy->behavior->Process(lua_gettop(vm), window->GetFrameTime(), vm);
+                scene->Process(window->GetFrameTime(), *window, vm);
                 lua_pop(vm, 1);//next
             }
             

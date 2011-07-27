@@ -23,6 +23,7 @@
 #define _bange_base_
 
 #include <lua5.1/lua.hpp>
+#include <behavior.hpp>
 
 namespace bange{
 
@@ -36,12 +37,15 @@ namespace bange{
 
     struct proxy{
         bange::base *object;
+        bange::behavior* behavior;
         
+        //Functions
+        proxy():object(NULL), behavior( NULL ){};
         static void RegisterVM(lua_State *);//Just for arrange the code
     };
     
     
-    bange::proxy *BuildProxy(lua_State *, bange::base *);//+1
+    bange::proxy *BuildProxy(lua_State *, bange::base *, bool=true);//+1
 
     static int proxy_newindex(lua_State *);
     static int proxy_index(lua_State *);

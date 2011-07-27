@@ -20,6 +20,7 @@
    //distribution.
 
 #include <iostream>
+#include <cstring>
 #include <base.hpp>
 
 void bange::proxy::RegisterVM(lua_State *vm){
@@ -33,11 +34,12 @@ void bange::proxy::RegisterVM(lua_State *vm){
     lua_setfield(vm, LUA_REGISTRYINDEX, "metatable_proxy");
 }
 
-bange::proxy *bange::BuildProxy(lua_State *vm, bange::base *object){
+bange::proxy *bange::BuildProxy(lua_State *vm, bange::base *object, bool hasbehavior){
     
     bange::proxy *proxy = static_cast<bange::proxy *>( lua_newuserdata(vm, sizeof(bange::proxy)) );
     proxy->object = object;
-    
+    if (hasbehavior){
+        proxy->behavior = new bange::behavior(); }
     lua_getfield(vm, LUA_REGISTRYINDEX, "metatable_proxy");
     lua_setmetatable(vm, -2);
     
@@ -47,13 +49,19 @@ bange::proxy *bange::BuildProxy(lua_State *vm, bange::base *object){
 static int bange::proxy_newindex(lua_State *vm){
     //userdata, key, value
     bange::proxy *proxy = static_cast<bange::proxy *>( lua_touserdata(vm, 1) );
-    proxy->object->NewIndex(vm, lua_tostring(vm, 2) );
+    const char *key = lua_tostring(vm, 2);
+    if (proxy->behavior != NULL && proxy->behavior->NewIndex(vm, key)){
+        return 0;}
+    proxy->object->NewIndex(vm, key);
     return 0;
 }
 
 static int bange::proxy_index(lua_State *vm){
     //userdata, key
     bange::proxy *proxy = static_cast<bange::proxy *>( lua_touserdata(vm, 1) );
+    const char *key = lua_tostring(vm, 2);
+    if (proxy->behavior != NULL && proxy->behavior->Index(vm, key)){
+        return 1;}
     if (!proxy->object->Index(vm, lua_tostring(vm, 2)) ){
         lua_pushnil(vm);}
     return 1;
@@ -62,7 +70,10 @@ static int bange::proxy_index(lua_State *vm){
 static int bange::proxy_gc(lua_State *vm){
     //userdata
     bange::proxy *proxy = static_cast<bange::proxy *>( lua_touserdata(vm, 1) );
-    //std::cout << "GC collects: " << proxy << std::endl;
+    if (proxy->behavior != NULL){
+        proxy->behavior->Clean(vm);
+        delete proxy->behavior;
+    }
     proxy->object->Clean(vm);
     delete proxy->object;
     return 0;

@@ -26,21 +26,17 @@
 #include <SFML/Graphics.hpp>
 #include <lua5.1/lua.hpp>
 #include <base.hpp>
-#include <behavior.hpp>
 
 namespace bange{
     
-    class layer: public bange::base, public bange::behavior{
-        private:
-            int data;
+    class layer: public bange::base{
         public:
             mutable bool visible;
         public:
             layer():visible(true){};
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
-            void Clean(lua_State *);
-            virtual void Process(int, sf::Uint32, sf::RenderTarget &, std::map<const void *, int> &, lua_State *) = 0;
+            virtual void Process(sf::Uint32, sf::RenderTarget &, std::map<const void *, int> &, lua_State *) = 0;
     };
     
 }

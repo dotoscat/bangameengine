@@ -24,11 +24,24 @@
 #include <base.hpp>
 #include <behavior.hpp>
 
+bool bange::behavior::NewIndex(lua_State *vm, const char *key){
+    if (strcmp("data", key) == 0){
+        this->data = luaL_ref(vm, LUA_REGISTRYINDEX);
+        return true;
+    }
+    return false;
+};
+
 bool bange::behavior::Index(lua_State *vm, const char *key){
+    if (strcmp("data", key) == 0){
+        lua_rawgeti(vm, LUA_REGISTRYINDEX, this->data);
+        return true;
+    }
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::behavior::");
     lua_getfield(vm, -1, key);
     if (lua_isfunction(vm, -1)){
         return true;}
+    lua_pop(vm, 1);
     return false;
 }
 
@@ -56,6 +69,7 @@ void bange::behavior::Process(int indexobject, sf::Uint32 time, lua_State *vm){
 }
 
 void bange::behavior::Clean(lua_State *vm){
+    luaL_unref(vm, LUA_REGISTRYINDEX, this->data);
     std::map<const void *, bange::behavior::function>::iterator afunction;
     for(afunction = functions.begin(); afunction != functions.end(); afunction++){
         luaL_unref(vm, LUA_REGISTRYINDEX, afunction->second.thefunction);
@@ -76,9 +90,8 @@ void bange::behavior::RegisterVM(lua_State *vm){
 static int bange::behavior_AddFunction(lua_State *vm){
     //userdata, function, time, data
     bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 1));
-    bange::behavior *behavior = dynamic_cast<bange::behavior *>(proxy->object);
     sf::Uint32 time = 0;
-    if (behavior == NULL){
+    if (proxy->behavior == NULL){
         std::cout << lua_touserdata(vm, 1) << ":AddFunction(): Object without any behavior." << std::endl;
         return 0;
     }
@@ -101,15 +114,14 @@ static int bange::behavior_AddFunction(lua_State *vm){
     newfunction.data = luaL_ref(vm, LUA_REGISTRYINDEX);
     newfunction.time = time;
     newfunction.timestored = 0;
-    behavior->functions[lua_topointer(vm, 2)] = newfunction;
+    proxy->behavior->functions[lua_topointer(vm, 2)] = newfunction;
     return 0;
 }
 
 static int bange::behavior_StopFunction(lua_State *vm){
     //userdata, function, boolean
     bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 1));
-    bange::behavior *behavior = dynamic_cast<bange::behavior *>(proxy->object);
-    if (behavior == NULL){
+    if (proxy->behavior == NULL){
         std::cout << lua_touserdata(vm, 1) << ":AddFunction(): Object without any behavior." << std::endl;
         return 0;
     }
@@ -121,6 +133,6 @@ static int bange::behavior_StopFunction(lua_State *vm){
         std::cout << lua_touserdata(vm, 1) << ":AddFunction(): First parameter isn't a boolean." << std::endl;
         return 0;
     }
-    behavior->functions[lua_topointer(vm, 2)].stop = static_cast<bool>( lua_toboolean(vm, 3) );
+    proxy->behavior->functions[lua_topointer(vm, 2)].stop = static_cast<bool>( lua_toboolean(vm, 3) );
     return 0;
 }

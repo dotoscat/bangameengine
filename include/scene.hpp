@@ -25,15 +25,13 @@
 #include <vector>
 #include <map>
 #include <base.hpp>
-#include <behavior.hpp>
 #include <layerobject.hpp>
 #include <view.hpp>
 
 namespace bange{
     
-    class scene: public bange::base, public bange::behavior{
+    class scene: public bange::base{
         private:
-            int data;
             std::vector<int> layers;
         public:
             mutable std::map<const void *, int> views;
@@ -42,7 +40,7 @@ namespace bange{
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
-            void Process(int, sf::Uint32, sf::RenderTarget &, lua_State *);
+            void Process(sf::Uint32, sf::RenderTarget &, lua_State *);
             void SetLayer(int, int, lua_State *);
             virtual ~scene(){};
             

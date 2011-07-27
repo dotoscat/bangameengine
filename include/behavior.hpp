@@ -43,12 +43,15 @@ namespace bange{
                 
             };
         
+        private:
+            int data;
+        
         public:
             mutable std::map<const void *, bange::behavior::function> functions;
         
         public:
-            bool NewIndex(lua_State *, const char *){return false;};
             bool Index(lua_State *, const char *);
+            bool NewIndex(lua_State *, const char *);
             void Clean(lua_State *);
             void Process(int, sf::Uint32, lua_State *);
 

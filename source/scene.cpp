@@ -31,29 +31,16 @@ bange::scene::scene(int nlayers){
 }
 
 bool bange::scene::NewIndex(lua_State *vm, const char *key){
-    if (strcmp(key, "data") == 0){
-        luaL_unref(vm, LUA_REGISTRYINDEX, data);
-        data = luaL_ref(vm, LUA_REGISTRYINDEX);
-        return true;
-    }
     return false;
 }
 
 bool bange::scene::Index(lua_State *vm, const char *key){
-    if(this->bange::behavior::Index(vm, key)){
-        return true;}
-    if (strcmp(key, "data") == 0){
-        lua_rawgeti(vm, LUA_REGISTRYINDEX, data);
-        return true;
-    }
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::scene::");
     lua_getfield(vm, -1, key);
     return true;
 }
 
 void bange::scene::Clean(lua_State *vm){
-    luaL_unref(vm, LUA_REGISTRYINDEX, data);
-    this->bange::behavior::Clean(vm);
     for(int i = 0; i < layers.size(); i += 1){
         luaL_unref(vm, LUA_REGISTRYINDEX, layers[i]);
     }
@@ -64,8 +51,7 @@ void bange::scene::Clean(lua_State *vm){
     lua_gc(vm, LUA_GCCOLLECT, 0);
 }
 
-void bange::scene::Process(int indexscene, sf::Uint32 time, sf::RenderTarget &rendertarget, lua_State *vm){
-    this->bange::behavior::Process(indexscene, time, vm);
+void bange::scene::Process(sf::Uint32 time, sf::RenderTarget &rendertarget, lua_State *vm){
     bange::proxy *proxy = NULL;
     bange::layer *layer = NULL;
     std::vector<int>::iterator alayer = layers.begin();
@@ -75,7 +61,7 @@ void bange::scene::Process(int indexscene, sf::Uint32 time, sf::RenderTarget &re
         lua_rawgeti(vm, LUA_REGISTRYINDEX, (*alayer));
         proxy = static_cast<bange::proxy *>( lua_touserdata(vm, -1) );
         layer = static_cast<bange::layer *>(proxy->object);
-        layer->Process(lua_gettop(vm), time, rendertarget, views, vm);
+        layer->Process(time, rendertarget, views, vm);
         lua_pop(vm, 1);
     }
 }

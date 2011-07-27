@@ -120,7 +120,7 @@ int bange::NewView(lua_State *vm){
     center.x = size.x / 2.f;
     center.y = size.y / 2.f;
     bange::view *view = new bange::view(center, size);
-    BuildProxy(vm, view);
+    BuildProxy(vm, view, false);
     return 1;
 }
 

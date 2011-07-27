@@ -24,14 +24,11 @@
 
 #include <lua5.1/lua.hpp>
 #include <base.hpp>
-#include <behavior.hpp>
 #include <drawable.hpp>
 
 namespace bange{
     
-    class object: public bange::base, public bange::drawable, public bange::behavior{
-        protected:
-            int data;
+    class object: public bange::base, public bange::drawable{
         public:
             mutable bool del;
             mutable bool visible;
@@ -40,7 +37,7 @@ namespace bange{
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
-            void Process(int, sf::Uint32, lua_State *);
+            virtual void Process(sf::Uint32, lua_State *){};
             virtual ~object(){};
             
             static void RegisterVM(lua_State *);

@@ -80,16 +80,14 @@ bool bange::layerobject::Index(lua_State *vm, const char *key){
 }
 
 void bange::layerobject::Clean(lua_State *vm){
-    this->bange::layer::Clean(vm);
     std::vector<int>::iterator aobject = objects.begin();
     for(; aobject != objects.end(); aobject++){
         luaL_unref(vm, LUA_REGISTRYINDEX, *aobject);}
     lua_gc(vm, LUA_GCCOLLECT, 0);
 }
 
-void bange::layerobject::Process(int indexlayer, sf::Uint32 time, sf::RenderTarget &rendertarget, \
+void bange::layerobject::Process(sf::Uint32 time, sf::RenderTarget &rendertarget, \
 std::map<const void *, int> &views, lua_State *vm){
-    this->bange::behavior::Process(indexlayer, time, vm);
     bange::proxy *proxy = NULL;
     bange::object *object = NULL;
     std::map<const void *, int>::iterator aview;
@@ -114,7 +112,8 @@ std::map<const void *, int> &views, lua_State *vm){
             objects[i] = LUA_REFNIL;
             nobjects -= 1;
         }
-        object->Process(lua_gettop(vm), time, vm);
+        proxy->behavior->Process(lua_gettop(vm), time, vm);
+        object->Process(time, vm);
         if (this->visible && object->visible){
             for (aview = views.begin(); aview != views.end(); aview++){
                 rendertarget.SetView( *static_cast<const bange::view *>(aview->first) );
@@ -273,7 +272,8 @@ int bange::layerobject_AddShapeLine(lua_State *vm){
     *static_cast<sf::Shape *>(shape) = sf::Shape::Line(point1, point2, thickness, color, outline, outlinecolor);
     bange::BuildProxy(vm, shape);
     lua_pushvalue(vm, -1);
-    layerobject->AddObject(luaL_ref(vm, LUA_REGISTRYINDEX));
+    int ref = luaL_ref(vm, LUA_REGISTRYINDEX);
+    layerobject->AddObject(ref);
     return 1;
 }
 
