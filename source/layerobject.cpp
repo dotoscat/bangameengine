@@ -27,6 +27,18 @@
 #include <aux.hpp>
 #include <view.hpp>
 
+void bange::layerobject::RegisterVM(lua_State *vm){
+    luaL_Reg methods[] = {
+    {"AddShapeRectangle", bange::layerobject_AddShapeRectangle},
+    {"AddShapeCircle", bange::layerobject_AddShapeCircle},
+    {"AddShapeLine", bange::layerobject_AddShapeLine},
+    {"AddText", bange::layerobject_AddText},
+    {NULL, NULL}};
+    lua_createtable(vm, 0, 4);
+    luaL_register(vm, NULL, methods);
+    lua_setfield(vm, LUA_REGISTRYINDEX, "bange::layerobject::");
+}
+
 bange::layerobject::layerobject(size_t maxobjects){
     this->maxobjects = maxobjects;
     nobjects = 0;
@@ -60,23 +72,9 @@ bool bange::layerobject::Index(lua_State *vm, const char *key){
         lua_pushnumber(vm, iterations);
         return true;}
     //Methods
-    else if (strcmp(key, "AddShapeRectangle") == 0){
-        lua_pushcfunction(vm, bange::layerobject_AddShapeRectangle);
-        return true;
-    }
-    else if (strcmp(key, "AddText") == 0){
-        lua_pushcfunction(vm, bange::layerobject_AddText);
-        return true;
-    }
-    else if (strcmp(key, "AddShapeCircle") == 0){
-        lua_pushcfunction(vm, bange::layerobject_AddShapeCircle);
-        return true;
-    }
-    else if (strcmp(key, "AddShapeLine") == 0){
-        lua_pushcfunction(vm, bange::layerobject_AddShapeLine);
-        return true;
-    }
-    return false;
+    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::layerobject::");
+    lua_getfield(vm, -1, key);
+    return true;
 }
 
 void bange::layerobject::Clean(lua_State *vm){

@@ -48,6 +48,8 @@ namespace bange{
                 return false;
             };
             
+        static void RegisterVM(lua_State *);
+            
     };
     
     static int layerobject_AddText(lua_State *);
