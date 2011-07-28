@@ -39,17 +39,16 @@ namespace bange{
         bange::base *object;
         bange::behavior* behavior;
         
-        //Functions
-        proxy():object(NULL), behavior( NULL ){};
+        //Function
         static void RegisterVM(lua_State *);//Just for arrange the code
     };
     
     
     bange::proxy *BuildProxy(lua_State *, bange::base *, bool=true);//+1
 
-    static int proxy_newindex(lua_State *);
-    static int proxy_index(lua_State *);
-    static int proxy_gc(lua_State *);
+    int proxy_newindex(lua_State *);
+    int proxy_index(lua_State *);
+    int proxy_gc(lua_State *);
 
 }
 

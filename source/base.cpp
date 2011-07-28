@@ -38,6 +38,7 @@ bange::proxy *bange::BuildProxy(lua_State *vm, bange::base *object, bool hasbeha
     
     bange::proxy *proxy = static_cast<bange::proxy *>( lua_newuserdata(vm, sizeof(bange::proxy)) );
     proxy->object = object;
+    proxy->behavior = NULL;
     if (hasbehavior){
         proxy->behavior = new bange::behavior(); }
     lua_getfield(vm, LUA_REGISTRYINDEX, "metatable_proxy");
@@ -46,7 +47,7 @@ bange::proxy *bange::BuildProxy(lua_State *vm, bange::base *object, bool hasbeha
     return proxy;
 }
 
-static int bange::proxy_newindex(lua_State *vm){
+int bange::proxy_newindex(lua_State *vm){
     //userdata, key, value
     bange::proxy *proxy = static_cast<bange::proxy *>( lua_touserdata(vm, 1) );
     const char *key = lua_tostring(vm, 2);
@@ -56,7 +57,7 @@ static int bange::proxy_newindex(lua_State *vm){
     return 0;
 }
 
-static int bange::proxy_index(lua_State *vm){
+int bange::proxy_index(lua_State *vm){
     //userdata, key
     bange::proxy *proxy = static_cast<bange::proxy *>( lua_touserdata(vm, 1) );
     const char *key = lua_tostring(vm, 2);
@@ -67,7 +68,7 @@ static int bange::proxy_index(lua_State *vm){
     return 1;
 }
 
-static int bange::proxy_gc(lua_State *vm){
+int bange::proxy_gc(lua_State *vm){
     //userdata
     bange::proxy *proxy = static_cast<bange::proxy *>( lua_touserdata(vm, 1) );
     if (proxy->behavior != NULL){

@@ -138,7 +138,7 @@ static int bange::scene_AddView(lua_State *vm){
     bange::proxy *proxy = static_cast<bange::proxy *>( lua_touserdata(vm, 1) );
     bange::scene *scene = static_cast<bange::scene *>(proxy->object);
     if (!lua_isuserdata(vm, 2)){
-        std::cout << proxy << ":AddView() : First argument ins't a valid userdata" << std::endl;
+        std::cout << proxy << ":AddView() : Object a valid userdata" << std::endl;
         return 0;
     }
     bange::view *view = dynamic_cast<bange::view *>( static_cast<bange::proxy *>(lua_touserdata(vm, 2))->object );

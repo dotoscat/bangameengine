@@ -188,7 +188,8 @@ int bange::layerobject_AddShapeRectangle(lua_State *vm){
     *static_cast<sf::Shape *>(shape) = sf::Shape::Rectangle(rect, color, outline, outlinecolor);
     bange::BuildProxy(vm, shape);
     lua_pushvalue(vm, -1);
-    layerobject->AddObject(luaL_ref(vm, LUA_REGISTRYINDEX));
+    int ref = luaL_ref(vm, LUA_REGISTRYINDEX);
+    layerobject->AddObject(ref);
     return 1;
 }
 
@@ -226,7 +227,8 @@ int bange::layerobject_AddShapeCircle(lua_State *vm){
     *static_cast<sf::Shape *>(shape) = sf::Shape::Circle(center, radius, color, outline, outlinecolor);
     bange::BuildProxy(vm, shape);
     lua_pushvalue(vm, -1);
-    layerobject->AddObject(luaL_ref(vm, LUA_REGISTRYINDEX));
+    int ref = luaL_ref(vm, LUA_REGISTRYINDEX);
+    layerobject->AddObject(ref);
     return 1;
 }
 

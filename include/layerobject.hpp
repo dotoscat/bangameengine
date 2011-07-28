@@ -52,10 +52,10 @@ namespace bange{
             
     };
     
-    static int layerobject_AddText(lua_State *);
-    static int layerobject_AddShapeRectangle(lua_State *);
-    static int layerobject_AddShapeCircle(lua_State *);
-    static int layerobject_AddShapeLine(lua_State *);
+    int layerobject_AddText(lua_State *);
+    int layerobject_AddShapeRectangle(lua_State *);
+    int layerobject_AddShapeCircle(lua_State *);
+    int layerobject_AddShapeLine(lua_State *);
     
 }
 
