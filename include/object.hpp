@@ -28,10 +28,11 @@
 
 namespace bange{
     
-    class object: public bange::base, public bange::drawable{
+    class object: public bange::base, public bange::drawable{   
         public:
             mutable bool del;
             mutable bool visible;
+            mutable int Destructor;
         public:
             object();
             bool NewIndex(lua_State *, const char *);

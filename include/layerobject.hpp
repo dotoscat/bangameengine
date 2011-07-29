@@ -23,10 +23,11 @@
 #define _bange_layerobject_
 
 #include <vector>
-#include <chipmunk/chipmunk.h>
 #include <layer.hpp>
 
 namespace bange{
+    
+    class object;
     
     class layerobject: public bange::layer{
         private:
@@ -49,7 +50,11 @@ namespace bange{
             };
             
         static void RegisterVM(lua_State *);
+        
+        protected:
             
+            void CallObjectDestructor(const bange::object &, lua_State *);
+        
     };
     
     int layerobject_AddText(lua_State *);

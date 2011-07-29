@@ -92,7 +92,7 @@ std::map<const void *, int> &views, lua_State *vm){
     size_t end = position+iterations, i = position;
     if (end > maxobjects){
         end=maxobjects;}
-    
+
     for(; i < end; i += 1){
         if (objects[i] == LUA_REFNIL){
             continue;}
@@ -106,9 +106,12 @@ std::map<const void *, int> &views, lua_State *vm){
         }
         object = static_cast<bange::object *>(proxy->object);
         if (object->del){
+            this->CallObjectDestructor(*object, vm);
             luaL_unref(vm, LUA_REGISTRYINDEX, objects[i]);
             objects[i] = LUA_REFNIL;
             nobjects -= 1;
+            lua_pop(vm, 1);//Pop proxy
+            continue;
         }
         proxy->behavior->Process(lua_gettop(vm), time, vm);
         object->Process(time, vm);
@@ -119,6 +122,7 @@ std::map<const void *, int> &views, lua_State *vm){
             }
         }
         if (object->del){
+            this->CallObjectDestructor(*object, vm);
             luaL_unref(vm, LUA_REGISTRYINDEX, objects[i]);
             objects[i] = LUA_REFNIL;
             nobjects -= 1;
@@ -126,9 +130,23 @@ std::map<const void *, int> &views, lua_State *vm){
         lua_pop(vm, 1);//pop proxy
         
     }
+    
     position = i;
     if (position == maxobjects){
         position = 0;}
+
+}
+
+void bange::layerobject::CallObjectDestructor(const bange::object &object, lua_State *vm){
+    //Is assumed that the last index stack vm is the object
+    if (object.Destructor == LUA_REFNIL){
+        return;}
+    lua_rawgeti(vm, LUA_REGISTRYINDEX, object.Destructor);
+    lua_pushvalue(vm, -2);//Push object
+    if (lua_pcall(vm, 1, 0, 0) == LUA_ERRRUN){
+        std::cout << &object << ":Destructor() -> " << lua_tostring(vm, -1) << std::endl;
+        lua_pop(vm, 1);
+    }
 }
 
 bool bange::layerobject::AddObject(int referenceobject){
@@ -208,14 +226,14 @@ int bange::layerobject_AddShapeCircle(lua_State *vm){
         lua_pushnil(vm);
         return 1;
     }
-    cpFloat radius = lua_tonumber(vm, 3);
+    float radius = lua_tonumber(vm, 3);
     if (!lua_istable(vm, 4)){
         std::cout << proxy << ":AddShapeCircle() : 3d argument must be a table with the color." << std::endl;
         lua_pushnil(vm);
         return 1;
     }
     sf::Color color = bange::TableTosfColor(4, vm);
-    cpFloat outline = 0;
+    float outline = 0;
     if (lua_gettop(vm) > 4 && lua_isnumber(vm, 5)){
         outline = lua_tonumber(vm, 5);
     }
@@ -253,14 +271,14 @@ int bange::layerobject_AddShapeLine(lua_State *vm){
         lua_pushnil(vm);
         return 1;
     }
-    cpFloat thickness = lua_tonumber(vm, 4);
+    float thickness = lua_tonumber(vm, 4);
     if (!lua_istable(vm, 5)){
         std::cout << proxy << ":AddShapeLine() : 4th argument must be a table with the color." << std::endl;
         lua_pushnil(vm);
         return 1;
     }
     sf::Color color = bange::TableTosfColor(5, vm);
-    cpFloat outline = 0;
+    float outline = 0;
     if (lua_gettop(vm) > 5 && lua_isnumber(vm, 6)){
         outline = lua_tonumber(vm, 6);
     }

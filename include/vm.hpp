@@ -23,7 +23,6 @@
 #define _bange_vm_
 
 #include <cstring>
-#include <chipmunk/chipmunk.h>
 #include <lua5.1/lua.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>

@@ -49,6 +49,10 @@ bool bange::object::NewIndex(lua_State *vm, const char *key){
         del = static_cast<bool>( lua_toboolean(vm, 3) );
         return true;
     }
+    else if (strcmp("Destructor", key) == 0 && lua_isfunction(vm, 3)){
+        Destructor = luaL_ref(vm, LUA_REGISTRYINDEX);
+        return true;
+    }
     return false;
 }
 
@@ -63,6 +67,10 @@ bool bange::object::Index(lua_State *vm, const char *key){
         lua_pushboolean(vm, del);
         return true;
     }
+    else if ( strcmp("Destructor", key) == 0){
+        lua_rawgeti(vm, LUA_REGISTRYINDEX, this->Destructor);
+        return true;
+    }
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::object::");
     lua_getfield(vm, -1, key);
     if (lua_isfunction(vm, -1)){
@@ -73,5 +81,5 @@ bool bange::object::Index(lua_State *vm, const char *key){
 }
 
 void bange::object::Clean(lua_State *vm){
-    ;//Add later a Destructor
+    luaL_unref(vm, LUA_REGISTRYINDEX, this->Destructor);
 }
