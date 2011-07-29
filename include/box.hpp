@@ -34,6 +34,8 @@ namespace bange{
             bool error;
             sf::Keyboard::Key escapekey;
         public:
+            mutable int mouseDelta;
+        public:
             box(const char *);
             ~box();
             bool GetError();
@@ -43,12 +45,14 @@ namespace bange{
             
     };
     
-    static int IsKeyPressed(lua_State *);
-    static int GetMousePosition(lua_State *);
-    static int IsMouseButtonPressed(lua_State *);
-    static int GetFrameTime(lua_State *);
-    static int GetWidth(lua_State *);
-    static int GetHeight(lua_State *);
+    int IsKeyPressed(lua_State *);
+    int GetMousePosition(lua_State *);
+    int IsMouseButtonPressed(lua_State *);
+    int GetMouseDelta(lua_State *);
+    
+    int GetFrameTime(lua_State *);
+    int GetWidth(lua_State *);
+    int GetHeight(lua_State *);
     
 }
 

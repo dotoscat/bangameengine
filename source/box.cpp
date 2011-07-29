@@ -30,6 +30,7 @@ bange::box::box(const char *config){
     error = false;
     window = NULL;
     this->escapekey = sf::Keyboard::Escape;
+    mouseDelta = 0;
     vm = luaL_newstate();
     bange::PrepareVM(vm);
     if (luaL_dofile(vm, config)){
@@ -129,6 +130,10 @@ void bange::box::Run(){
                 window->Close();}
             else if (event.Type == sf::Event::KeyPressed && event.Key.Code == escapekey){
                 window->Close();}
+            
+            if (event.Type == sf::Event::MouseWheelMoved){
+                mouseDelta = event.MouseWheel.Delta;}
+                
         }
         
         window->Clear();
@@ -161,6 +166,9 @@ void bange::box::Run(){
         
         lua_pop(vm, 1);
         
+        //Reset mouseDelta
+        this->mouseDelta = 0;
+        
     }
 }
 
@@ -169,6 +177,7 @@ void bange::box::RegisterVM(lua_State *vm){
     {"IsKeyPressed", bange::IsKeyPressed},
     {"GetMousePosition", bange::GetMousePosition},
     {"IsMouseButtonPressed", bange::IsMouseButtonPressed},
+    {"GetMouseDelta", bange::GetMouseDelta},
     {"GetFrameTime", bange::GetFrameTime},
     {"GetWidth", bange::GetWidth},
     {"GetHeight", bange::GetHeight},
@@ -177,7 +186,7 @@ void bange::box::RegisterVM(lua_State *vm){
     lua_pop(vm, 1);
 }
 
-static int bange::IsKeyPressed(lua_State *vm){
+int bange::IsKeyPressed(lua_State *vm){
     //keycode -> bool
     if (sf::Keyboard::IsKeyPressed( static_cast<sf::Keyboard::Key>(lua_tonumber(vm, 1)) ) ){
         lua_pushboolean(vm, 1);
@@ -186,7 +195,7 @@ static int bange::IsKeyPressed(lua_State *vm){
     return 1;
 }
 
-static int bange::GetMousePosition(lua_State *vm){
+int bange::GetMousePosition(lua_State *vm){
     //-> table {x, y}
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box::window");
     sf::RenderWindow *window = static_cast<sf::RenderWindow *>(lua_touserdata(vm, -1));
@@ -200,7 +209,7 @@ static int bange::GetMousePosition(lua_State *vm){
     return 1;
 }
 
-static int bange::IsMouseButtonPressed(lua_State *vm){
+int bange::IsMouseButtonPressed(lua_State *vm){
     //mousebutton -> bool
     if (sf::Mouse::IsButtonPressed( static_cast<sf::Mouse::Button>(lua_tonumber(vm, 1)) ) ){
         lua_pushboolean(vm, 1);
@@ -209,7 +218,16 @@ static int bange::IsMouseButtonPressed(lua_State *vm){
     return 1;
 }
 
-static int bange::GetFrameTime(lua_State *vm){
+int bange::GetMouseDelta(lua_State *vm){
+    //-> number
+    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box");
+    bange::box *box = static_cast<bange::box *>( lua_touserdata(vm, 1) );
+    lua_pop(vm, 1);
+    lua_pushnumber(vm, (lua_Number)box->mouseDelta);
+    return 1;
+}
+
+int bange::GetFrameTime(lua_State *vm){
     //->number
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box::window");
     sf::RenderWindow *window = static_cast<sf::RenderWindow *>(lua_touserdata(vm, -1));
@@ -218,7 +236,7 @@ static int bange::GetFrameTime(lua_State *vm){
     return 1;
 }
 
-static int bange::GetWidth(lua_State *vm){
+int bange::GetWidth(lua_State *vm){
     //->number
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box::window");
     sf::RenderWindow *window = static_cast<sf::RenderWindow *>(lua_touserdata(vm, -1));
@@ -227,7 +245,7 @@ static int bange::GetWidth(lua_State *vm){
     return 1;
 }
 
-static int bange::GetHeight(lua_State *vm){
+int bange::GetHeight(lua_State *vm){
     //->number
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box::window");
     sf::RenderWindow *window = static_cast<sf::RenderWindow *>(lua_touserdata(vm, -1));
