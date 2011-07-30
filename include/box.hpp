@@ -54,6 +54,8 @@ namespace bange{
     int JoystickConnected(lua_State *);
     int JoystickDisconnected(lua_State *);
     int IsJoystickConnected(lua_State *);
+    int JoystickGetButtonCount(lua_State *);
+    int JoystickHasAxis(lua_State *);
     
     int GetFrameTime(lua_State *);
     int GetWidth(lua_State *);

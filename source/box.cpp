@@ -188,6 +188,8 @@ void bange::box::RegisterVM(lua_State *vm){
     {"JoystickConnected", bange::JoystickConnected},
     {"JoystickDisconnected", bange::JoystickDisconnected},
     {"IsJoystickConnected", bange::IsJoystickConnected},
+    {"JoystickGetButtonCount", bange::JoystickGetButtonCount},
+    {"JoystickHasAxis", bange::JoystickHasAxis},
     {"GetFrameTime", bange::GetFrameTime},
     {"GetWidth", bange::GetWidth},
     {"GetHeight", bange::GetHeight},
@@ -264,6 +266,29 @@ int bange::IsJoystickConnected(lua_State *vm){
     bool connected = false;
     connected = sf::Joystick::IsConnected((unsigned int)joystick);
     lua_pushboolean(vm, (int)connected);
+    return 1;
+}
+
+int bange::JoystickGetButtonCount(lua_State *vm){
+    //number -> number
+    if (!lua_isnumber(vm, 1)){
+        std::cout << "bange.JoystickGetButtonCount() -> First argument isn't a valid number" << std::endl;
+    }
+    lua_Number joystick = lua_tonumber(vm, 1);
+    lua_pushnumber(vm, (lua_Number)sf::Joystick::GetButtonCount( (unsigned int)joystick ) );
+    return 1;
+}
+
+int bange::JoystickHasAxis(lua_State *vm){
+    //number, number -> bool
+    if (!lua_isnumber(vm, 1)){
+        std::cout << "bange.JoystickHasAxis() -> First argument isn't a valid number" << std::endl;
+    }
+    if (!lua_isnumber(vm, 2)){
+        std::cout << "bange.JoystickHasAxis() -> 2nd argument isn't a valid number" << std::endl;
+    }
+    bool hasaxis = sf::Joystick::HasAxis( (unsigned int)lua_tonumber(vm, 1), (sf::Joystick::Axis)lua_tonumber(vm, 2) );
+    lua_pushboolean(vm, (int)hasaxis );
     return 1;
 }
 
