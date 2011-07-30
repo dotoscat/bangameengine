@@ -31,6 +31,8 @@ bange::box::box(const char *config){
     window = NULL;
     this->escapekey = sf::Keyboard::Escape;
     mouseDelta = 0;
+    JoystickConnected = false;
+    JoystickDisconnected = false;
     vm = luaL_newstate();
     bange::PrepareVM(vm);
     if (luaL_dofile(vm, config)){
@@ -130,9 +132,12 @@ void bange::box::Run(){
                 window->Close();}
             else if (event.Type == sf::Event::KeyPressed && event.Key.Code == escapekey){
                 window->Close();}
-            
-            if (event.Type == sf::Event::MouseWheelMoved){
+            else if (event.Type == sf::Event::MouseWheelMoved){
                 mouseDelta = event.MouseWheel.Delta;}
+            else if (event.Type == sf::Event::JoystickConnected){
+                JoystickConnected = true;}
+            else if (event.Type == sf::Event::JoystickDisconnected){
+                JoystickDisconnected = true;}
                 
         }
         
@@ -166,8 +171,10 @@ void bange::box::Run(){
         
         lua_pop(vm, 1);
         
-        //Reset mouseDelta
+        //Reset
         this->mouseDelta = 0;
+        this->JoystickConnected = false;
+        this->JoystickDisconnected = false;
         
     }
 }
@@ -178,6 +185,8 @@ void bange::box::RegisterVM(lua_State *vm){
     {"GetMousePosition", bange::GetMousePosition},
     {"IsMouseButtonPressed", bange::IsMouseButtonPressed},
     {"GetMouseDelta", bange::GetMouseDelta},
+    {"IsJoystickConnected", bange::IsJoystickConnected},
+    {"IsJoystickDisconnected", bange::IsJoystickDisconnected},
     {"GetFrameTime", bange::GetFrameTime},
     {"GetWidth", bange::GetWidth},
     {"GetHeight", bange::GetHeight},
@@ -224,6 +233,24 @@ int bange::GetMouseDelta(lua_State *vm){
     bange::box *box = static_cast<bange::box *>( lua_touserdata(vm, 1) );
     lua_pop(vm, 1);
     lua_pushnumber(vm, (lua_Number)box->mouseDelta);
+    return 1;
+}
+
+int bange::IsJoystickConnected(lua_State *vm){
+    //-> bool
+    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box");
+    bange::box *box = static_cast<bange::box *>( lua_touserdata(vm, 1) );
+    lua_pop(vm, 1);
+    lua_pushboolean(vm, (int)box->JoystickConnected);
+    return 1;
+}
+
+int bange::IsJoystickDisconnected(lua_State *vm){
+    //-> bool
+    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box");
+    bange::box *box = static_cast<bange::box *>( lua_touserdata(vm, 1) );
+    lua_pop(vm, 1);
+    lua_pushboolean(vm, (int)box->JoystickDisconnected);
     return 1;
 }
 
