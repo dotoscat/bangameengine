@@ -190,6 +190,8 @@ void bange::box::RegisterVM(lua_State *vm){
     {"IsJoystickConnected", bange::IsJoystickConnected},
     {"JoystickGetButtonCount", bange::JoystickGetButtonCount},
     {"JoystickHasAxis", bange::JoystickHasAxis},
+    {"JoystickIsButtonPressed", bange::JoystickIsButtonPressed},
+    {"JoystickGetAxisPosition", bange::JoystickGetAxisPosition},
     {"GetFrameTime", bange::GetFrameTime},
     {"GetWidth", bange::GetWidth},
     {"GetHeight", bange::GetHeight},
@@ -289,6 +291,32 @@ int bange::JoystickHasAxis(lua_State *vm){
     }
     bool hasaxis = sf::Joystick::HasAxis( (unsigned int)lua_tonumber(vm, 1), (sf::Joystick::Axis)lua_tonumber(vm, 2) );
     lua_pushboolean(vm, (int)hasaxis );
+    return 1;
+}
+
+int bange::JoystickIsButtonPressed(lua_State *vm){
+    //number, number -> bool
+    if (!lua_isnumber(vm, 1)){
+        std::cout << "bange.JoystickIsButtonPressed() -> First argument isn't a valid number" << std::endl;
+    }
+    if (!lua_isnumber(vm, 2)){
+        std::cout << "bange.JoystickIsButtonPressed() -> 2nd argument isn't a valid number" << std::endl;
+    }
+    bool buttonpressed = sf::Joystick::IsButtonPressed( (unsigned int)lua_tonumber(vm, 1), (unsigned int)lua_tonumber(vm, 2) );
+    lua_pushboolean(vm, (int)buttonpressed);
+    return 1;
+}
+
+int bange::JoystickGetAxisPosition(lua_State *vm){
+    //number, number -> number
+    if (!lua_isnumber(vm, 1)){
+        std::cout << "bange.JoystickGetAxisPosition() -> First argument isn't a valid number" << std::endl;
+    }
+    if (!lua_isnumber(vm, 2)){
+        std::cout << "bange.JoystickGetAxisPosition() -> 2nd argument isn't a valid number" << std::endl;
+    }
+    float position = sf::Joystick::GetAxisPosition( (unsigned int)lua_tonumber(vm, 1), (sf::Joystick::Axis)lua_tonumber(vm, 2) );
+    lua_pushnumber(vm, position);
     return 1;
 }
 
