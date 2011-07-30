@@ -51,8 +51,9 @@ namespace bange{
     int GetMousePosition(lua_State *);
     int IsMouseButtonPressed(lua_State *);
     int GetMouseDelta(lua_State *);
+    int JoystickConnected(lua_State *);
+    int JoystickDisconnected(lua_State *);
     int IsJoystickConnected(lua_State *);
-    int IsJoystickDisconnected(lua_State *);
     
     int GetFrameTime(lua_State *);
     int GetWidth(lua_State *);
