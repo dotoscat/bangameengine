@@ -57,6 +57,13 @@ namespace bange{
             bool Index(lua_State *, const char *);
     };
     
+    class sprite: public bange::object, public sf::Sprite{
+        private:
+            int image;
+        public:
+            sprite();
+    };
+    
 }
 
 #endif
