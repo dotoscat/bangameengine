@@ -1,7 +1,7 @@
 #Don't touch
 #===========
 
-BANGELIBS = ["physfs", "lua5.1", "sfml-system", "sfml-window", "sfml-graphics"]
+BANGELIBS = ["physfs", "lua5.1", "sfml-system", "sfml-window", "sfml-graphics", "sfml-audio"]
 BANGECCFLAGS = ""
 
 if ARGUMENTS.get("debug", 0):

@@ -33,6 +33,7 @@ void bange::layerobject::RegisterVM(lua_State *vm){
     {"AddShapeCircle", bange::layerobject_AddShapeCircle},
     {"AddShapeLine", bange::layerobject_AddShapeLine},
     {"AddText", bange::layerobject_AddText},
+    {"AddSprite", bange::layerobject_AddSprite},
     {NULL, NULL}};
     lua_createtable(vm, 0, 4);
     luaL_register(vm, NULL, methods);
@@ -312,6 +313,18 @@ int bange::layerobject_AddText(lua_State *vm){
     if (strtext != NULL){
         text->SetString(sf::String(strtext));}
     bange::BuildProxy(vm, text);
+    lua_pushvalue(vm, -1);
+    int ref = luaL_ref(vm, LUA_REGISTRYINDEX);
+    layerobject->AddObject(ref);
+    return 1;
+}
+
+int bange::layerobject_AddSprite(lua_State *vm){
+    //layerobject, text
+    bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 1));
+    bange::layerobject *layerobject = static_cast<bange::layerobject *>(proxy->object);
+    bange::sprite *sprite = new bange::sprite();
+    bange::BuildProxy(vm, sprite);
     lua_pushvalue(vm, -1);
     int ref = luaL_ref(vm, LUA_REGISTRYINDEX);
     layerobject->AddObject(ref);

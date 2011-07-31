@@ -18,7 +18,9 @@
 
    //3. This notice may not be removed or altered from any source
    //distribution.
-   
+ 
+#include <iostream>
+#include <cstring>
 #include <object.hpp>
 #include <image.hpp>
 
@@ -33,8 +35,8 @@ bool bange::sprite::NewIndex(lua_State *vm, const char *key){
     
     if (strcmp("image", key) == 0){
         
-        bange::proxyimage *proxyimage = NULL;
-        proxyimage = static_cast<bange::proxyimage *>( lua_touserdata(vm, 3) );
+        bange::proxy *proxyimage = NULL;
+        proxyimage = static_cast<bange::proxy *>( lua_touserdata(vm, 3) );
         if (proxyimage == NULL){
             std::cout << this << ".image -> Value isn't a valid image." << std::endl;
             return true;
@@ -63,4 +65,9 @@ bool bange::sprite::Index(lua_State *vm, const char *key){
     }
     
     return false;
+}
+
+void bange::sprite::Clean(lua_State *vm){
+    this->bange::object::Clean(vm);
+    luaL_unref(vm, LUA_REGISTRYINDEX, this->image);
 }

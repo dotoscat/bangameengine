@@ -62,6 +62,9 @@ namespace bange{
             int image;
         public:
             sprite();
+            bool NewIndex(lua_State *, const char *);
+            bool Index(lua_State *, const char *);
+            void Clean(lua_State *);
     };
     
 }

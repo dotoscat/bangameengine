@@ -58,6 +58,7 @@ namespace bange{
     };
     
     int layerobject_AddText(lua_State *);
+    int layerobject_AddSprite(lua_State *);
     int layerobject_AddShapeRectangle(lua_State *);
     int layerobject_AddShapeCircle(lua_State *);
     int layerobject_AddShapeLine(lua_State *);
