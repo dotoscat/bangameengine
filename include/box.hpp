@@ -38,6 +38,7 @@ namespace bange{
             mutable int JoystickConnected;
             mutable int JoystickDisconnected;
             mutable bool mouseEntered;
+            mutable bool windowFocus;
         public:
             box(const char *);
             ~box();
@@ -60,6 +61,7 @@ namespace bange{
     int JoystickHasAxis(lua_State *);
     int JoystickIsButtonPressed(lua_State *);
     int JoystickGetAxisPosition(lua_State *);
+    int WindowHasFocus(lua_State *);
     
     int GetFrameTime(lua_State *);
     int GetWidth(lua_State *);

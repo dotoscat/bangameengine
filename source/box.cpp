@@ -34,6 +34,7 @@ bange::box::box(const char *config){
     JoystickConnected = -1;
     JoystickDisconnected = -1;
     mouseEntered = false;
+    windowFocus = false;
     vm = luaL_newstate();
     bange::PrepareVM(vm);
     if (luaL_dofile(vm, config)){
@@ -143,6 +144,10 @@ void bange::box::Run(){
                 mouseEntered = true;}
             else if (event.Type == sf::Event::MouseLeft){
                 mouseEntered = false;}
+            else if (event.Type == sf::Event::GainedFocus){
+                windowFocus = true;}
+            else if (event.Type == sf::Event::LostFocus){
+                windowFocus = false;}
                 
         }
         
@@ -198,6 +203,7 @@ void bange::box::RegisterVM(lua_State *vm){
     {"JoystickHasAxis", bange::JoystickHasAxis},
     {"JoystickIsButtonPressed", bange::JoystickIsButtonPressed},
     {"JoystickGetAxisPosition", bange::JoystickGetAxisPosition},
+    {"WindowHasFocus", bange::WindowHasFocus},
     {"GetFrameTime", bange::GetFrameTime},
     {"GetWidth", bange::GetWidth},
     {"GetHeight", bange::GetHeight},
@@ -332,6 +338,15 @@ int bange::JoystickGetAxisPosition(lua_State *vm){
     }
     float position = sf::Joystick::GetAxisPosition( (unsigned int)lua_tonumber(vm, 1), (sf::Joystick::Axis)lua_tonumber(vm, 2) );
     lua_pushnumber(vm, position);
+    return 1;
+}
+
+int bange::WindowHasFocus(lua_State *vm){
+    //-> bool
+    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box");
+    bange::box *box = static_cast<bange::box *>( lua_touserdata(vm, 1) );
+    lua_pop(vm, 1);
+    lua_pushboolean(vm, (int)box->windowFocus);
     return 1;
 }
 
