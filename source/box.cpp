@@ -31,8 +31,8 @@ bange::box::box(const char *config){
     window = NULL;
     this->escapekey = sf::Keyboard::Escape;
     mouseDelta = 0;
-    JoystickConnected = false;
-    JoystickDisconnected = false;
+    JoystickConnected = -1;
+    JoystickDisconnected = -1;
     vm = luaL_newstate();
     bange::PrepareVM(vm);
     if (luaL_dofile(vm, config)){
@@ -135,9 +135,9 @@ void bange::box::Run(){
             else if (event.Type == sf::Event::MouseWheelMoved){
                 mouseDelta = event.MouseWheel.Delta;}
             else if (event.Type == sf::Event::JoystickConnected){
-                JoystickConnected = true;}
+                JoystickConnected = (int)event.JoystickConnect.JoystickId;}
             else if (event.Type == sf::Event::JoystickDisconnected){
-                JoystickDisconnected = true;}
+                JoystickDisconnected = (int)event.JoystickConnect.JoystickId;}
                 
         }
         
@@ -173,8 +173,8 @@ void bange::box::Run(){
         
         //Reset
         this->mouseDelta = 0;
-        this->JoystickConnected = false;
-        this->JoystickDisconnected = false;
+        this->JoystickConnected = -1;
+        this->JoystickDisconnected = -1;
         
     }
 }
@@ -242,20 +242,20 @@ int bange::GetMouseDelta(lua_State *vm){
 }
 
 int bange::JoystickConnected(lua_State *vm){
-    //-> bool
+    //-> number
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box");
     bange::box *box = static_cast<bange::box *>( lua_touserdata(vm, 1) );
     lua_pop(vm, 1);
-    lua_pushboolean(vm, (int)box->JoystickConnected);
+    lua_pushnumber(vm, (lua_Number)box->JoystickConnected);
     return 1;
 }
 
 int bange::JoystickDisconnected(lua_State *vm){
-    //-> bool
+    //-> number
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::box");
     bange::box *box = static_cast<bange::box *>( lua_touserdata(vm, 1) );
     lua_pop(vm, 1);
-    lua_pushboolean(vm, (int)box->JoystickDisconnected);
+    lua_pushnumber(vm, (lua_Number)box->JoystickDisconnected);
     return 1;
 }
 

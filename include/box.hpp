@@ -35,8 +35,8 @@ namespace bange{
             sf::Keyboard::Key escapekey;
         public:
             mutable int mouseDelta;
-            mutable bool JoystickConnected;
-            mutable bool JoystickDisconnected;
+            mutable int JoystickConnected;
+            mutable int JoystickDisconnected;
         public:
             box(const char *);
             ~box();
