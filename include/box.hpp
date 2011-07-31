@@ -37,6 +37,7 @@ namespace bange{
             mutable int mouseDelta;
             mutable int JoystickConnected;
             mutable int JoystickDisconnected;
+            mutable bool mouseEntered;
         public:
             box(const char *);
             ~box();
@@ -51,6 +52,7 @@ namespace bange{
     int GetMousePosition(lua_State *);
     int IsMouseButtonPressed(lua_State *);
     int GetMouseDelta(lua_State *);
+    int MouseInWindow(lua_State *);
     int JoystickConnected(lua_State *);
     int JoystickDisconnected(lua_State *);
     int IsJoystickConnected(lua_State *);
