@@ -142,6 +142,44 @@ namespace bange{
         return rect;
     }
 
+    inline sf::IntRect TableTosfIntRect(int indextable, lua_State *vm){
+        sf::IntRect rect;
+        
+        lua_getfield(vm, indextable, "Left");
+        if (lua_isnil(vm, -1)){
+            lua_pop(vm, 1);
+            lua_rawgeti(vm, indextable, 1);
+        }
+        rect.Left = lua_tonumber(vm, -1);
+        lua_pop(vm, 1);
+        
+        lua_getfield(vm, indextable, "Top");
+        if (lua_isnil(vm, -1)){
+            lua_pop(vm, 1);
+            lua_rawgeti(vm, indextable, 2);
+        }
+        rect.Top = lua_tonumber(vm, -1);
+        lua_pop(vm, 1);
+        
+        lua_getfield(vm, indextable, "Width");
+        if (lua_isnil(vm, -1)){
+            lua_pop(vm, 1);
+            lua_rawgeti(vm, indextable, 3);
+        }
+        rect.Width = lua_tonumber(vm, -1);
+        lua_pop(vm, 1);
+        
+        lua_getfield(vm, indextable, "Height");
+        if (lua_isnil(vm, -1)){
+            lua_pop(vm, 1);
+            lua_rawgeti(vm, indextable, 4);
+        }
+        rect.Height = lua_tonumber(vm, -1);
+        lua_pop(vm, 1);
+        
+        return rect;
+    }
+
     inline void sfFloatRectToTable(sf::FloatRect rect, lua_State *vm){
         lua_createtable(vm, 0, 4);
         lua_pushnumber(vm, rect.Left);
