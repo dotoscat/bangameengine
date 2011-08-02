@@ -30,6 +30,14 @@ void bange::object::RegisterVM(lua_State *vm){
     lua_createtable(vm, 0, 1);
     luaL_register(vm, NULL, methods);
     lua_setfield(vm, LUA_REGISTRYINDEX, "bange::object::");
+    
+    luaL_Reg spritemethods[] = {
+    {"Animate", bange::sprite::sprite_Animate},
+    {NULL, NULL}};
+    lua_createtable(vm, 0, 1);
+    luaL_register(vm, NULL, spritemethods);
+    lua_setfield(vm, LUA_REGISTRYINDEX, "bange::sprite::");
+    
 }
 
 bange::object::object(){

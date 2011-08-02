@@ -27,10 +27,14 @@
 bange::sprite::sprite(){
     thedrawable = this;
     image = LUA_REFNIL;
+    animation = NULL;
 }
 
 bool bange::sprite::NewIndex(lua_State *vm, const char *key){
     if (this->bange::object::NewIndex(vm, key)){
+        return true;}
+    
+    if (animation != NULL && animation->NewIndex(vm, key)){
         return true;}
     
     if (strcmp("image", key) == 0){
@@ -59,15 +63,39 @@ bool bange::sprite::Index(lua_State *vm, const char *key){
     if (this->bange::object::Index(vm, key)){
         return true;}
     
+    if (animation != NULL && animation->Index(vm, key)){
+        return true;}
+    
     if ( strcmp("image", key) == 0 ){
         lua_rawgeti(vm, LUA_REGISTRYINDEX, this->image);
         return true;
     }
-    
-    return false;
+    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::sprite::");
+    lua_getfield(vm, -1, key);
+    return true;
 }
 
 void bange::sprite::Clean(lua_State *vm){
     this->bange::object::Clean(vm);
     luaL_unref(vm, LUA_REGISTRYINDEX, this->image);
+    if (animation != NULL){
+        animation->Clean(vm);}
+}
+
+void bange::sprite::Animate(){
+    if (animation != NULL){
+        return;}
+    animation = new bange::animation(static_cast<sf::Sprite *>(this));
+}
+
+void bange::sprite::Process(sf::Uint32 time, lua_State *vm){
+    if (animation != NULL){
+        animation->Process(time, vm);}
+}
+
+int bange::sprite::sprite_Animate(lua_State *vm){
+    bange::proxy *proxy = static_cast<bange::proxy *>( lua_touserdata(vm, 1) );
+    bange::sprite *sprite = static_cast<bange::sprite *>( proxy->object );
+    sprite->Animate();
+    return 0;
 }

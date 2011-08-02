@@ -19,6 +19,7 @@
    //3. This notice may not be removed or altered from any source
    //distribution.
 
+#include <iostream>
 #include <cstring>
 #include <animation.hpp>
 #include <aux.hpp>
@@ -92,18 +93,15 @@ void bange::animation::Process(sf::Uint32 time, lua_State *vm){
         lua_rawgeti(vm, -1, iframe);
         bange::animation::frame aframe = bange::animation::BuildFrame(lua_gettop(vm), vm);
         lua_pop(vm, 1);//frame
-        
-        size_t lastframe = iframe;
-        
+                
         if (storetime >= aframe.timestep){
             iframe += 1;
-        }
-        if (iframe > lenframes){
-            iframe = 1;
+            if (iframe > lenframes){
+                iframe = 1;}
+            this->SetSubRect(aframe);
+            storetime = 0;
         }
         
-        if (lastframe != iframe){
-            this->SetSubRect(aframe);}
     }
     
     lua_pop(vm, 2);//Frames and animation table
@@ -113,6 +111,7 @@ void bange::animation::SetSubRect(bange::animation::frame aframe){
     sprite->SetSubRect(aframe.rect);
     sprite->FlipX(aframe.flipx);
     sprite->FlipY(aframe.flipy);
+    sprite->SetOrigin(aframe.origin);
 }
 
 bange::animation::frame bange::animation::BuildFrame(int indexframe, lua_State *vm){
@@ -130,7 +129,22 @@ bange::animation::frame bange::animation::BuildFrame(int indexframe, lua_State *
     lua_pop(vm, 1);//flipy
     
     lua_getfield(vm, indexframe, "rect");
-    aframe.rect = bange::TableTosfIntRect(lua_gettop(vm), vm);
+    if (lua_istable(vm, -1)){
+        aframe.rect = bange::TableTosfIntRect(-1, vm);}
+    else{
+        std::cout << "bange::animation: frame table " << lua_topointer(vm, indexframe) << " doesn't have a rect." << std::endl;
+    }
     lua_pop(vm, 1);//rect
+    
+    lua_getfield(vm, indexframe, "origin");
+    aframe.origin.x = 0.f;
+    aframe.origin.y = 0.f;
+    if (lua_istable(vm, -1)){
+        aframe.origin = bange::TableTosfVector2f(-1, vm);}
+    else{
+        std::cout << "bange::animation: frame table " << lua_topointer(vm, indexframe) << " doesn't have a origin." << std::endl;
+    }
+    lua_pop(vm, 1);//origin
+    
     return aframe;
 }

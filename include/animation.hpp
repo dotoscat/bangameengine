@@ -32,6 +32,7 @@ namespace bange{
         
         struct frame{
             sf::IntRect rect;
+            sf::Vector2f origin;
             bool flipx;
             bool flipy;
             sf::Uint32 timestep;

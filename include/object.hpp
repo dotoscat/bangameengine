@@ -25,6 +25,7 @@
 #include <lua5.1/lua.hpp>
 #include <base.hpp>
 #include <drawable.hpp>
+#include <animation.hpp>
 
 namespace bange{
     
@@ -60,11 +61,17 @@ namespace bange{
     class sprite: public bange::object, public sf::Sprite{
         private:
             int image;
+            bange::animation *animation;
         public:
             sprite();
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
+            void Animate();
+            void Process(sf::Uint32, lua_State *);
+            
+            static int sprite_Animate(lua_State *);
+            
     };
     
 }
