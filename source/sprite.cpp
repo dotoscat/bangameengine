@@ -23,6 +23,7 @@
 #include <cstring>
 #include <object.hpp>
 #include <image.hpp>
+#include <aux.hpp>
 
 bange::sprite::sprite(){
     thedrawable = this;
@@ -55,6 +56,15 @@ bool bange::sprite::NewIndex(lua_State *vm, const char *key){
         this->image = luaL_ref(vm, LUA_REGISTRYINDEX);
         
     }
+    else if ( strcmp("subrect", key) == 0 ){
+        
+        if (!lua_istable(vm, 3)){
+            std::cout << this << ".subrect -> value isn't a valid table" << std::endl;
+            return true;
+        }
+        
+        this->SetSubRect(bange::TableTosfIntRect(3, vm));
+    }
     
     return true;
 }
@@ -68,6 +78,10 @@ bool bange::sprite::Index(lua_State *vm, const char *key){
     
     if ( strcmp("image", key) == 0 ){
         lua_rawgeti(vm, LUA_REGISTRYINDEX, this->image);
+        return true;
+    }
+    else if ( strcmp("subrect", key) == 0 ){
+        bange::sfIntRectToTable(this->GetSubRect(), vm);
         return true;
     }
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::sprite::");

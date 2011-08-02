@@ -192,6 +192,18 @@ namespace bange{
         lua_setfield(vm, -2, "Height");
     }
 
+    inline void sfIntRectToTable(sf::IntRect rect, lua_State *vm){
+        lua_createtable(vm, 0, 4);
+        lua_pushnumber(vm, rect.Left);
+        lua_setfield(vm, -2, "Left");
+        lua_pushnumber(vm, rect.Top);
+        lua_setfield(vm, -2, "Top");
+        lua_pushnumber(vm, rect.Width);
+        lua_setfield(vm, -2, "Width");
+        lua_pushnumber(vm, rect.Height);
+        lua_setfield(vm, -2, "Height");
+    }
+
 }
 
 #endif
