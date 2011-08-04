@@ -20,7 +20,7 @@
    //distribution.
 
 #include <iostream>
-#include <physfs.h>
+#include <sfmlphysfs.hpp>
 #include <image.hpp>
 
 void bange::image::RegisterVM(lua_State *vm){
@@ -64,31 +64,9 @@ int bange::LoadImageFromPackage(lua_State *vm){
         return 1;
     }
     const char *filename = lua_tostring(vm, 1);
-    if (PHYSFS_exists(filename) == 0){
-        std::cout << "bange.LoadImageFromPackage() -> " << filename << " doesn't exists." << std::endl;
-        lua_pushnil(vm);
-        return 1;
-    }
-    
-    PHYSFS_sint64 length = 0, readed = 0;
-    PHYSFS_File *file = PHYSFS_openRead(filename);
-    length = PHYSFS_fileLength(file);
-    char *byteimage = new char[length];
-    while(PHYSFS_eof(file) == 0){
-        readed += PHYSFS_read(file, byteimage, 1, length);
-    }
-    if (readed < length){
-        std::cout << "(physfs)bange.LoadImageFromPackage() -> " << PHYSFS_getLastError() << std::endl;
-        delete byteimage;
-        PHYSFS_close(file);
-        lua_pushnil(vm);
-        return 1;
-    }
-    PHYSFS_close(file);
-    
+    sf::physfs streamimage(filename);
 	bange::image *image = new bange::image;
-	image->LoadFromMemory(byteimage, static_cast<std::size_t>(length));
-    delete byteimage;
+	image->LoadFromStream(streamimage);
 	bange::BuildProxy(vm, image);
     return 1;
 }
