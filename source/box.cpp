@@ -44,6 +44,11 @@ bange::box::box(const char *config){
     }
     //Get Window dimensions
     sf::VideoMode videomode(640, 480);
+    lua_Number wh = 0;
+    if (vm::GetNumber(vm, "Width", wh)){
+        videomode.Width = wh;}
+    if (vm::GetNumber(vm, "Height", wh)){
+        videomode.Height = wh;}
     //Get Title
     char title[128] = "BAN Game Engine";
     vm::GetString(vm, "Title", title, 128);
