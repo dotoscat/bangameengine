@@ -26,12 +26,13 @@
 void bange::image::RegisterVM(lua_State *vm){
     luaL_Reg functions[] = {
     {"LoadImage", bange::LoadImage},
+    {"LoadImageFromPackage", bange::LoadImageFromPackage},
     {NULL, NULL}};
     luaL_register(vm, "bange", functions);
     lua_pop(vm, 1);
 }
 
-static int bange::LoadImage(lua_State *vm){
+int bange::LoadImage(lua_State *vm){
     //string -> bange::image
     if (!lua_isstring(vm, 1) || (lua_isstring(vm, 1) && lua_isnumber(vm, 1)) ){
         std::cout << "bange.LoadImage: First argument must be a string." << std::endl;
@@ -44,8 +45,27 @@ static int bange::LoadImage(lua_State *vm){
         return 1;
     }
     const char *filename = lua_tostring(vm, 1);
+    bange::image *image = new bange::image;
+    image->LoadFromFile(std::string(filename));
+	bange::BuildProxy(vm, image);
+    return 1;
+}
+
+int bange::LoadImageFromPackage(lua_State *vm){
+    //string -> bange::image
+    if (!lua_isstring(vm, 1) || (lua_isstring(vm, 1) && lua_isnumber(vm, 1)) ){
+        std::cout << "bange.LoadImageFromPackage() -> First argument must be a string." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    if(lua_objlen(vm, 1) == 0){
+        std::cout << "bange.LoadImageFromPackage() -> The string is void." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    const char *filename = lua_tostring(vm, 1);
     if (PHYSFS_exists(filename) == 0){
-        std::cout << "bange.LoadImage: " << filename << " doesn't exists." << std::endl;
+        std::cout << "bange.LoadImageFromPackage() -> " << filename << " doesn't exists." << std::endl;
         lua_pushnil(vm);
         return 1;
     }
@@ -58,7 +78,7 @@ static int bange::LoadImage(lua_State *vm){
         readed += PHYSFS_read(file, byteimage, 1, length);
     }
     if (readed < length){
-        std::cout << "bange.LoadImage(physfs): " << PHYSFS_getLastError() << std::endl;
+        std::cout << "(physfs)bange.LoadImageFromPackage() -> " << PHYSFS_getLastError() << std::endl;
         delete byteimage;
         PHYSFS_close(file);
         lua_pushnil(vm);

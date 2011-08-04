@@ -36,7 +36,8 @@ namespace bange{
 
     };
     
-    static int LoadImage(lua_State *);
+    int LoadImage(lua_State *);
+    int LoadImageFromPackage(lua_State *);
     
 }
 
