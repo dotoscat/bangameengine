@@ -44,7 +44,27 @@ bool bange::tile::Index(lua_State *vm, const char *key){
     return false;
 }
 
-void bang::tile::Clean(lua_State *vm){
+void bange::tile::Clean(lua_State *vm){
     if (sprite != NULL){
         sprite->Clean(vm);}
+}
+
+void bange::tile::MoveX(float x){
+    position.x = x;
+    if (sprite != NULL){
+        sprite->SetX(x);}
+}
+
+void bange::tile::MoveY(float x){
+    position.y = y;
+    if (sprite != NULL){
+        sprite->SetX(y);}
+}
+
+bool bange::tile::BuildSprite(){
+    if (sprite != NULL){
+        return false;}
+    sprite = new bange::sprite();
+    sprite->SetPosition(position);
+    return true;
 }

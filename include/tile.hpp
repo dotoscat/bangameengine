@@ -34,10 +34,17 @@ namespace bange{
         bange::sprite *sprite;
         public:
             tile(float, float);
+            ~tile();
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
-            ~tile();
+            
+            void MoveX(float);
+            void MoveY(float);
+            bool BuildSprite();
+        
+        
+        
     };
     
 }
