@@ -64,9 +64,10 @@ int bange::LoadImageFromPackage(lua_State *vm){
         return 1;
     }
     const char *filename = lua_tostring(vm, 1);
-    sf::physfs streamimage(filename);
+    sf::physfs *streamimage = new sf::physfs(filename);
 	bange::image *image = new bange::image;
-	image->LoadFromStream(streamimage);
+	image->LoadFromStream(*streamimage);
 	bange::BuildProxy(vm, image);
+    delete streamimage;
     return 1;
 }
