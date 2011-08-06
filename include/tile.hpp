@@ -43,9 +43,12 @@ namespace bange{
             void MoveY(float);
             bool BuildSprite();
         
-        
-        
+        public:
+            static RegisterVM(lua_State *);
+
     };
+    
+    int tile_BuildSprite(lua_State *);
     
 }
 

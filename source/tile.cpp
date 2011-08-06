@@ -18,7 +18,8 @@
 
    //3. This notice may not be removed or altered from any source
    //distribution.
-   
+
+#include <iostream>
 #include <tile.hpp>
 
 bange::tile::tile(float x, float y){
@@ -42,6 +43,9 @@ bool bange::tile::Index(lua_State *vm, const char *key){
     if (sprite != NULL && sprite->Index(vm, key)){
         return true;}
     return false;
+    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::tile::");
+    lua_getfield(vm, -1, key);
+    return true;
 }
 
 void bange::tile::Clean(lua_State *vm){
@@ -67,4 +71,30 @@ bool bange::tile::BuildSprite(){
     sprite = new bange::sprite();
     sprite->SetPosition(position);
     return true;
+}
+
+void bange::tile::RegisterVM(lua_State *vm){
+    luaL_Reg methods[] = {
+    {"BuildSprite", bange::tile_BuildSprite},
+    {NULL, NULL}};
+    lua_createtable(vm, 0, 1);
+    luaL_register(vm, NULL, methods);
+    lua_setfield(vm, LUA_REGISTRYINDEX, "bange::tile::");
+    
+}
+
+int bange::tile_BuildSprite(lua_State *vm){
+    //tile -> bool/nil
+    bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 1));
+    bange::tile *tile = static_cast<bange::tile *>(proxy->object);
+    if (tile == NULL){
+        std::cout << ":BuildSprite() -> no valid object." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    if (tile->BuildSprite()){
+        lua_pushboolean(vm, 1);
+    }else{
+        lua_pushboolean(vm, 0);}
+    return 1;
 }
