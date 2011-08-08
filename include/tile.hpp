@@ -31,7 +31,8 @@ namespace bange{
     
     class tile: public bange::base{
         sf::Vector2f position;
-        bange::sprite *sprite;
+        public:
+            mutable bange::sprite *sprite;
         public:
             tile(float, float);
             ~tile();
@@ -39,12 +40,10 @@ namespace bange{
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
             
-            void MoveX(float);
-            void MoveY(float);
             bool BuildSprite();
         
         public:
-            static RegisterVM(lua_State *);
+            static void RegisterVM(lua_State *);
 
     };
     
