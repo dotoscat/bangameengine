@@ -18,11 +18,22 @@
 
    //3. This notice may not be removed or altered from any source
    //distribution.
-   
+
+#include <iostream>
 #include <layertilemap.hpp>
 #include <tile.hpp>
+#include <view.hpp>
 
-bange::tilemap::tilemap(int width, int height, float widthtile, float heighttile){
+void bange::layertilemap::RegisterVM(lua_State *vm){
+    luaL_Reg methods[] = {
+    {"BuildTile", bange::layertilemap_BuildTile},
+    {NULL, NULL}};
+    lua_createtable(vm, 0, 1);
+    luaL_register(vm, NULL, methods);
+    lua_setfield(vm, LUA_REGISTRYINDEX, "bange::layertilemap::");
+}
+
+bange::layertilemap::layertilemap(int width, int height, int widthtile, int heighttile){
     this->width = width;
     this->height = height;
     this->widthtile = widthtile;
@@ -40,13 +51,20 @@ bange::tilemap::tilemap(int width, int height, float widthtile, float heighttile
     }
 }
 
-bool bange::tilemap::NewIndex(lua_State *vm, const char *key){
+bool bange::layertilemap::NewIndex(lua_State *vm, const char *key){
+    if (this->bange::layer::NewIndex(vm, key)){
+        return true;}
 }
             
-bool bange::tilemap::Index(lua_State *vm, const char *key){
+bool bange::layertilemap::Index(lua_State *vm, const char *key){
+    if (this->bange::layer::Index(vm, key)){
+        return true;}
+    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::layertilemap::");
+    lua_getfield(vm, -1, key);
+    return true;
 }
 
-void bange::tilemap::Clean(lua_State *vm){
+void bange::layertilemap::Clean(lua_State *vm){
     std::vector< std::vector<int> >::iterator arow;
     std::vector<int>::iterator acol;
     for (arow = tiles.begin(); arow != tiles.end(); arow++){
@@ -57,22 +75,44 @@ void bange::tilemap::Clean(lua_State *vm){
     lua_gc(vm, LUA_GCCOLLECT, 0);
 }
 
-void bange::tilemap::Process(sf::Uint32 time, sf::RenderTarget &rendertarget, std::map<const void *, int> &views, lua_State *vm){
-    renderimage.Create(rendertarget.GetWidth(), rendertarget.GetHeight());
+void bange::layertilemap::Process(sf::Uint32 time, sf::RenderTarget &rendertarget, std::map<const void *, int> &views, lua_State *vm){
+    if (renderimage.GetWidth() != rendertarget.GetWidth() || renderimage.GetHeight() != rendertarget.GetHeight()){
+        //recreate renderimage (rendertexture) if the rendertarget changes
+        renderimage.Create(rendertarget.GetWidth(), rendertarget.GetHeight());
+    }
     std::map<const void *, int>::iterator aview;
     bange::proxy *proxy = NULL;
-    bange::tile *tile = NULL;s
+    bange::tile *tile = NULL;
+    for (int i = 0; i < processtiles.size(); i += 1){
+        lua_rawgeti(vm, LUA_REGISTRYINDEX, processtiles[i]);
+        proxy = static_cast<bange::proxy *>( lua_touserdata(vm, -1) );
+        lua_pop(vm, 1);
+        proxy->behavior->Process(lua_gettop(vm), time, vm);
+        tile = static_cast<bange::tile *>(proxy->object);
+        //tile->Process(time, vm);
+    }
     rendertarget.SetView( rendertarget.GetDefaultView() );
     for (aview = views.begin(); aview != views.end(); aview++){
-        bange::view *view = *static_cast<const bange::view *>(aview->first)
+        const bange::view *view = static_cast<const bange::view *>(aview->first);
         sf::Vector2f center = view->GetCenter();
-        sf::Vector2d size = view->GetSize();
-        int starttilex = (int)center.x / widthtile;
-        int statttiley = (int)center.y / heighttile;
+        sf::Vector2f size = view->GetSize();
+        int starttilex = ((int)center.x-(int)size.x/2) / widthtile;
+        if (starttilex < 0){
+            starttilex = 0;}
+        int starttiley = ((int)center.y-(int)size.y/2) / heighttile;
+        if (starttiley < 0){
+            starttiley = 0;}
+        int endtilex = ((int)center.x+(int)size.x/2) / widthtile;
+        if (endtilex >= width){
+            endtilex = width-1;}
+        int endtiley = ((int)center.y+(int)size.y/2) / heighttile;
+        if (endtiley >= height){
+            endtiley = height-1;}
         //draw things on the renderimage
-        renderimage.Clear();
-        for (int y = starttiley; y < tiles.size(); y += 1){
-            for (int x = starttilex; x < tiles[y][x].size(); x += 1){
+        renderimage.SetView(*view);
+        renderimage.Clear(sf::Color(255, 0, 255));
+        for (int y = starttiley; y <= endtiley; y += 1){
+            for (int x = starttilex; x <= endtilex; x += 1){
                 if (tiles[y][x] == LUA_REFNIL){
                     continue;}
                 lua_rawgeti(vm, LUA_REGISTRYINDEX, tiles[y][x]);
@@ -87,9 +127,42 @@ void bange::tilemap::Process(sf::Uint32 time, sf::RenderTarget &rendertarget, st
         renderimage.Display();
         //Set view to render target. Then draw the sprite with the tilemap rendered.
         sprite.SetImage(renderimage.GetImage());
-        rendertarget.draw(sprite);
+        rendertarget.Draw(sprite);
     }
 }
 
-int bange::tilemap_BuildTile(lua_State *vm){
+void bange::layertilemap::SetTile(int x, int y, int ref, lua_State *vm){
+    tiles[y][x] = ref;
+    lua_rawgeti(vm, LUA_REGISTRYINDEX, ref);
+    processtiles.push_back(luaL_ref(vm, LUA_REGISTRYINDEX));
+}
+
+int bange::layertilemap_BuildTile(lua_State *vm){
+    //x, y -> tile
+    bange::proxy *proxy = static_cast<bange::proxy *>( lua_touserdata(vm, 1) );
+    bange::layertilemap *layertilemap = static_cast<bange::layertilemap *>(proxy->object);
+    int x = 0, y = 0;
+    //0 is a valid index in arrays so...
+    if (!lua_isnumber(vm, 2)){
+        std::cout << proxy << ":BuildTile() -> First value isn't a valid number." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    x = lua_tonumber(vm, 2);
+    if (!lua_isnumber(vm, 3)){
+        std::cout << proxy << ":BuildTile() -> Second value isn't a valid number." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    y = lua_tonumber(vm, 3);
+    if (layertilemap->tiles[y][x] != LUA_REFNIL){
+        std::cout << proxy << ":BuildTile() -> Tile " << x << ":" << y << ", already builded." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    bange::tile *tile = new bange::tile(x*layertilemap->widthtile, y*layertilemap->heighttile);
+    bange::BuildProxy(vm, tile);
+    lua_pushvalue(vm, -1);
+    layertilemap->SetTile(x, y, luaL_ref(vm, LUA_REGISTRYINDEX), vm);
+    return 1;
 }

@@ -28,6 +28,7 @@
 #include <object.hpp>
 #include <view.hpp>
 #include <tile.hpp>
+#include <layertilemap.hpp>
 
 void bange::PrepareVM(lua_State *vm){
 	using namespace bange::vm;
@@ -179,4 +180,5 @@ void bange::PrepareVM(lua_State *vm){
     bange::object::RegisterVM(vm);
     bange::image::RegisterVM(vm);
     bange::tile::RegisterVM(vm);
+    bange::layertilemap::RegisterVM(vm);
 }

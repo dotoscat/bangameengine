@@ -42,7 +42,6 @@ bool bange::tile::NewIndex(lua_State *vm, const char *key){
 bool bange::tile::Index(lua_State *vm, const char *key){
     if (sprite != NULL && sprite->Index(vm, key)){
         return true;}
-    return false;
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::tile::");
     lua_getfield(vm, -1, key);
     return true;

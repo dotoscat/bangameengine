@@ -60,6 +60,7 @@ void bange::scene::Process(sf::Uint32 time, sf::RenderTarget &rendertarget, lua_
             continue;}
         lua_rawgeti(vm, LUA_REGISTRYINDEX, (*alayer));
         proxy = static_cast<bange::proxy *>( lua_touserdata(vm, -1) );
+        proxy->behavior->Process(lua_gettop(vm), time, vm);
         layer = static_cast<bange::layer *>(proxy->object);
         layer->Process(time, rendertarget, views, vm);
         lua_pop(vm, 1);
@@ -75,6 +76,7 @@ void bange::scene::SetLayer(int ilayer, int reference, lua_State *vm){
 void bange::scene::RegisterVM(lua_State *vm){    
     luaL_Reg methods[] = {
     {"SetLayerObject", bange::scene_SetLayerObject},
+    {"SetLayerTilemap", bange::scene_SetLayerTilemap},
     {"AddView", bange::scene_AddView},
     {NULL, NULL}};
     lua_createtable(vm, 0, 2);
@@ -100,8 +102,8 @@ int bange::NewScene(lua_State *vm){
     return 1;
 }
 
-static int bange::scene_SetLayerObject(lua_State *vm){
-    //scene, ilayer, maxobjects
+int bange::scene_SetLayerObject(lua_State *vm){
+    //scene, ilayer, maxobjects -> layer
     bange::proxy *proxy = static_cast<bange::proxy *>( lua_touserdata(vm, 1) );
     bange::scene *scene = static_cast<bange::scene *>(proxy->object);
     if (!lua_isnumber(vm, 2)){
@@ -133,7 +135,50 @@ static int bange::scene_SetLayerObject(lua_State *vm){
     return 1;
 }
 
-static int bange::scene_AddView(lua_State *vm){
+int bange::scene_SetLayerTilemap(lua_State *vm){
+    //layer, width, height, widthtile, heighttile -> layer
+    bange::proxy *proxy = static_cast<bange::proxy *>( lua_touserdata(vm, 1) );
+    bange::scene *scene = static_cast<bange::scene *>(proxy->object);
+    int i = 0;
+    lua_Number width = 0, height = 0, widthtile = 0, heighttile = 0;
+    i = lua_tonumber(vm, 2);
+    width = lua_tonumber(vm, 3);
+    height = lua_tonumber(vm, 4);
+    widthtile = lua_tonumber(vm, 5);
+    heighttile = lua_tonumber(vm, 6);
+    if (i <= 0){
+        std::cout << proxy << ":SetLayerTilemap() -> Layer must be greater than 0." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    if (width == 0){
+        std::cout << proxy << ":SetLayerTilemap() -> First value isn't a valid number." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    if (height == 0){
+        std::cout << proxy << ":SetLayerTilemap() -> Second value isn't a valid number." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    if (widthtile == 0){
+        std::cout << proxy << ":SetLayerTilemap() -> Third value isn't a valid number." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    if (heighttile == 0){
+        std::cout << proxy << ":SetLayerTilemap() -> Fourth value isn't a valid number." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    bange::layer *layer = new bange::layertilemap(width, height, widthtile, heighttile);
+    bange::BuildProxy(vm, layer);
+    lua_pushvalue(vm, -1);
+    scene->SetLayer(i-1, luaL_ref(vm, LUA_REGISTRYINDEX), vm);
+    return 1;
+}
+
+int bange::scene_AddView(lua_State *vm){
     //scene, view
     bange::proxy *proxy = static_cast<bange::proxy *>( lua_touserdata(vm, 1) );
     bange::scene *scene = static_cast<bange::scene *>(proxy->object);

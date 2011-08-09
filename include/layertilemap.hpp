@@ -29,24 +29,31 @@
 
 namespace bange{
     
-    class tilemap: public bange::layer{
-        std::vector< std::vector<int> >tiles;
-        std::vector<int> processtiles;
+    class layertilemap: public bange::layer{
         sf::Sprite sprite;
         sf::RenderImage renderimage;
         int width, height;
-        int widthtile, heighttile;
         int widthtilemap, heighttilemap;
+        std::vector<int> processtiles;
         public:
-            tilemap(int, int, float, float);
+            mutable std::vector< std::vector<int> >tiles;
+            mutable int widthtile, heighttile;
+        public:
+            layertilemap(int width, int height, int widthtile, int heighttile);
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
             void Process(sf::Uint32, sf::RenderTarget &, std::map<const void *, int> &, lua_State *);
-        private:
+            
+            void SetTile(int x, int y, int, lua_State *);
+            
+        public:
+            static void RegisterVM(lua_State *);
+        
     };
     
-    int tilemap_BuildTile(lua_State *);
+    int layertilemap_BuildTile(lua_State *);
+    int layertilemap_GetTile(lua_State *);
     
 }
 

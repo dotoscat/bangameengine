@@ -26,6 +26,7 @@
 #include <map>
 #include <base.hpp>
 #include <layerobject.hpp>
+#include <layertilemap.hpp>
 #include <view.hpp>
 
 namespace bange{
@@ -50,8 +51,9 @@ namespace bange{
     
     int NewScene(lua_State *);
     
-    static int scene_SetLayerObject(lua_State *);
-    static int scene_AddView(lua_State *);
+    int scene_SetLayerObject(lua_State *);
+    int scene_SetLayerTilemap(lua_State *);
+    int scene_AddView(lua_State *);
     
 }
 

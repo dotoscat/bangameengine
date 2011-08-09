@@ -124,6 +124,7 @@ void bange::box::Run(){
     bange::scene *scene = NULL;
     bange::view *view = NULL;
     int indexscene = -1;
+    bool close = false;
     while(window->IsOpened()){
         
         lua_getglobal(vm, "bange");
@@ -137,7 +138,9 @@ void bange::box::Run(){
         
         while(window->PollEvent(event)){
             if (event.Type == sf::Event::Closed){
-                window->Close();}
+                window->Close();
+                close = true;
+            }
             else if (event.Type == sf::Event::KeyPressed && event.Key.Code == escapekey){
                 window->Close();}
             else if (event.Type == sf::Event::MouseWheelMoved){
@@ -156,6 +159,10 @@ void bange::box::Run(){
                 windowFocus = false;}
                 
         }
+        
+        if (close){
+            lua_pop(vm, 1);
+            continue;}
         
         window->Clear();
         //Process the scenes
