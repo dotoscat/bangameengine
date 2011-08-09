@@ -22,7 +22,7 @@
 #include <iostream>
 #include <cstring>
 #include <drawable.hpp>
-#include <aux.hpp>
+#include <auxiliar.hpp>
 
 bool bange::drawable::NewIndex(lua_State *vm, const char *key){
     if ( strcmp("color", key) == 0 ){

@@ -22,7 +22,7 @@
 #include <iostream>
 #include <cstring>
 #include <scene.hpp>
-#include <aux.hpp>
+#include <auxiliar.hpp>
 
 bange::scene::scene(int nlayers){
     layers.reserve(nlayers);

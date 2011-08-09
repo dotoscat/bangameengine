@@ -21,7 +21,7 @@
 
 #include <iostream>
 #include <object.hpp>
-#include <aux.hpp>
+#include <auxiliar.hpp>
 
 bange::shape::shape(){
     thedrawable = this;

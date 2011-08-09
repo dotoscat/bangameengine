@@ -19,8 +19,8 @@
    //3. This notice may not be removed or altered from any source
    //distribution.
 
-#ifndef _bange_aux_
-#define _bange_aux_
+#ifndef _bange_auxiliar_
+#define _bange_auxiliar_
 
 #include <SFML/Graphics.hpp>
 #include <lua5.1/lua.hpp>

@@ -23,7 +23,7 @@
 #include <cstring>
 #include <view.hpp>
 #include <scene.hpp>
-#include <aux.hpp>
+#include <auxiliar.hpp>
 
 bange::view::view(const sf::Vector2f &center, const sf::Vector2f &size): sf::View(center, size){}
 

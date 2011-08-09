@@ -22,7 +22,7 @@
 #include <iostream>
 #include <cstring>
 #include <object.hpp>
-#include <aux.hpp>
+#include <auxiliar.hpp>
 
 void bange::object::RegisterVM(lua_State *vm){
     luaL_Reg methods[] = {

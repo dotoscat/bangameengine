@@ -24,7 +24,7 @@
 #include <SFML/System.hpp>
 #include <layerobject.hpp>
 #include <object.hpp>
-#include <aux.hpp>
+#include <auxiliar.hpp>
 #include <view.hpp>
 
 void bange::layerobject::RegisterVM(lua_State *vm){

@@ -23,7 +23,7 @@
 #include <cstring>
 #include <object.hpp>
 #include <image.hpp>
-#include <aux.hpp>
+#include <auxiliar.hpp>
 
 bange::sprite::sprite(){
     thedrawable = this;

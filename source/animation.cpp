@@ -22,7 +22,7 @@
 #include <iostream>
 #include <cstring>
 #include <animation.hpp>
-#include <aux.hpp>
+#include <auxiliar.hpp>
 
 bange::animation::animation(sf::Sprite *sprite){
     this->sprite = sprite;
