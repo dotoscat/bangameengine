@@ -24,7 +24,7 @@
 #include <base.hpp>
 #include <scene.hpp>
 #include <layerobject.hpp>
-#include <image.hpp>
+#include <texture.hpp>
 #include <object.hpp>
 #include <view.hpp>
 #include <tile.hpp>
@@ -178,7 +178,7 @@ void bange::PrepareVM(lua_State *vm){
     bange::layerobject::RegisterVM(vm);
     bange::view::RegisterVM(vm);
     bange::object::RegisterVM(vm);
-    bange::image::RegisterVM(vm);
+    bange::texture::RegisterVM(vm);
     bange::tile::RegisterVM(vm);
     bange::layertilemap::RegisterVM(vm);
 }

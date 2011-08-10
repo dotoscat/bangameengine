@@ -21,37 +21,37 @@
 
 #include <iostream>
 #include <sfmlphysfs.hpp>
-#include <image.hpp>
+#include <texture.hpp>
 
-void bange::image::RegisterVM(lua_State *vm){
+void bange::texture::RegisterVM(lua_State *vm){
     luaL_Reg functions[] = {
-    {"LoadImage", bange::LoadImage},
-    {"LoadImageFromPackage", bange::LoadImageFromPackage},
+    {"LoadTexture", bange::LoadTexture},
+    {"LoadTextureFromPackage", bange::LoadTextureFromPackage},
     {NULL, NULL}};
     luaL_register(vm, "bange", functions);
     lua_pop(vm, 1);
 }
 
-int bange::LoadImage(lua_State *vm){
+int bange::LoadTexture(lua_State *vm){
     //string -> bange::image
     if (!lua_isstring(vm, 1) || (lua_isstring(vm, 1) && lua_isnumber(vm, 1)) ){
-        std::cout << "bange.LoadImage: First argument must be a string." << std::endl;
+        std::cout << "bange.LoadTexture(): First argument must be a string." << std::endl;
         lua_pushnil(vm);
         return 1;
     }
     if(lua_objlen(vm, 1) == 0){
-        std::cout << "bange.LoadImage: The string is void." << std::endl;
+        std::cout << "bange.LoadTexture(): The string is void." << std::endl;
         lua_pushnil(vm);
         return 1;
     }
     const char *filename = lua_tostring(vm, 1);
-    bange::image *image = new bange::image;
-    image->LoadFromFile(std::string(filename));
-	bange::BuildProxy(vm, image);
+    bange::texture *texture = new bange::texture;
+    texture->LoadFromFile(std::string(filename));
+	bange::BuildProxy(vm, texture);
     return 1;
 }
 
-int bange::LoadImageFromPackage(lua_State *vm){
+int bange::LoadTextureFromPackage(lua_State *vm){
     //string -> bange::image
     if (!lua_isstring(vm, 1) || (lua_isstring(vm, 1) && lua_isnumber(vm, 1)) ){
         std::cout << "bange.LoadImageFromPackage() -> First argument must be a string." << std::endl;
@@ -64,10 +64,10 @@ int bange::LoadImageFromPackage(lua_State *vm){
         return 1;
     }
     const char *filename = lua_tostring(vm, 1);
-    sf::physfs *streamimage = new sf::physfs(filename);
-	bange::image *image = new bange::image;
-	image->LoadFromStream(*streamimage);
-	bange::BuildProxy(vm, image);
-    delete streamimage;
+    sf::physfs *streamtexture = new sf::physfs(filename);
+	bange::texture *texture = new bange::texture;
+	texture->LoadFromStream(*streamtexture);
+	bange::BuildProxy(vm, texture);
+    delete streamtexture;
     return 1;
 }

@@ -105,7 +105,7 @@ bange::box::box(const char *config){
         error = true;
         return;
     }
-    std::cout << "Texture maximum size: " << sf::Image::GetMaximumSize() << std::endl;
+    std::cout << "Texture maximum size: " << sf::Texture::GetMaximumSize() << std::endl;
 }
 
 bange::box::~box(){

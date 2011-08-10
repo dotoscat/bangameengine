@@ -19,15 +19,15 @@
    //3. This notice may not be removed or altered from any source
    //distribution.
 
-#ifndef _bange_image_
-#define _bange_image_
+#ifndef _bange_texture_
+#define _bange_texture_
 
 #include <SFML/Graphics.hpp>
 #include <base.hpp>
 
 namespace bange{
     
-    class image: public sf::Image, public bange::base{
+    class texture: public sf::Texture, public bange::base{
         public:
             bool NewIndex(lua_State *, const char *){};
             bool Index(lua_State *, const char *){};
@@ -36,8 +36,8 @@ namespace bange{
 
     };
     
-    int LoadImage(lua_State *);
-    int LoadImageFromPackage(lua_State *);
+    int LoadTexture(lua_State *);
+    int LoadTextureFromPackage(lua_State *);
     
 }
 

@@ -22,12 +22,12 @@
 #include <iostream>
 #include <cstring>
 #include <object.hpp>
-#include <image.hpp>
+#include <texture.hpp>
 #include <auxiliar.hpp>
 
 bange::sprite::sprite(){
     thedrawable = this;
-    image = LUA_REFNIL;
+    texture = LUA_REFNIL;
     animation = NULL;
 }
 
@@ -38,22 +38,22 @@ bool bange::sprite::NewIndex(lua_State *vm, const char *key){
     if (animation != NULL && animation->NewIndex(vm, key)){
         return true;}
     
-    if (strcmp("image", key) == 0){
+    if (strcmp("texture", key) == 0){
         
-        bange::proxy *proxyimage = NULL;
-        proxyimage = static_cast<bange::proxy *>( lua_touserdata(vm, 3) );
-        if (proxyimage == NULL){
-            std::cout << this << ".image -> Value isn't a valid image." << std::endl;
+        bange::proxy *proxy = NULL;
+        proxy = static_cast<bange::proxy *>( lua_touserdata(vm, 3) );
+        if (proxy == NULL){
+            std::cout << this << ".texture -> Value isn't a valid texture." << std::endl;
             return true;
         }
-        bange::image *image = dynamic_cast<bange::image *>( proxyimage->object );
-        if (image == NULL){
-            std::cout << this << ".image -> Value isn't a valid image." << std::endl;
+        bange::texture *texture = dynamic_cast<bange::texture *>( proxy->object );
+        if (texture == NULL){
+            std::cout << this << ".texture -> Value isn't a valid texture." << std::endl;
             return true;
         }
-        this->SetImage(*image);
-        luaL_unref(vm, LUA_REGISTRYINDEX, this->image);
-        this->image = luaL_ref(vm, LUA_REGISTRYINDEX);
+        this->SetTexture(*texture);
+        luaL_unref(vm, LUA_REGISTRYINDEX, this->texture);
+        this->texture = luaL_ref(vm, LUA_REGISTRYINDEX);
         
     }
     else if ( strcmp("subrect", key) == 0 ){
@@ -76,8 +76,8 @@ bool bange::sprite::Index(lua_State *vm, const char *key){
     if (animation != NULL && animation->Index(vm, key)){
         return true;}
     
-    if ( strcmp("image", key) == 0 ){
-        lua_rawgeti(vm, LUA_REGISTRYINDEX, this->image);
+    if ( strcmp("texture", key) == 0 ){
+        lua_rawgeti(vm, LUA_REGISTRYINDEX, this->texture);
         return true;
     }
     else if ( strcmp("subrect", key) == 0 ){
@@ -91,7 +91,7 @@ bool bange::sprite::Index(lua_State *vm, const char *key){
 
 void bange::sprite::Clean(lua_State *vm){
     this->bange::object::Clean(vm);
-    luaL_unref(vm, LUA_REGISTRYINDEX, this->image);
+    luaL_unref(vm, LUA_REGISTRYINDEX, this->texture);
     if (animation != NULL){
         animation->Clean(vm);}
 }

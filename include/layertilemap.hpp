@@ -31,7 +31,7 @@ namespace bange{
     
     class layertilemap: public bange::layer{
         sf::Sprite sprite;
-        sf::RenderImage renderimage;
+        sf::RenderTexture rendertexture;
         int width, height;
         int widthtilemap, heighttilemap;
         std::vector<int> processtiles;

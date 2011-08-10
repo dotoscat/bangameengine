@@ -76,9 +76,8 @@ void bange::layertilemap::Clean(lua_State *vm){
 }
 
 void bange::layertilemap::Process(sf::Uint32 time, sf::RenderTarget &rendertarget, std::map<const void *, int> &views, lua_State *vm){
-    if (renderimage.GetWidth() != rendertarget.GetWidth() || renderimage.GetHeight() != rendertarget.GetHeight()){
-        //recreate renderimage (rendertexture) if the rendertarget changes
-        renderimage.Create(rendertarget.GetWidth(), rendertarget.GetHeight());
+    if (rendertexture.GetWidth() != rendertarget.GetWidth() || rendertexture.GetHeight() != rendertarget.GetHeight()){
+        rendertexture.Create(rendertarget.GetWidth(), rendertarget.GetHeight());
     }
     std::map<const void *, int>::iterator aview;
     bange::proxy *proxy = NULL;
@@ -108,9 +107,9 @@ void bange::layertilemap::Process(sf::Uint32 time, sf::RenderTarget &rendertarge
         int endtiley = ((int)center.y+(int)size.y/2) / heighttile;
         if (endtiley >= height){
             endtiley = height-1;}
-        //draw things on the renderimage
-        renderimage.SetView(*view);
-        renderimage.Clear(sf::Color(255, 0, 255));
+        //draw things on the texture
+        rendertexture.SetView(*view);
+        rendertexture.Clear();
         for (int y = starttiley; y <= endtiley; y += 1){
             for (int x = starttilex; x <= endtilex; x += 1){
                 if (tiles[y][x] == LUA_REFNIL){
@@ -120,13 +119,13 @@ void bange::layertilemap::Process(sf::Uint32 time, sf::RenderTarget &rendertarge
                 bange::tile *tile = static_cast<bange::tile *>(proxy->object);
                 lua_pop(vm, 1);//Pop proxy
                 if (tile->sprite != NULL){
-                    renderimage.Draw(*tile->sprite);
+                    rendertexture.Draw(*tile->sprite);
                 }
             }
         }
-        renderimage.Display();
+        rendertexture.Display();
         //Set view to render target. Then draw the sprite with the tilemap rendered.
-        sprite.SetImage(renderimage.GetImage());
+        sprite.SetTexture(rendertexture.GetTexture());
         rendertarget.Draw(sprite);
     }
 }

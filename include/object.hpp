@@ -60,7 +60,7 @@ namespace bange{
     
     class sprite: public bange::object, public sf::Sprite{
         private:
-            int image;
+            int texture;
             bange::animation *animation;
         public:
             sprite();
