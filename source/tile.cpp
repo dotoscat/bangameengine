@@ -52,6 +52,11 @@ void bange::tile::Clean(lua_State *vm){
         sprite->Clean(vm);}
 }
 
+void bange::tile::Process(sf::Uint32 time, lua_State *vm){
+    if (sprite != NULL){
+        sprite->Process(time, vm);}
+}
+
 bool bange::tile::BuildSprite(){
     if (sprite != NULL){
         return false;}

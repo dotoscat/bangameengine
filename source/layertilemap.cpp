@@ -88,7 +88,7 @@ void bange::layertilemap::Process(sf::Uint32 time, sf::RenderTarget &rendertarge
         lua_pop(vm, 1);
         proxy->behavior->Process(lua_gettop(vm), time, vm);
         tile = static_cast<bange::tile *>(proxy->object);
-        //tile->Process(time, vm);
+        tile->Process(time, vm);
     }
     rendertarget.SetView( rendertarget.GetDefaultView() );
     for (aview = views.begin(); aview != views.end(); aview++){

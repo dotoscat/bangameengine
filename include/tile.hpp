@@ -39,6 +39,7 @@ namespace bange{
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
+            void Process(sf::Uint32, lua_State *);
             
             bool BuildSprite();
         
