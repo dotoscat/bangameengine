@@ -43,6 +43,7 @@ void bange::object::RegisterVM(lua_State *vm){
 bange::object::object(){
     visible = true;
     del = false;
+    Destructor = LUA_REFNIL;
 }
 
 bool bange::object::NewIndex(lua_State *vm, const char *key){
