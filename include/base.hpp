@@ -45,7 +45,6 @@ namespace bange{
     
     
     bange::proxy *BuildProxy(lua_State *, bange::base *, bool=true);//+1
-    void BuildPureProxy(lua_State *, bange::base *);//+1
 
     int proxy_newindex(lua_State *);
     int proxy_index(lua_State *);

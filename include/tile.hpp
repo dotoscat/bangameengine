@@ -25,23 +25,21 @@
 #include <lua5.1/lua.hpp>
 #include <SFML/Graphics.hpp>
 #include <base.hpp>
-#include <object.hpp>
 
 namespace bange{
     
     class tile: public bange::base{
         sf::Vector2f position;
         public:
-            mutable bange::sprite *sprite;
+            mutable int sprite;
         public:
             tile(float, float);
-            ~tile();
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
             void Process(sf::Uint32, lua_State *);
             
-            bool BuildSprite();
+            bool BuildSprite(lua_State *);
         
         public:
             static void RegisterVM(lua_State *);

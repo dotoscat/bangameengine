@@ -31,15 +31,7 @@ void bange::proxy::RegisterVM(lua_State *vm){
     {NULL, NULL}};
     lua_createtable(vm, 0, 3);
     luaL_register(vm, NULL, meta);
-    lua_setfield(vm, LUA_REGISTRYINDEX, "bange::meta_proxy");
-        
-    luaL_Reg puremeta[] = {
-    {"__newindex", bange::proxy_newindex},
-    {"__index", bange::proxy_index},
-    {NULL, NULL}};
-    lua_createtable(vm, 0, 2);
-    luaL_register(vm, NULL, puremeta);
-    lua_setfield(vm, LUA_REGISTRYINDEX, "bange::puremeta_proxy");
+    lua_setfield(vm, LUA_REGISTRYINDEX, "metatable_proxy");
 }
 
 bange::proxy *bange::BuildProxy(lua_State *vm, bange::base *object, bool hasbehavior){
@@ -49,18 +41,10 @@ bange::proxy *bange::BuildProxy(lua_State *vm, bange::base *object, bool hasbeha
     proxy->behavior = NULL;
     if (hasbehavior){
         proxy->behavior = new bange::behavior(); }
-    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::meta_proxy");
+    lua_getfield(vm, LUA_REGISTRYINDEX, "metatable_proxy");
     lua_setmetatable(vm, -2);
     
     return proxy;
-}
-
-void bange::BuildPureProxy(lua_State *vm, bange::base *object){
-    bange::proxy *proxy = static_cast<bange::proxy *>( lua_newuserdata(vm, sizeof(bange::proxy)) );
-    proxy->object = object;
-    proxy->behavior = NULL;
-    lua_getfield(vm, LUA_REGISTRYINDEX, "bange::puremeta_proxy");
-    lua_setmetatable(vm, -2);
 }
 
 int bange::proxy_newindex(lua_State *vm){

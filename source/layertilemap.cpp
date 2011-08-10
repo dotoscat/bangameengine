@@ -23,6 +23,7 @@
 #include <layertilemap.hpp>
 #include <tile.hpp>
 #include <view.hpp>
+#include <object.hpp>
 
 void bange::layertilemap::RegisterVM(lua_State *vm){
     luaL_Reg methods[] = {
@@ -118,9 +119,13 @@ void bange::layertilemap::Process(sf::Uint32 time, sf::RenderTarget &rendertarge
                 proxy = static_cast<bange::proxy *>( lua_touserdata(vm, -1) );
                 bange::tile *tile = static_cast<bange::tile *>(proxy->object);
                 lua_pop(vm, 1);//Pop proxy
-                if (tile->sprite != NULL){
-                    rendertexture.Draw(*tile->sprite);
-                }
+                if (tile->sprite == LUA_REFNIL){
+                    continue;}
+                lua_rawgeti(vm, LUA_REGISTRYINDEX, tile->sprite);
+                bange::proxy *proxy = static_cast<bange::proxy *>( lua_touserdata(vm, -1) );
+                lua_pop(vm, 1);//proxy
+                bange::sprite *sprite = static_cast<bange::sprite *>(proxy->object);
+                rendertexture.Draw(*sprite);
             }
         }
         rendertexture.Display();

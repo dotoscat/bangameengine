@@ -19,50 +19,52 @@
    //3. This notice may not be removed or altered from any source
    //distribution.
 
+#include <cstring>
 #include <iostream>
 #include <tile.hpp>
+#include <object.hpp>
 
 bange::tile::tile(float x, float y){
     position.x = x;
     position.y = y;
-    sprite = NULL;
-}
-
-bange::tile::~tile(){
-    if (sprite != NULL){
-        delete sprite;}
+    sprite = LUA_REFNIL;
 }
 
 bool bange::tile::NewIndex(lua_State *vm, const char *key){
-    if (sprite != NULL && sprite->NewIndex(vm, key)){
-        return true;}
     return false;
 }
 
 bool bange::tile::Index(lua_State *vm, const char *key){
-    if (sprite != NULL && sprite->Index(vm, key)){
-        
-        return true;}
+    if (strcmp("sprite", key) == 0){
+        lua_rawgeti(vm, LUA_REGISTRYINDEX, sprite);
+        return true;
+    }
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::tile::");
     lua_getfield(vm, -1, key);
     return true;
 }
 
 void bange::tile::Clean(lua_State *vm){
-    if (sprite != NULL){
-        sprite->Clean(vm);}
+    luaL_unref(vm, LUA_REGISTRYINDEX, sprite);
 }
 
 void bange::tile::Process(sf::Uint32 time, lua_State *vm){
-    if (sprite != NULL){
-        sprite->Process(time, vm);}
+    if (this->sprite == LUA_REFNIL){
+        return;}
+    lua_rawgeti(vm, LUA_REGISTRYINDEX, this->sprite);
+    bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, -1));
+    bange::sprite *sprite = static_cast<bange::sprite *>(proxy->object);
+    lua_pop(vm, 1);//pop proxy
+    sprite->Process(time, vm);
 }
 
-bool bange::tile::BuildSprite(){
-    if (sprite != NULL){
+bool bange::tile::BuildSprite(lua_State *vm){
+    if (this->sprite != LUA_REFNIL){
         return false;}
-    sprite = new bange::sprite();
+    bange::sprite *sprite = new bange::sprite();
     sprite->SetPosition(position);
+    bange::BuildProxy(vm, sprite);
+    this->sprite = luaL_ref(vm, LUA_REGISTRYINDEX);
     return true;
 }
 
@@ -85,7 +87,7 @@ int bange::tile_BuildSprite(lua_State *vm){
         lua_pushnil(vm);
         return 1;
     }
-    if (tile->BuildSprite()){
+    if (tile->BuildSprite(vm)){
         lua_pushboolean(vm, 1);
     }else{
         lua_pushboolean(vm, 0);}
