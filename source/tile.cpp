@@ -63,7 +63,7 @@ bool bange::tile::BuildSprite(lua_State *vm){
         return false;}
     bange::sprite *sprite = new bange::sprite();
     sprite->SetPosition(position);
-    bange::BuildProxy(vm, sprite);
+    bange::BuildProxy(vm, sprite, false);
     this->sprite = luaL_ref(vm, LUA_REGISTRYINDEX);
     return true;
 }
