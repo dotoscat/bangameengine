@@ -141,9 +141,6 @@ bange::animation::frame bange::animation::BuildFrame(int indexframe, lua_State *
     aframe.origin.y = 0.f;
     if (lua_istable(vm, -1)){
         aframe.origin = bange::TableTosfVector2f(-1, vm);}
-    else{
-        std::cout << "bange::animation: frame table " << lua_topointer(vm, indexframe) << " doesn't have a origin." << std::endl;
-    }
     lua_pop(vm, 1);//origin
     
     return aframe;
