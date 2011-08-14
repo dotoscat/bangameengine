@@ -86,8 +86,8 @@ void bange::layertilemap::Process(sf::Uint32 time, sf::RenderTarget &rendertarge
     for (int i = 0; i < processtiles.size(); i += 1){
         lua_rawgeti(vm, LUA_REGISTRYINDEX, processtiles[i]);
         proxy = static_cast<bange::proxy *>( lua_touserdata(vm, -1) );
-        lua_pop(vm, 1);
         proxy->behavior->Process(lua_gettop(vm), time, vm);
+        lua_pop(vm, 1);
         tile = static_cast<bange::tile *>(proxy->object);
         tile->Process(time, vm);
     }
