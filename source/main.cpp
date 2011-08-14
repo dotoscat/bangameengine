@@ -32,10 +32,10 @@ main(int argc, char *argv[]){
     }
     bange::box *box = NULL;
     if (argc > 1){
-        box = new bange::box(argv[1]);
+        box = new bange::box(argv[1], argc, argv);
     }
     else{
-        box = new bange::box("config.lua");
+        box = new bange::box("config.lua", argc, argv);
     }
     if (!box->GetError()){
         box->Run();}

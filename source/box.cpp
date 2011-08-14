@@ -26,7 +26,7 @@
 #include <scene.hpp>
 #include <view.hpp>
 
-bange::box::box(const char *config){
+bange::box::box(const char *config, int argc, char *argv[]){
     error = false;
     window = NULL;
     this->escapekey = sf::Keyboard::Escape;
@@ -37,6 +37,14 @@ bange::box::box(const char *config){
     windowFocus = false;
     vm = luaL_newstate();
     bange::PrepareVM(vm);
+    //Create a lua table with arguments
+    lua_createtable(vm, argc, 0);
+    for (int i = 0; i < argc; i += 1){
+        lua_pushstring(vm, argv[i]);
+        lua_rawseti(vm, -2, i+1);
+    }
+    lua_setglobal(vm, "Args");
+    //---
     if (luaL_dofile(vm, config)){
         std::cout << "bange(lua): Error reading config file \"" << config << "\": " << lua_tostring(vm, -1) << std::endl;
         error = true;

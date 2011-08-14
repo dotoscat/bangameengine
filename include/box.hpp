@@ -40,7 +40,7 @@ namespace bange{
             mutable bool mouseEntered;
             mutable bool windowFocus;
         public:
-            box(const char *);
+            box(const char *, int, char *[]);
             ~box();
             bool GetError();
             void Run();
