@@ -46,6 +46,7 @@ bool bange::animation::NewIndex(lua_State *vm, const char *key){
         bange::animation::frame aframe = bange::animation::BuildFrame(lua_gettop(vm), vm);
         lua_pop(vm, 2);//iframe and frames
         this->SetSubRect(aframe);
+        luaL_unref(vm, LUA_REGISTRYINDEX, refanimation);
         refanimation = luaL_ref(vm, LUA_REGISTRYINDEX);
     }
     
@@ -89,21 +90,26 @@ void bange::animation::Process(sf::Uint32 time, lua_State *vm){
     }
     
     size_t lenframes = lua_objlen(vm, -1);
-    if (lenframes > 0){
-        lua_rawgeti(vm, -1, iframe);
-        bange::animation::frame aframe = bange::animation::BuildFrame(lua_gettop(vm), vm);
-        lua_pop(vm, 1);//frame
-                
-        if (storetime >= aframe.timestep){
-            iframe += 1;
-            if (iframe > lenframes){
-                iframe = 1;}
-            this->SetSubRect(aframe);
-            storetime = 0;
-        }
-        
+    if (lenframes == 0){
+        lua_pop(vm, 2);//frames and animation table
+        return;
     }
-    
+
+    lua_rawgeti(vm, -1, iframe);
+    bange::animation::frame aframe = bange::animation::BuildFrame(lua_gettop(vm), vm);
+    lua_pop(vm, 1);//frame
+            
+    if (storetime >= aframe.timestep){
+        iframe += 1;
+        if (iframe > lenframes){
+            iframe = 1;}
+        lua_rawgeti(vm, -1, iframe);//New frame
+        aframe = bange::animation::BuildFrame(lua_gettop(vm), vm);
+        lua_pop(vm, 1);//frame table
+        this->SetSubRect(aframe);
+        storetime = 0;
+    }
+
     lua_pop(vm, 2);//Frames and animation table
 }
 
