@@ -49,6 +49,9 @@ bool bange::animation::NewIndex(lua_State *vm, const char *key){
         luaL_unref(vm, LUA_REGISTRYINDEX, refanimation);
         refanimation = luaL_ref(vm, LUA_REGISTRYINDEX);
     }
+    else if (strcmp("addtime", key) == 0){
+        addtime = (bool)lua_toboolean(vm, 3);
+    }
     
     return true;
 }
@@ -57,6 +60,10 @@ bool bange::animation::Index(lua_State *vm, const char *key){
     
     if ( strcmp("animation", key) == 0){
         lua_rawgeti(vm, LUA_REGISTRYINDEX, this->refanimation);
+        return true;
+    }
+    else if (strcmp("addtime", key) == 0){
+        lua_pushboolean(vm, (int)addtime);
         return true;
     }
     
@@ -82,7 +89,10 @@ void bange::animation::Process(sf::Uint32 time, lua_State *vm){
     lua_pop(vm, 1);//auto
     if(automatic){
         storetime += time;}
-    
+    else if(!automatic && addtime){
+        storetime += time;
+        addtime = false;
+    }
     lua_getfield(vm, -1, "frames");
     if (!lua_istable(vm, -1)){
         lua_pop(vm, 2);//"frames" and animation table

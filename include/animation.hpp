@@ -41,6 +41,7 @@ namespace bange{
         sf::Sprite *sprite;
         sf::Uint32 storetime;
         size_t iframe;
+        bool addtime;
         int refanimation;//lua animation table
         
         public:
