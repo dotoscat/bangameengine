@@ -20,6 +20,7 @@
    //distribution.
 
 #include <iostream>
+#include <cstring>
 #include <layerimagetilemap.hpp>
 #include <tile.hpp>
 #include <view.hpp>
@@ -57,11 +58,29 @@ bange::layerimagetilemap::layerimagetilemap(int width, int height, int widthtile
 bool bange::layerimagetilemap::NewIndex(lua_State *vm, const char *key){
     if (this->bange::layer::NewIndex(vm, key)){
         return true;}
+    
+    if ( strcmp("repeatx", key) == 0){
+        int repeatx = lua_toboolean(vm, 3);
+        if (repeatx){
+            flags |= bange::layerimagetilemap::repeatx;}
+        else if (!repeatx && (flags & bange::layerimagetilemap::repeatx) == bange::layerimagetilemap::repeatx){
+            flags ^= bange::layerimagetilemap::repeatx;}
+    }
+    return true;
 }
             
 bool bange::layerimagetilemap::Index(lua_State *vm, const char *key){
     if (this->bange::layer::Index(vm, key)){
         return true;}
+    
+    if ( strcmp("repeatx", key) == 0){
+        if ((flags & bange::layerimagetilemap::repeatx) == bange::layerimagetilemap::repeatx){
+            lua_pushboolean(vm, 1);}
+        else{
+            lua_pushboolean(vm, 0);}
+        return true;
+    }
+    
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::layerimagetilemap::");
     lua_getfield(vm, -1, key);
     return true;
@@ -115,14 +134,28 @@ void bange::layerimagetilemap::Process(sf::Uint32 time, sf::RenderTarget &render
     }
     rendertexture.Display();
     
-    //Now draw the tilemap's sprite to each view
+    //Now draw the tilemap's sprite with each view
     rendertarget.SetView( rendertarget.GetDefaultView() );
     for (aview = views.begin(); aview != views.end(); aview++){
         const bange::view *view = static_cast<const bange::view *>(aview->first);
+        sf::Vector2f center = view->GetCenter();
+        sf::Vector2f size = view->GetSize();
         rendertarget.SetView(*view);
         //Draw the sprite with the tilemap rendered.
         this->sprite.SetTexture(rendertexture.GetTexture());
-        rendertarget.Draw(this->sprite);
+        sf::Vector2f opos = this->sprite.GetPosition();
+        //What...
+        if (flags == 0){
+            rendertarget.Draw(this->sprite);
+        }
+        else if ((flags & bange::layerimagetilemap::repeatx) == bange::layerimagetilemap::repeatx \
+        && (flags & bange::layerimagetilemap::repeaty) != bange::layerimagetilemap::repeaty){
+            for (float x = center.x-size.x/2.f; x < center.x+size.x/2.f; x += widthtilemap){
+                this->sprite.SetX(x);
+                rendertarget.Draw(this->sprite);
+            }
+        }
+        this->sprite.SetPosition(opos);
     }
 }
 
