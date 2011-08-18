@@ -18,41 +18,53 @@
 
    //3. This notice may not be removed or altered from any source
    //distribution.
-
-#ifndef _bange_scene_
-#define _bange_scene_
+   
+#ifndef _bange_layerimagetilemap_
+#define _bange_layerimagetilemap_
 
 #include <vector>
-#include <map>
-#include <base.hpp>
-#include <view.hpp>
+#include <lua5.1/lua.hpp>
+#include <layer.hpp>
+#include <tile.hpp>
 
 namespace bange{
     
-    class scene: public bange::base{
-        private:
-            std::vector<int> layers;
+    class layerimagetilemap: public bange::layer{
+        sf::Sprite sprite;
+        sf::RenderTexture rendertexture;
+        int width, height;
+        int widthtilemap, heighttilemap;
+        std::vector<int> processtiles;
+        float velx, vely;
+        float velautoscrollx, velautoscrolly;
+        float xautoscrollx, yautoscrolly;
+        unsigned int flags;
+        
+        enum __flags{
+            repeatx = 1 << 0,
+            repeaty = 1 << 1,
+            autoscrollx = 1 << 2,
+            autoscrolly = 1 << 3,
+        };
+        
         public:
-            mutable std::map<const void *, int> views;
+            mutable std::vector< std::vector<int> >tiles;
+            mutable int widthtile, heighttile;
         public:
-            scene(int);
+            layerimagetilemap(int width, int height, int widthtile, int heighttile);
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
             void Clean(lua_State *);
-            void Process(sf::Uint32, sf::RenderTarget &, lua_State *);
-            void SetLayer(int, int, lua_State *);
-            virtual ~scene(){};
+            void Process(sf::Uint32, sf::RenderTarget &, std::map<const void *, int> &, lua_State *);
             
+            void SetTile(int x, int y, int, lua_State *);
+            
+        public:
             static void RegisterVM(lua_State *);
-
+        
     };
     
-    int NewScene(lua_State *);
-    
-    int scene_SetLayerObject(lua_State *);
-    int scene_SetLayerTilemap(lua_State *);
-    int scene_SetLayerImageTilemap(lua_State *);
-    int scene_AddView(lua_State *);
+    int layerimagetilemap_BuildTile(lua_State *);
     
 }
 
