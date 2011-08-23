@@ -21,10 +21,12 @@
 
 #include <iostream>
 #include <cstring>
+#include <cmath>
 #include <layerimagetilemap.hpp>
 #include <tile.hpp>
 #include <view.hpp>
 #include <object.hpp>
+#include <auxiliar.hpp>
 
 void bange::layerimagetilemap::RegisterVM(lua_State *vm){
     luaL_Reg methods[] = {
@@ -40,6 +42,12 @@ bange::layerimagetilemap::layerimagetilemap(int width, int height, int widthtile
     this->height = height;
     this->widthtile = widthtile;
     this->heighttile = heighttile;
+    velx = 0;
+    vely = 0;
+    xautoscrollx = 0;
+    yautoscrolly = 0;
+    velautoscrollx = 0;
+    velautoscrolly = 0;
     widthtilemap = width * widthtile;
     heighttilemap = height * heighttile;
     rendertexture.Create(widthtilemap, heighttilemap);
@@ -66,6 +74,45 @@ bool bange::layerimagetilemap::NewIndex(lua_State *vm, const char *key){
         else if (!repeatx && (flags & bange::layerimagetilemap::repeatx) == bange::layerimagetilemap::repeatx){
             flags ^= bange::layerimagetilemap::repeatx;}
     }
+    else if ( strcmp("repeaty", key) == 0){
+        int repeaty = lua_toboolean(vm, 3);
+        if (repeaty){
+            flags |= bange::layerimagetilemap::repeaty;}
+        else if (!repeaty && (flags & bange::layerimagetilemap::repeaty) == bange::layerimagetilemap::repeaty){
+            flags ^= bange::layerimagetilemap::repeaty;}
+    }
+    else if ( strcmp("autoscrollx", key) == 0){
+        int autoscrollx = lua_toboolean(vm, 3);
+        if (autoscrollx){
+            flags |= bange::layerimagetilemap::autoscrollx;}
+        else if (!autoscrollx && (flags & bange::layerimagetilemap::autoscrollx) == bange::layerimagetilemap::autoscrollx){
+            flags ^= bange::layerimagetilemap::autoscrollx;}
+    }
+    else if ( strcmp("autoscrolly", key) == 0){
+        int autoscrolly = lua_toboolean(vm, 3);
+        if (autoscrolly){
+            flags |= bange::layerimagetilemap::autoscrolly;}
+        else if (!autoscrolly && (flags & bange::layerimagetilemap::autoscrolly) == bange::layerimagetilemap::autoscrolly){
+            flags ^= bange::layerimagetilemap::autoscrolly;}
+    }
+    else if (strcmp("velx", key) == 0){
+        velx = lua_tonumber(vm, 3);
+    }
+    else if (strcmp("vely", key) == 0){
+        vely = lua_tonumber(vm, 3);
+    }
+    else if (strcmp("velautoscrollx", key) == 0){
+        velautoscrollx = lua_tonumber(vm, 3);
+    }
+    else if (strcmp("velautoscrolly", key) == 0){
+        velautoscrolly = lua_tonumber(vm, 3);
+    }
+    else if (strcmp("posx", key) == 0){
+        this->sprite.SetX(lua_tonumber(vm, 3));
+    }
+    else if (strcmp("posy", key) == 0){
+        this->sprite.SetY(lua_tonumber(vm, 3));
+    }
     return true;
 }
             
@@ -80,7 +127,47 @@ bool bange::layerimagetilemap::Index(lua_State *vm, const char *key){
             lua_pushboolean(vm, 0);}
         return true;
     }
-    
+    else if ( strcmp("repeaty", key) == 0){
+        if ((flags & bange::layerimagetilemap::repeatx) == bange::layerimagetilemap::repeaty){
+            lua_pushboolean(vm, 1);}
+        else{
+            lua_pushboolean(vm, 0);}
+        return true;
+    }
+    else if ( strcmp("autoscrollx", key) == 0){
+        if ((flags & bange::layerimagetilemap::autoscrollx) == bange::layerimagetilemap::autoscrollx){
+            lua_pushboolean(vm, 1);}
+        else{
+            lua_pushboolean(vm, 0);}
+        return true;
+    }
+    else if ( strcmp("autoscrolly", key) == 0){
+        if ((flags & bange::layerimagetilemap::autoscrolly) == bange::layerimagetilemap::autoscrolly){
+            lua_pushboolean(vm, 1);}
+        else{
+            lua_pushboolean(vm, 0);}
+        return true;
+    }
+    else if ( strcmp("velx", key ) == 0){
+        lua_pushnumber(vm, velx);
+        return true;
+    }
+    else if ( strcmp("vely", key ) == 0){
+        lua_pushnumber(vm, vely);
+        return true;
+    }
+    else if ( strcmp("velautoscrollx", key ) == 0){
+        lua_pushnumber(vm, velautoscrollx);
+        return true;
+    }
+    else if ( strcmp("velautoscrolly", key ) == 0){
+        lua_pushnumber(vm, velautoscrolly);
+        return true;
+    }
+    else if ( strcmp("posy", key) == 0){
+        lua_pushnumber(vm, this->sprite.GetPosition().y);
+        return true;
+    }
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::layerimagetilemap::");
     lua_getfield(vm, -1, key);
     return true;
@@ -110,7 +197,21 @@ void bange::layerimagetilemap::Process(sf::Uint32 time, sf::RenderTarget &render
         tile = static_cast<bange::tile *>(proxy->object);
         tile->Process(time, vm);
     }
-    
+    //Process the autoscroll
+    float ctime = (float)time / 1000.f;
+    if ( (flags & bange::layerimagetilemap::autoscrollx) == bange::layerimagetilemap::autoscrollx ){
+        xautoscrollx += velautoscrollx * ctime;
+        if ( fabs(xautoscrollx) > widthtilemap ){
+            xautoscrollx = 0.f;
+        }
+    }
+    if ( (flags & bange::layerimagetilemap::autoscrolly) == bange::layerimagetilemap::autoscrolly ){
+        yautoscrolly += velautoscrolly * ctime;
+        if ( fabs(yautoscrolly) > heighttilemap ){
+            yautoscrolly = 0.f;
+        }
+    }
+    //---
     //Draw all the tiles in rendertexture
     std::vector< std::vector<int> >::iterator arow;
     std::vector<int>::iterator acol;
@@ -135,24 +236,50 @@ void bange::layerimagetilemap::Process(sf::Uint32 time, sf::RenderTarget &render
     rendertexture.Display();
     
     //Now draw the tilemap's sprite with each view
+    sf::Vector2f opos = this->sprite.GetPosition();
     rendertarget.SetView( rendertarget.GetDefaultView() );
     for (aview = views.begin(); aview != views.end(); aview++){
         const bange::view *view = static_cast<const bange::view *>(aview->first);
         sf::Vector2f center = view->GetCenter();
         sf::Vector2f size = view->GetSize();
+        float startxview = center.x-size.x/2.f;
+        float startyview = center.y-size.y/2.f;
         rendertarget.SetView(*view);
         //Draw the sprite with the tilemap rendered.
         this->sprite.SetTexture(rendertexture.GetTexture());
-        sf::Vector2f opos = this->sprite.GetPosition();
         //What...
         if (flags == 0){
             rendertarget.Draw(this->sprite);
         }
         else if ((flags & bange::layerimagetilemap::repeatx) == bange::layerimagetilemap::repeatx \
         && (flags & bange::layerimagetilemap::repeaty) != bange::layerimagetilemap::repeaty){
-            for (float x = center.x-size.x/2.f; x < center.x+size.x/2.f; x += widthtilemap){
+            float x = -(int(center.x * velx + xautoscrollx) % (int)widthtilemap) + startxview - widthtilemap;
+            float posrepeatx = vely * center.y;
+            this->sprite.SetY(posrepeatx + opos.y);
+            for (; x < startxview+size.x; x += widthtilemap){
                 this->sprite.SetX(x);
                 rendertarget.Draw(this->sprite);
+            }
+        }
+        else if ((flags & bange::layerimagetilemap::repeaty) == bange::layerimagetilemap::repeaty \
+        && (flags & bange::layerimagetilemap::repeatx) != bange::layerimagetilemap::repeatx){
+            float y = -(int(center.y * vely + yautoscrolly) % (int)heighttilemap) + startyview - heighttilemap;
+            float posrepeaty = velx * center.x;
+            this->sprite.SetX(posrepeaty + opos.x);
+            for (; y < startyview+size.y; y += heighttilemap){
+                this->sprite.SetY(y);
+                rendertarget.Draw(this->sprite);
+            }
+        }
+        else if ((flags & bange::layerimagetilemap::repeatx) == bange::layerimagetilemap::repeatx \
+        && (flags & bange::layerimagetilemap::repeaty) == bange::layerimagetilemap::repeaty){
+            float y = -(int(center.y * vely + yautoscrolly) % (int)heighttilemap) + startyview - heighttilemap;
+            for(; y < startyview+size.y; y += heighttilemap){
+                this->sprite.SetY(y);                            
+                for (float x = -(int(center.x * velx + xautoscrollx) % (int)widthtilemap) + startxview - widthtilemap; x < startxview+size.x; x += widthtilemap){
+                    this->sprite.SetX(x);
+                    rendertarget.Draw(this->sprite);
+                }
             }
         }
         this->sprite.SetPosition(opos);
