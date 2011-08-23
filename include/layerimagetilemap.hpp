@@ -26,10 +26,11 @@
 #include <lua5.1/lua.hpp>
 #include <layer.hpp>
 #include <tile.hpp>
+#include <drawable.hpp>
 
 namespace bange{
     
-    class layerimagetilemap: public bange::layer{
+    class layerimagetilemap: public bange::layer, public bange::drawable{
         sf::Sprite sprite;
         sf::RenderTexture rendertexture;
         int width, height;

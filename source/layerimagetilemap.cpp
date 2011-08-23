@@ -61,6 +61,7 @@ bange::layerimagetilemap::layerimagetilemap(int width, int height, int widthtile
         }
         tiles.push_back(coltiles);
     }
+    thedrawable = &sprite;
 }
 
 bool bange::layerimagetilemap::NewIndex(lua_State *vm, const char *key){
@@ -113,6 +114,11 @@ bool bange::layerimagetilemap::NewIndex(lua_State *vm, const char *key){
     else if (strcmp("posy", key) == 0){
         this->sprite.SetY(lua_tonumber(vm, 3));
     }
+    //drawable
+    else if (strcmp("color", key) == 0){
+        this->bange::drawable::NewIndex(vm, key);
+    }
+    //---
     return true;
 }
             
@@ -168,6 +174,11 @@ bool bange::layerimagetilemap::Index(lua_State *vm, const char *key){
         lua_pushnumber(vm, this->sprite.GetPosition().y);
         return true;
     }
+    //Drawable
+    else if ( strcmp("color", key) == 0 && this->bange::drawable::Index(vm, key) ){
+        return true;
+    }
+    //---
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::layerimagetilemap::");
     lua_getfield(vm, -1, key);
     return true;
