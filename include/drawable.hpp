@@ -31,6 +31,8 @@ namespace bange{
         public:
             mutable sf::Drawable *thedrawable;
         public:
+            drawable(){this->thedrawable = NULL;};
+            drawable(const sf::Drawable *adrawable){this->thedrawable = const_cast<sf::Drawable *>(adrawable);};
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
     };
