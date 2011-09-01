@@ -30,6 +30,8 @@
 #include <tile.hpp>
 #include <layertilemap.hpp>
 #include <layerimagetilemap.hpp>
+#include <soundbuffer.hpp>
+#include <sound.hpp>
 
 void bange::PrepareVM(lua_State *vm){
 	using namespace bange::vm;
@@ -183,4 +185,6 @@ void bange::PrepareVM(lua_State *vm){
     bange::tile::RegisterVM(vm);
     bange::layertilemap::RegisterVM(vm);
     bange::layerimagetilemap::RegisterVM(vm);
+    bange::soundbuffer::RegisterVM(vm);
+    bange::sound::RegisterVM(vm);
 }
