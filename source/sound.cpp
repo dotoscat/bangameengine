@@ -62,6 +62,14 @@ bool bange::sound::NewIndex(lua_State *vm, const char *key){
         this->SetBuffer(*soundbuffer);
         return true;
     }
+    else if (strcmp("loop", key) == 0){
+        this->SetLoop((bool)lua_toboolean(vm, 3));
+        return true;
+    }
+    else if (strcmp("playingoffset", key) == 0){
+        this->SetPlayingOffset(lua_tonumber(vm, 3));
+        return true;
+    }
     return false;
 }
 
@@ -69,6 +77,18 @@ bool bange::sound::Index(lua_State *vm, const char *key){
     
     if (strcmp("soundbuffer", key) == 0){
         lua_rawgeti(vm, LUA_REGISTRYINDEX, soundbuffer);
+        return true;
+    }
+    else if (strcmp("status", key) == 0){
+        lua_pushnumber(vm, (lua_Number)this->GetStatus());
+        return true;
+    }
+    else if (strcmp("loop", key) == 0){
+        lua_pushboolean(vm, (int)this->GetLoop());
+        return true;
+    }
+    else if (strcmp("playingoffset", key) == 0){
+        lua_pushnumber(vm, (lua_Number)this->GetPlayingOffset() );
         return true;
     }
     lua_getfield(vm, LUA_REGISTRYINDEX, "bange::sound::");
