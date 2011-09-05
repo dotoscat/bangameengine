@@ -42,9 +42,13 @@ void bange::sound::RegisterVM(lua_State *vm){
 
 bange::sound::sound(){
     soundbuffer = LUA_REFNIL;
+    soundsource.SetSoundSource(this);
 }
 
 bool bange::sound::NewIndex(lua_State *vm, const char *key){
+    
+    if (soundsource.NewIndex(vm, key)){
+        return true;}
     
     if ( strcmp("soundbuffer", key) == 0){
         bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 3));
@@ -74,6 +78,9 @@ bool bange::sound::NewIndex(lua_State *vm, const char *key){
 }
 
 bool bange::sound::Index(lua_State *vm, const char *key){
+    
+    if (soundsource.Index(vm, key)){
+        return true;}
     
     if (strcmp("soundbuffer", key) == 0){
         lua_rawgeti(vm, LUA_REGISTRYINDEX, soundbuffer);

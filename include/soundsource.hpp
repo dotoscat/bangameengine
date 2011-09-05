@@ -19,34 +19,26 @@
    //3. This notice may not be removed or altered from any source
    //distribution.
    
-#ifndef _bange_sound_
-#define _bange_sound_
+#ifndef _bange_soundsource_
+#define _bange_soundsource_
 
 #include <lua5.1/lua.hpp>
 #include <SFML/Audio.hpp>
-#include <base.hpp>
-#include <soundsource.hpp>
 
 namespace bange{
-    
-    class sound: public bange::base, public sf::Sound{
-        private:
-            int soundbuffer;
-            bange::soundsource soundsource;
+
+    class soundsource{
+        
+        sf::SoundSource *thesource;
+        
         public:
-            sound();
+            soundsource(): thesource(NULL){};
+            void SetSoundSource(sf::SoundSource *);
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
-            void Clean(lua_State *);
-            
-            static void RegisterVM(lua_State *);
-            
+        
     };
-    
-    int sound_NewSound(lua_State *);
-    int sound_Play(lua_State *);
-    
+
 }
 
 #endif
-   

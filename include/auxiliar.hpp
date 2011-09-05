@@ -26,7 +26,33 @@
 #include <lua5.1/lua.hpp>
 
 namespace bange{
-
+    
+    inline sf::Vector3f TableTosfVector3f(int indextable, lua_State *vm){
+        sf::Vector3f vector;
+        lua_getfield(vm, indextable, "x");
+        if (lua_isnil(vm, -1)){
+            lua_pop(vm, 1);
+            lua_rawgeti(vm, indextable, 1);
+        }
+        vector.x = lua_tonumber(vm, -1);
+        lua_pop(vm, 1);
+        lua_getfield(vm, indextable, "y");
+        if (lua_isnil(vm, -1)){
+            lua_pop(vm, 1);
+            lua_rawgeti(vm, indextable, 2);
+        }
+        vector.y = lua_tonumber(vm, -1);
+        lua_pop(vm, 1);
+        lua_getfield(vm, indextable, "z");
+        if (lua_isnil(vm, -1)){
+            lua_pop(vm, 1);
+            lua_rawgeti(vm, indextable, 3);
+        }
+        vector.z = lua_tonumber(vm, -1);
+        lua_pop(vm, 1);
+        return vector;
+    }
+    
     inline sf::Vector2f TableTosfVector2f(int indextable, lua_State *vm){
         sf::Vector2f vector;
         lua_getfield(vm, indextable, "x");
@@ -52,6 +78,17 @@ namespace bange{
         lua_setfield(vm, -2, "x");
         lua_pushnumber(vm, vector.y);
         lua_setfield(vm, -2, "y");
+        //+1
+    }
+
+    inline void sfVector3fToTable(sf::Vector3f vector, lua_State *vm){
+        lua_createtable(vm, 0, 3);
+        lua_pushnumber(vm, vector.x);
+        lua_setfield(vm, -2, "x");
+        lua_pushnumber(vm, vector.y);
+        lua_setfield(vm, -2, "y");
+        lua_pushnumber(vm, vector.z);
+        lua_setfield(vm, -2, "z");
         //+1
     }
 
