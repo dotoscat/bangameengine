@@ -32,6 +32,7 @@
 #include <layerimagetilemap.hpp>
 #include <soundbuffer.hpp>
 #include <sound.hpp>
+#include <music.hpp>
 #include <listener.hpp>
 
 void bange::PrepareVM(lua_State *vm){
@@ -188,5 +189,6 @@ void bange::PrepareVM(lua_State *vm){
     bange::layerimagetilemap::RegisterVM(vm);
     bange::soundbuffer::RegisterVM(vm);
     bange::sound::RegisterVM(vm);
+    bange::music::RegisterVM(vm);
     bange::listener::RegisterVM(vm);
 }
