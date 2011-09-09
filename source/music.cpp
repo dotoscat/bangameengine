@@ -23,8 +23,15 @@
 #include <cstring>
 #include <music.hpp>
 
-bange::music::music(){
+bange::music::music(sf::physfs *stream){
     soundsource.SetSoundSource(this);
+    this->stream = stream;
+}
+
+bange::music::~music(){
+    if (this->stream != NULL){
+        delete stream;
+    }
 }
 
 bool bange::music::NewIndex(lua_State *vm, const char *key){
@@ -85,6 +92,7 @@ void bange::music::RegisterVM(lua_State *vm){
     
     luaL_Reg functions[] = {
     {"OpenMusic", bange::music_OpenMusic},
+    {"OpenMusicFromPackage", bange::music_OpenMusicFromPackage},
     {NULL, NULL}};
     luaL_register(vm, "bange", functions);
     lua_pop(vm, 1);
@@ -148,4 +156,24 @@ int bange::music_Stop(lua_State *vm){
     bange::music *music = static_cast<bange::music *>(proxy->object);
     music->Stop();
     return 0;
+}
+
+int bange::music_OpenMusicFromPackage(lua_State *vm){
+    //string -> music
+    if (!lua_isstring(vm, 1) || (lua_isstring(vm, 1) && lua_isnumber(vm, 1)) ){
+        std::cout << "bange.OpenMusicFromPackage() -> First argument must be a string." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    if(lua_objlen(vm, 1) == 0){
+        std::cout << "bange.OpenMusicFromPackage() -> The string is void." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    const char *filename = lua_tostring(vm, 1);
+    sf::physfs *streammusicbuffer = new sf::physfs(filename);
+	bange::music *music = new bange::music(streammusicbuffer);
+	music->OpenFromStream(*streammusicbuffer);
+	bange::BuildProxy(vm, music);
+    return 1;
 }

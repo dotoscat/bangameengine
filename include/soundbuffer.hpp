@@ -39,6 +39,7 @@ namespace bange{
     };
     
     int soundbuffer_LoadSoundBuffer(lua_State *);
+    int soundbuffer_LoadSoundBufferFromPackage(lua_State *);
     
 }
 

@@ -26,15 +26,18 @@
 #include <SFML/Audio.hpp>
 #include <base.hpp>
 #include <soundsource.hpp>
+#include <sfmlphysfs.hpp>
 
 namespace bange{
     
     class music: public bange::base, public sf::Music{
         
         bange::soundsource soundsource;
+        sf::physfs *stream;
         
         public:
-            music();
+            music(sf::physfs *stream=NULL);
+            ~music();
             bool NewIndex(lua_State *, const char *);
             bool Index(lua_State *, const char *);
         
@@ -43,6 +46,7 @@ namespace bange{
     };
     
     int music_OpenMusic(lua_State *);
+    int music_OpenMusicFromPackage(lua_State *);
     
     int music_Play(lua_State *);
     int music_Pause(lua_State *);

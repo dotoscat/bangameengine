@@ -21,10 +21,12 @@
 
 #include <iostream>
 #include <soundbuffer.hpp>
+#include <sfmlphysfs.hpp>
 
 void bange::soundbuffer::RegisterVM(lua_State *vm){
     luaL_reg functions[] = {
     {"LoadSoundBuffer", bange::soundbuffer_LoadSoundBuffer},
+    {"LoadSoundBufferFromPackage", bange::soundbuffer_LoadSoundBufferFromPackage},
     {NULL, NULL}};
     luaL_register(vm, "bange", functions);
     lua_pop(vm, 1);
@@ -46,5 +48,25 @@ int bange::soundbuffer_LoadSoundBuffer(lua_State *vm){
     bange::soundbuffer *soundbuffer = new bange::soundbuffer;
     soundbuffer->LoadFromFile(std::string(filename));
 	bange::BuildProxy(vm, soundbuffer, false);
+    return 1;
+}
+
+int bange::soundbuffer_LoadSoundBufferFromPackage(lua_State *vm){
+    //string -> soundbuffer
+    if (!lua_isstring(vm, 1) || (lua_isstring(vm, 1) && lua_isnumber(vm, 1)) ){
+        std::cout << "bange.LoadSoundBufferFromPackage() -> First argument must be a string." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    if(lua_objlen(vm, 1) == 0){
+        std::cout << "bange.LoadSoundBufferFromPackage() -> The string is void." << std::endl;
+        lua_pushnil(vm);
+        return 1;
+    }
+    const char *filename = lua_tostring(vm, 1);
+    sf::physfs streamsoundbuffer(filename);
+	bange::soundbuffer *soundbuffer = new bange::soundbuffer;
+	soundbuffer->LoadFromStream(streamsoundbuffer);
+	bange::BuildProxy(vm, soundbuffer);
     return 1;
 }
