@@ -33,6 +33,8 @@ void bange::sound::RegisterVM(lua_State *vm){
     
     luaL_Reg methods[] = {
     {"Play", bange::sound_Play},
+    {"Pause", bange::sound_Pause},
+    {"Stop", bange::sound_Stop},
     {NULL, NULL}};
     lua_createtable(vm, 0, 3);
     luaL_register(vm, NULL, methods);
@@ -122,5 +124,27 @@ int bange::sound_Play(lua_State *vm){
     }
     bange::sound *sound = static_cast<bange::sound *>(proxy->object);
     sound->Play();
+    return 0;
+}
+
+int bange::sound_Pause(lua_State *vm){
+    //sound
+    bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 1));
+    if (proxy == NULL){
+        std::cout << "sound::Pause() -> object isn't a userdata" << std::endl;
+    }
+    bange::sound *sound = static_cast<bange::sound *>(proxy->object);
+    sound->Pause();
+    return 0;
+}
+
+int bange::sound_Stop(lua_State *vm){
+    //sound
+    bange::proxy *proxy = static_cast<bange::proxy *>(lua_touserdata(vm, 1));
+    if (proxy == NULL){
+        std::cout << "sound::Stop() -> object isn't a userdata" << std::endl;
+    }
+    bange::sound *sound = static_cast<bange::sound *>(proxy->object);
+    sound->Stop();
     return 0;
 }

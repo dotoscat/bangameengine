@@ -44,7 +44,10 @@ namespace bange{
     };
     
     int sound_NewSound(lua_State *);
+    
     int sound_Play(lua_State *);
+    int sound_Pause(lua_State *);
+    int sound_Stop(lua_State *);
     
 }
 
